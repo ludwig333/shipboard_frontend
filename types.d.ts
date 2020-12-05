@@ -10,14 +10,14 @@ export type ReducerType = {
 }
 
 // AUTHENTICATION TYPES
-export type Credential = {
+export type CredentialData = {
   email: string,
   password: string
 }
 
-export type registerType = {
+export type RegistrationData = {
   name: string,
   email: string,
   password: string,
-  confirmation_password: string
+  password_confirmation: string
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, FormEvent } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import AuthLayout from '../../components/front/layout/AuthLayout';
 import { FormHeader } from '../../components/common/typography';
@@ -6,20 +6,19 @@ import { InputField, FormLink } from '../../components/common/form';
 import { FormButton } from '../../components/common/buttons';
 import { useAuthDispatch } from '../../providers/Auth/AuthServiceProvider';
 import { login } from '../../apis/auth';
-import { Credential } from '../../../types';
+import { CredentialData } from '../../../types';
 
-const defaultCredentials: Credential = {
+const defaultCredentials: CredentialData = {
   email: '',
   password: '',
 };
 
-const LoginPage = (props: any) => {
+const LoginPage: React.FC = (props: any) => {
   const [credential, setCredentials] = useState(defaultCredentials);
   const [errorMessage, setErrorMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const emailRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
 
   const authDispatch = useAuthDispatch();
 
@@ -44,9 +43,9 @@ const LoginPage = (props: any) => {
     }
   };
 
-  const handleChange = <P extends keyof Credential>(
+  const handleChange = <P extends keyof CredentialData>(
     prop: P,
-    value: Credential[P]
+    value: CredentialData[P]
   ) => {
     setCredentials({ ...credential, [prop]: value });
   };
@@ -69,14 +68,13 @@ const LoginPage = (props: any) => {
           className="last-input"
           id="password"
           placeholder="Type your password"
-          ref={passwordRef}
           type="password"
           value={credential.password}
           onChange={(e) => {
             handleChange('password', e.target.value);
           }}
         />
-        <FormButton type="submit">Sign In</FormButton>
+        <FormButton type="submit" disabled={isLoading}>Sign In</FormButton>
       </form>
       <div className="link">
         <Link to="/forgot-password">
