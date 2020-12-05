@@ -1,26 +1,32 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import LandingPage from './pages/LandingPage';
+import GlobalStyle from './styles/global';
+import RegisterPage from './pages/auth/RegisterPage';
+import LoginPage from './pages/auth/LoginPage';
+import ForgotPassworPage from './pages/auth/ForgotPasswordPage';
+import { ProtectedRoute } from './routes/ProtectedRoute';
+import Dashboard from './pages/main/Dashboard/index';
+import NotFound from './pages/error/404';
+import { useAuthContext } from './providers/Auth/AuthServiceProvider';
 
-function App() {
+const App: React.FC = () => {
+  const authContext = useAuthContext();
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <GlobalStyle />
+      <>
+        <Switch>
+          <Route exact path="/" component={LandingPage} />
+          <Route exact path="/register" component={RegisterPage} />
+          <Route exact path="/login" component={LoginPage} />
+          <Route exact path="/forgot-password" component={ForgotPassworPage} />
+          <ProtectedRoute exact path="/app" component={Dashboard} />
+          <Route path="*" component={NotFound} />
+        </Switch>
+      </>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;
