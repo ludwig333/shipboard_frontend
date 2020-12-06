@@ -10,6 +10,7 @@ export const PrimaryHeader = styled.h1`
 
 export const FormHeader = styled(PrimaryHeader)`
   font-size: 2.6rem;
+  text-align: center;
 `;
 
 export const FormSubHeader = styled.h2`

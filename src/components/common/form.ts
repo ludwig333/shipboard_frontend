@@ -16,6 +16,7 @@ export const InputField = styled.input<{isError?: boolean}>`
   font-weight: 400;
   font-size: 1.4rem;
   color: #000;
+  width: 100%;
 
 
   &:focus {
