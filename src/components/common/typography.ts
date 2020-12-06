@@ -19,7 +19,6 @@ export const FormSubHeader = styled.h2`
     font-size: 1.6rem;
     color: #000;
     text-align: center;
-    width: 25rem;
 `;
 
 export const SecondaryHeader = styled.h1`
