@@ -36,7 +36,10 @@ body {
     font-weight: 400;
     line-height: 1.7;
 }
-
+.form-error {
+    font-size: 1rem;
+    color: red;
+}
 ::selection {
     background-color: #5850EB;
     color: #ffffff;

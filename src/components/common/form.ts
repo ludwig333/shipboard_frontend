@@ -1,8 +1,8 @@
 import styled from 'styled-components'
 import { grey } from '../../styles/theme';
 
-export const InputField = styled.input`
-  background: #F7F7F7;
+export const InputField = styled.input<{isError?: boolean}>`
+  background: ${props => props.isError ? '#FFE4E4' : '#F7F7F7'};
   border-radius: 7px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);

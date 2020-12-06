@@ -15,7 +15,7 @@ const defaultCredentials: CredentialData = {
 
 const LoginPage: React.FC = (props: any) => {
   const [credential, setCredentials] = useState(defaultCredentials);
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(defaultCredentials);
   const [isLoading, setIsLoading] = useState(false);
 
   const emailRef = useRef<HTMLInputElement>(null);
@@ -26,28 +26,39 @@ const LoginPage: React.FC = (props: any) => {
     emailRef.current && emailRef.current.focus();
   }, []);
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-
-    try {
-      setIsLoading(true);
-      login(credential).then((response) => {
-        authDispatch({
-          type: 'LOGIN',
-          payload: response.data,
-        });
-        props.history.push('/app');
-      });
-    } catch (e) {
-      alert('error');
-    }
-  };
-
   const handleChange = <P extends keyof CredentialData>(
     prop: P,
     value: CredentialData[P]
   ) => {
     setCredentials({ ...credential, [prop]: value });
+    setErrorMessage({
+      ...errorMessage,
+      [prop]: '',
+    });
+  };
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    setIsLoading(true);
+    login(credential)
+      .then((response) => {
+        authDispatch({
+          type: 'LOGIN',
+          payload: response.data,
+        });
+        props.history.push('/app');
+      })
+      .catch((err) => {
+        setErrorMessage({
+          email: err.response.data.errors.email
+            ? err.response.data.errors.email[0]
+            : '',
+          password: err.response.data.errors.password
+            ? err.response.data.errors.password[0]
+            : '',
+        });
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -55,6 +66,7 @@ const LoginPage: React.FC = (props: any) => {
       <form className="login-form" onSubmit={handleSubmit}>
         <FormHeader>Sign in to account</FormHeader>
         <InputField
+          isError={!!errorMessage.email}
           id="email"
           placeholder="Type your email"
           ref={emailRef}
@@ -64,7 +76,11 @@ const LoginPage: React.FC = (props: any) => {
             handleChange('email', e.target.value);
           }}
         />
+        {errorMessage.email && (
+          <span className="form-error">{errorMessage.email}</span>
+        )}
         <InputField
+          isError={!!errorMessage.password}
           className="last-input"
           id="password"
           placeholder="Type your password"
@@ -74,7 +90,12 @@ const LoginPage: React.FC = (props: any) => {
             handleChange('password', e.target.value);
           }}
         />
-        <FormButton type="submit" disabled={isLoading}>Sign In</FormButton>
+        {errorMessage.password && (
+          <span className="form-error">{errorMessage.password}</span>
+        )}
+        <FormButton type="submit" disabled={isLoading}>
+          Sign In
+        </FormButton>
       </form>
       <div className="link">
         <Link to="/forgot-password">
