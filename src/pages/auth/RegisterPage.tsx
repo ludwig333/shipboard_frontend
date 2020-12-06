@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import AuthLayout from '../../components/front/layout/AuthLayout';
+import AuthLayout from '../../components/layout/AuthLayout';
 import { Link } from 'react-router-dom';
 import { FormHeader } from '../../components/common/typography';
 import { InputField, FormLink } from '../../components/common/form';

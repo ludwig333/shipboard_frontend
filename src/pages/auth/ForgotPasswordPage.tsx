@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import AuthLayout from '../../components/front/layout/AuthLayout';
+import AuthLayout from '../../components/layout/AuthLayout';
 import { FormHeader, FormSubHeader } from '../../components/common/typography';
 import { InputField, FormLink } from '../../components/common/form';
 import { FormButton } from '../../components/common/buttons';

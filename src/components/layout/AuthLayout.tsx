@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import logo from '../../../assets/images/logo-dark.png';
-import { AuthButton } from '../../common/buttons';
+import logo from '../../assets/images/logo-dark.png';
+import { AuthButton } from '../common/buttons';
 
 interface LayoutProps {
   children?: any;

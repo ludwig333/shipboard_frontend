@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import AuthLayout from '../../components/front/layout/AuthLayout';
+import AuthLayout from '../../components/layout/AuthLayout';
 import { FormHeader } from '../../components/common/typography';
 import { InputField, FormLink } from '../../components/common/form';
 import { FormButton } from '../../components/common/buttons';
@@ -15,7 +15,7 @@ const defaultCredentials: CredentialData = {
 
 const LoginPage: React.FC = (props: any) => {
   const [credential, setCredentials] = useState(defaultCredentials);
-  const [errorMessage, setErrorMessage] = useState(defaultCredentials);
+  const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const emailRef = useRef<HTMLInputElement>(null);
@@ -31,10 +31,7 @@ const LoginPage: React.FC = (props: any) => {
     value: CredentialData[P]
   ) => {
     setCredentials({ ...credential, [prop]: value });
-    setErrorMessage({
-      ...errorMessage,
-      [prop]: '',
-    });
+    setErrorMessage('');
   };
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -49,14 +46,7 @@ const LoginPage: React.FC = (props: any) => {
         props.history.push('/app');
       })
       .catch((err) => {
-        setErrorMessage({
-          email: err.response.data.errors.email
-            ? err.response.data.errors.email[0]
-            : '',
-          password: err.response.data.errors.password
-            ? err.response.data.errors.password[0]
-            : '',
-        });
+        setErrorMessage(err.response.data.message);
         setIsLoading(false);
       });
   };
@@ -66,7 +56,7 @@ const LoginPage: React.FC = (props: any) => {
       <form className="login-form" onSubmit={handleSubmit}>
         <FormHeader>Sign in to account</FormHeader>
         <InputField
-          isError={!!errorMessage.email}
+          isError={!!errorMessage}
           id="email"
           placeholder="Type your email"
           ref={emailRef}
@@ -76,11 +66,11 @@ const LoginPage: React.FC = (props: any) => {
             handleChange('email', e.target.value);
           }}
         />
-        {errorMessage.email && (
-          <span className="form-error">{errorMessage.email}</span>
+        {errorMessage && (
+          <span className="form-error">{errorMessage}</span>
         )}
         <InputField
-          isError={!!errorMessage.password}
+          isError={!!errorMessage}
           className="last-input"
           id="password"
           placeholder="Type your password"
@@ -90,9 +80,6 @@ const LoginPage: React.FC = (props: any) => {
             handleChange('password', e.target.value);
           }}
         />
-        {errorMessage.password && (
-          <span className="form-error">{errorMessage.password}</span>
-        )}
         <FormButton type="submit" disabled={isLoading}>
           {isLoading ? 'Loading...' : 'Sign In'}
         </FormButton>
