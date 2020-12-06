@@ -60,10 +60,20 @@ const ForgotPassworPage = () => {
           {errorMessage.email && (
             <span className="form-error">{errorMessage.email}</span>
           )}
-          <FormButton type="submit">Email me</FormButton>
+          <FormButton type="submit" disabled={isLoading}>
+          {isLoading ? 'Loading...' : 'Email me'}
+        </FormButton>
         </form>
       )}
-      {isEmailed && <h1>Sent</h1>}
+      {isEmailed && (
+        <div>
+          <FormHeader>Email is on the way!</FormHeader>
+          <FormSubHeader>
+            We will send you email with the reset password link if (
+            <strong>{email}</strong>) exists in Shipboard.
+          </FormSubHeader>
+        </div>
+      )}
       <Link to="/login" className="go-back">
         <IoArrowBack />
         <h5>Go Back</h5>

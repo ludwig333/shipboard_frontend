@@ -46,7 +46,7 @@ const RegisterPage: React.FC = (props: any) => {
     event.preventDefault();
 
     setIsLoading(true);
-    
+
     register(registrationData)
       .then((response) => {
         authDispatch({
@@ -130,7 +130,7 @@ const RegisterPage: React.FC = (props: any) => {
           </span>
         )}
         <FormButton type="submit" disabled={isLoading}>
-          Sign Up
+          {isLoading ? 'Loading...' : 'Sign Up'}
         </FormButton>
         <div className="link">
           <Link to="/login">

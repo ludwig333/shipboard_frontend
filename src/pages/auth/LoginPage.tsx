@@ -94,7 +94,7 @@ const LoginPage: React.FC = (props: any) => {
           <span className="form-error">{errorMessage.password}</span>
         )}
         <FormButton type="submit" disabled={isLoading}>
-          Sign In
+          {isLoading ? 'Loading...' : 'Sign In'}
         </FormButton>
       </form>
       <div className="link">
