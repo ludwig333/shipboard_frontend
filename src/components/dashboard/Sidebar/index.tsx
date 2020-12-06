@@ -1,13 +1,13 @@
 import React, { useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import logo from '../../../assets/images/logo-light.png';
 import avatar from '../../../assets/images/avatar.jpg';
 import { AiOutlineDashboard, AiOutlineRobot } from 'react-icons/ai';
 import { TiFlowMerge } from 'react-icons/ti';
 import { HiTemplate } from 'react-icons/hi';
 import { IoSettingsSharp, IoLogOut } from 'react-icons/io5';
-import { getAuthUser } from '../../../apis/auth';
-
+import { getAuthUser, logOut } from '../../../apis/auth';
+import { useAuthDispatch } from '../../../providers/Auth/AuthServiceProvider';
 import {
   SidebarWrapper,
   LogoWrapper,
@@ -17,12 +17,27 @@ import {
 
 const Sidebar: React.FC = () => {
   const nameRef = useRef<HTMLHeadingElement>(null);
+  const history = useHistory();
+  const authDispatch = useAuthDispatch();
 
-  // useEffect(() => {
-  //   getAuthUser().then((response) => {
-  //     console.log(response.data);
-  //   });
-  // }, []);
+  useEffect(() => {
+    getAuthUser().then((response) => {
+      var x = document.getElementById('username');
+      if (x) {
+        x.innerHTML = response.data.name 
+      }
+    });
+  },[]);
+
+  const handleLogOut = (event: any) => {
+    event.preventDefault();
+    logOut().then((response) => {
+      authDispatch({
+        type: 'LOGOUT',
+      });
+      history.push('/');
+    });
+  };
 
   return (
     <SidebarWrapper>
@@ -32,7 +47,7 @@ const Sidebar: React.FC = () => {
       <UserInfoWrapper>
         <img src={avatar} alt="Avatar" />
         <div className="user-info">
-          <h2 ref={nameRef}>Jane Doe</h2>
+          <h2 ref={nameRef} id="username"></h2>
           <p>Profile Setting</p>
         </div>
       </UserInfoWrapper>
@@ -70,7 +85,7 @@ const Sidebar: React.FC = () => {
               Settings
             </MenuItem>
           </Link>
-          <MenuItem>
+          <MenuItem onClick={handleLogOut}>
             <IoLogOut className="menu-icon" />
             Logout
           </MenuItem>

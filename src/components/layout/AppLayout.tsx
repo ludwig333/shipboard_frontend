@@ -29,4 +29,14 @@ const AppContainer = styled.div`
     margin-top: 2rem;
     margin-left: 2rem;
   }
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    margin: 2rem;
+
+    .button {
+      align-self: center;
+    }
+  }
 `;

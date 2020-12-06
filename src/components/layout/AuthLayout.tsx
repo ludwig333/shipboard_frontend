@@ -19,12 +19,12 @@ const AuthLayout: React.FC<LayoutProps> = (props) => {
       </nav>
       <AuthContainer>
         <div className="card">{props.children}</div>
-        {props.type === 'login' && (
+        {/* {props.type === 'login' && (
           <div className="auth-buttons">
             <AuthButton>Sign in with Google</AuthButton>
             <AuthButton>Sign in with Facebook</AuthButton>
           </div>
-        )}
+        )} */}
       </AuthContainer>
       <FooterWrapper>
         <p>©Shipbot Pvt. Ltd. 2020. All rights reserved</p>

@@ -28,5 +28,9 @@ export const resetPassword = async () => {
 };
 
 export const getAuthUser = async () => {
-  return makeRequest(urls.authUser, 'GET',null, 'Authorization: Bearer '+ getItem('token')).then((response) => response.data)
+  return makeRequest(urls.authUser, 'GET', null, { Authorization: 'Bearer ' + getItem('token') }).then((response) => response.data)
+}
+
+export const logOut = async () => {
+  return makeRequest(urls.logOut, 'POST', null, { Authorization: 'Bearer ' + getItem('token') }).then((response) => response.data)
 }
