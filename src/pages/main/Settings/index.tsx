@@ -1,12 +1,12 @@
 import React from 'react';
 import AppLayout from '../../../components/layout/AppLayout';
 
-const Dashboard = (props:any) => {
+const Settings = (props:any) => {
   return (
     <AppLayout>
-      <h1 className="main-heading">Dashboard</h1>
+      <h1 className="main-heading">Settings</h1>
     </AppLayout>
   );
 };
 
-export default Dashboard;
+export default Settings;

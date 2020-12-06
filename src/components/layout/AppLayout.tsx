@@ -9,15 +9,24 @@ interface LayoutProps {
 const AppLayout: React.FC<LayoutProps> = (props) => {
   return (
     <LayoutWrapper>
-      <Sidebar/>
+      <Sidebar />
+      <AppContainer>{props.children}</AppContainer>
     </LayoutWrapper>
   );
-}
+};
 
 export default AppLayout;
 
 const LayoutWrapper = styled.div`
-display: flex;
-min-height: 100vh;
+  display: flex;
+  min-height: 100vh;
+`;
 
+const AppContainer = styled.div`
+  flex-grow: 1;
+
+  h1 {
+    margin-top: 2rem;
+    margin-left: 2rem;
+  }
 `;

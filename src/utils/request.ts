@@ -1,6 +1,7 @@
 import { useReducer, createContext, useContext } from 'react';
 import axios, { Method } from 'axios';
 import { ReducerType } from '../../types';
+import { getItem } from './storage';
 
 export const makeRequest = async (
   url: string,
@@ -18,7 +19,7 @@ export const makeRequest = async (
 };
 
 axios.interceptors.request.use(async function (config: any) {
-  const token = 'dummytoken';
+  const token = getItem("token");
 
   config.headers = {
     ...config.headers,

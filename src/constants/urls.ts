@@ -5,8 +5,8 @@ const urls = {
   register: `${baseUrl}/register`,
   forgotPassword: `${baseUrl}/forgot-password`,
   resetPassword: `${baseUrl}/reset-password`,
- 
-
+  authUser: `${baseUrl}/user`,
+  
   bots: `${baseUrl}/bots`,
   configureBots: `${baseUrl}/configure`
 };

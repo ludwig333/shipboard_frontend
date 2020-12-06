@@ -1,6 +1,7 @@
 import urls from '../constants/urls';
 import { makeRequest } from '../utils/request';
 import { CredentialData, RegistrationData } from '../../types';
+import { getItem } from '../utils/storage';
 
 export const login = async (credentials: CredentialData) => {
   return makeRequest(urls.login, 'POST', credentials).then(
@@ -25,3 +26,7 @@ export const resetPassword = async () => {
     (response) => response.data
   );
 };
+
+export const getAuthUser = async () => {
+  return makeRequest(urls.authUser, 'GET',null, 'Authorization: Bearer '+ getItem('token')).then((response) => response.data)
+}
