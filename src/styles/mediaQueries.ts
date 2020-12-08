@@ -7,6 +7,7 @@
  */
 
 export const media = {
+  smallPhone: '@media (max-width: 25em)', //600px
   phone: '@media (max-width: 37.5em)', //600px
   tabPort: '@media (max-width: 56.25em)', //900px
   tabLand: '@media (max-width: 75em)', //1200px

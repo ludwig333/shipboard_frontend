@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom'
 import { HeaderContainer, HeroWrapper } from './styles';
 import Navbar from '../navbar/index';
-import PrototypingImg from '../../../assets/images/prototyping-process.png';
+import PrototypingImg from '../../../assets/images/hero-img.png';
 import { PrimaryButton } from '../../common/buttons';
 
 const Header = () => {
@@ -17,7 +17,7 @@ const Header = () => {
             platform.
           </p>
           <Link to="/register">
-            <PrimaryButton>Get Started</PrimaryButton>
+            <PrimaryButton>Get Started</PrimaryButton>  
           </Link>
         </div>
         <div className="hero_image">

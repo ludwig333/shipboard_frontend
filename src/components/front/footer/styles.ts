@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const FooterWrapper = styled.div`
-  background-color: #2A3250;
+  background-color: #2a3250;
   display: flex;
   height: 30rem;
   justify-content: center;
@@ -14,7 +14,8 @@ export const FooterWrapper = styled.div`
     justify-content: space-around;
     max-width: 144rem;
     margin: auto;
-    
+    padding-left: 3rem;
+    padding-right: 3rem;
   }
 
   .logo-section {

@@ -21,7 +21,7 @@ html {
     ${media.tabPort}{ // width < 900?
         font-size: 50%; //1 rem = 8px, 8/16 = 50%
     }
-    
+
     ${media.bigDesktop} {
         font-size: 75%; //1rem = 12, 12/16
     }

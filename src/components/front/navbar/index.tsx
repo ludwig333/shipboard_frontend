@@ -14,7 +14,7 @@ const Navbar = () => {
             <StyledButton>Login</StyledButton>
           </Link>
           <Link to="/register">
-            <PrimaryButton>Get Started</PrimaryButton>
+            <PrimaryButton className="register-btn">Get Started</PrimaryButton>
           </Link>
         </div>
       </NavContainer>

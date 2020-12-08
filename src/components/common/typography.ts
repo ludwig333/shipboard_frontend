@@ -1,5 +1,6 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 import { darkerGrey } from '../../styles/theme';
+import { media } from '../../styles/mediaQueries';
 
 export const PrimaryHeader = styled.h1`
   font-family: Comic Neue, Roboto, sans-serif;
@@ -14,11 +15,11 @@ export const FormHeader = styled(PrimaryHeader)`
 `;
 
 export const FormSubHeader = styled.h2`
-    font-family: Roboto, sans-serif;
-    font-weight: 300;
-    font-size: 1.6rem;
-    color: #000;
-    text-align: center;
+  font-family: Roboto, sans-serif;
+  font-weight: 300;
+  font-size: 1.6rem;
+  color: #000;
+  text-align: center;
 `;
 
 export const SecondaryHeader = styled.h1`
@@ -32,6 +33,6 @@ export const SecondaryHeader = styled.h1`
 export const Paragraph = styled.p`
   font-family: inherit;
   font-size: 1.5rem;
-  color: ${props => props.theme.darkerGrey};
-  line-height: 28px;
+  color: ${(props) => props.theme.darkerGrey};
+  line-height: 2.8rem;
 `;

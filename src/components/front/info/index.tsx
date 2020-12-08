@@ -10,17 +10,17 @@ function Info() {
         <img src={phoneChatbot} alt="Chabot Phone" />
       </div>
       <div className="info-text">
-        <PrimaryHeader className="heading">Build, Test and Publish</PrimaryHeader>
+        <PrimaryHeader className="heading">
+          Build, Test and Publish
+        </PrimaryHeader>
         <div className="paragraph">
-        <Paragraph>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Eget aliquam
-          fringilla vrisus enim. Viverra purus malesuada in non ipsum massa
-          semper elementumLorem ipsum dolor sit amet, consectetur adipiscing
-          elit. Eget aliquam fringilla vrisus enim. Viverra purus malesuada in
-          non ipsum massa semper elementum Lorem ipsum dolor sit amet,
-          consectetur adipiscing elit. Eget aliquam fringilla vrisus enim.
-          Viverra purus malesuada in non ipsum massa semper elementum{' '}
-        </Paragraph>
+          <Paragraph>
+            Build chatbot as you wanted with our flow builder platform. Test
+            your bot and refined your flow. If all is well then publish it to
+            the platform of your choice and let users get quality service of
+            your business. You also can install the templates from our template
+            collection and customize it as per your requirement
+          </Paragraph>
         </div>
       </div>
     </InfoWrapper>

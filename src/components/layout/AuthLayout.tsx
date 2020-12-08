@@ -74,7 +74,7 @@ const AuthContainer = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
-    margin-top: -7rem;
+    margin-top: -10rem;
     max-width: 40rem;
     min-height: 30rem;
     padding: 4rem;

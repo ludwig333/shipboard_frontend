@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { media } from '../../../styles/mediaQueries';
 
 export const NavWrapper = styled.div`
   height: 10rem;
@@ -12,7 +13,8 @@ export const NavContainer = styled.nav`
   max-width: 144rem;
   position: relative;
   padding-top: 2rem;
-  
+  padding-left: 3rem;
+  padding-right: 3rem;
   img {
     height: 5rem;
   }
@@ -23,6 +25,12 @@ export const NavContainer = styled.nav`
 
     button {
       margin: 1.5rem;
-    }    
+    }
+
+    .register-btn {
+      ${media.phone} {
+        display: none;
+      }
+    }
   }
 `;
