@@ -1,13 +1,42 @@
 import styled from 'styled-components';
 
-export const SidebarWrapper = styled.nav`
+export const SidebarWrapper = styled.div`
+  display: flex;
+`;
+
+export const ToggleBar = styled.div`
+  width: 2rem;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all .3s;
+
+  svg {
+    height: 3.5rem;
+    width: 3.5rem;
+    color: transparent;
+  }
+
+  &:hover {
+    background: #161e2e;
+
+    svg {
+        color: #fff; 
+    }
+  }
+  
+`;
+export const SidebarMenu = styled.nav<{ isOpen: boolean }>`
+  background: #252f3f;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  width: 22rem;
-  background: #252f3f;
+  width: ${(props => (props.isOpen) ? '22rem' : '6rem' )};
   flex-grow: 0;
   flex-shrink: 0;
+  transition: all 1s;
 
   .menu_list {
     display: flex;
@@ -16,7 +45,9 @@ export const SidebarWrapper = styled.nav`
     flex-grow: 1;
     justify-content: space-between;
 
-    a, a:visited, a:focus{
+    a,
+    a:visited,
+    a:focus {
       text-decoration: none;
     }
   }
@@ -26,14 +57,14 @@ export const LogoWrapper = styled.div`
   height: 6rem;
   display: flex;
   align-items: center;
-  padding-left: 2rem;
+  padding-left: 1.7rem;
   background: #161e2e;
   img {
-    height: 4.2rem;
+    height: 3.1rem;
   }
 `;
 
-export const UserInfoWrapper = styled(LogoWrapper)`
+export const UserInfoWrapper = styled(LogoWrapper)<{isOpen: boolean}>`
   height: 6.2rem;
   background: transparent;
 
@@ -61,11 +92,17 @@ export const UserInfoWrapper = styled(LogoWrapper)`
       color: #ffffff;
     }
   }
+
+  ${props => !props.isOpen && `
+    .user-info {
+      display: none
+    }
+  `}
 `;
 
-export const MenuItem = styled.li<{ isActive?: boolean }>`
+export const MenuItem = styled.li<{ isActive?: boolean, isOpen: boolean }>`
   align-items: center;
-  background-color: ${(props) => (props.isActive ? '#161e2e' : '#252f3f')};
+  background-color: ${(props) => (props.isActive ? '#161e2e' : 'transparent')};
   color: #ffffff;
   display: flex;
   font-family: Roboto;
@@ -87,4 +124,10 @@ export const MenuItem = styled.li<{ isActive?: boolean }>`
     width: 2rem;
     margin-right: 1rem;
   }
+
+  p {
+    display: ${props => props.isOpen ? 'inline' : 'none' }
+  }
+
+
 `;

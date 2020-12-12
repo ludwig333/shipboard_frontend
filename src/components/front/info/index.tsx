@@ -4,7 +4,7 @@ import phoneChatbot from '../../../assets/images/phone-chatbot@2x.png';
 import { PrimaryHeader, Paragraph } from '../../common/typography';
 
 function Info() {
-  return (
+  return (  
     <InfoWrapper>
       <div className="info-image">
         <img src={phoneChatbot} alt="Chabot Phone" />

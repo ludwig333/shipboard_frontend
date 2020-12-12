@@ -7,9 +7,16 @@ interface LayoutProps {
 }
 
 const AppLayout: React.FC<LayoutProps> = (props) => {
+  const [isOpen, setIsOpen] = React.useState<boolean>(true);
+  const sidebarState = React.useRef();
+
+  const handleSidebarState = React.useCallback(isOpen => {
+    setIsOpen(isOpen);
+  }, [])
+
   return (
     <LayoutWrapper>
-      <Sidebar />
+      <Sidebar handleSidebarState={handleSidebarState} />
       <AppContainer>{props.children}</AppContainer>
     </LayoutWrapper>
   );
