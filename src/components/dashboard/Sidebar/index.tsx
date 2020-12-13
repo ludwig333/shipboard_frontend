@@ -8,7 +8,7 @@ import { TiFlowMerge } from 'react-icons/ti';
 import { HiTemplate } from 'react-icons/hi';
 import { IoSettingsSharp, IoLogOut } from 'react-icons/io5';
 import { getAuthUser, logOut } from '../../../apis/auth';
-import { useAuthDispatch } from '../../../providers/Auth/AuthServiceProvider';
+import { useAuthDispatch } from '../../../services/Auth/AuthProvider';
 import {
   SidebarWrapper,
   SidebarMenu,

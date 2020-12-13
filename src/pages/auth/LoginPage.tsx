@@ -4,7 +4,7 @@ import AuthLayout from '../../components/layout/AuthLayout';
 import { FormHeader } from '../../components/common/typography';
 import { InputField, FormLink } from '../../components/common/form';
 import { FormButton } from '../../components/common/buttons';
-import { useAuthDispatch } from '../../providers/Auth/AuthServiceProvider';
+import { useAuthDispatch } from '../../services/Auth/AuthProvider';
 import { login } from '../../apis/auth';
 import { CredentialData } from '../../../types';
 

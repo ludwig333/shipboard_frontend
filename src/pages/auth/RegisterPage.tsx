@@ -6,7 +6,7 @@ import { InputField, FormLink } from '../../components/common/form';
 import { FormButton } from '../../components/common/buttons';
 import { RegistrationData } from '../../../types';
 import { register } from '../../apis/auth';
-import { useAuthDispatch } from '../../providers/Auth/AuthServiceProvider';
+import { useAuthDispatch } from '../../services/Auth/AuthProvider';
 
 const defaultRegistrationData: RegistrationData = {
   name: '',

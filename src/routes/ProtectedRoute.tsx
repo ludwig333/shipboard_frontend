@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
-import { useAuthContext } from '../providers/Auth/AuthServiceProvider';
+import { useAuthContext } from '../services/Auth/AuthProvider';
 
 interface ProtectedRouteInterface {
   component: any;
