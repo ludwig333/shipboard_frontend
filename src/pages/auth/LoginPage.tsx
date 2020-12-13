@@ -46,9 +46,13 @@ const LoginPage: React.FC = (props: any) => {
         props.history.push('/app');
       })
       .catch((err) => {
-        setErrorMessage(err.response.data.message);
+        if (err.response.status === 422) {
+          setErrorMessage(err.response.data.message);
+        }
+      })
+      .finally(() => {
         setIsLoading(false);
-      });
+    })
   };
 
   return (

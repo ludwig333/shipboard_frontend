@@ -4,8 +4,8 @@ import { InputField } from '../../common/form';
 import { FormButton } from '../../common/buttons';
 import { BotDataType } from '../../../../types';
 import { saveBots } from '../../../apis/bots';
-import { useHistory } from 'react-router-dom';
 import { useModalContext } from '../../../services/Modal/ModalProvider';
+import { toast } from 'react-toastify';
 
 const defaultBotData: BotDataType = {
   name: '',
@@ -16,7 +16,6 @@ const BotModal = () => {
   const [errorMessage, setErrorMessage] = useState(defaultBotData);
   const [isLoading, setIsLoading] = useState(false);
   const nameRef = useRef<HTMLInputElement>(null);
-  const history = useHistory();
 
   const modalContext = useModalContext();
   useEffect(() => {
@@ -32,23 +31,31 @@ const BotModal = () => {
       ...errorMessage,
       [prop]: '',
     });
-    setIsLoading(false);
   };
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    setIsLoading(false);
+    setIsLoading(true);
 
     saveBots(botData)
       .then((response) => {
         modalContext.closeModal();
+        toast.success('Bot added successfully');
       })
       .catch((err) => {
-        setErrorMessage({
-          name: err.response.data.errors.name
-            ? err.response.data.errors.name[0]
-            : '',
-        });
+        if (err.response.status === 422) {
+          setErrorMessage({
+            name: err.response.data.errors.name
+              ? err.response.data.errors.name[0]
+              : '',
+          });
+        } else {
+          modalContext.closeModal();
+          toast.error('Failed to create bot');
+        }
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 

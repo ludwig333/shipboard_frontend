@@ -14,6 +14,9 @@ import Flows from './pages/main/Flows/index';
 import Templates from './pages/main/Templates/index';
 import Settings from './pages/main/Settings/index';
 import { ModalProvider } from './services/Modal/ModalProvider';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const App: React.FC = () => {
   const authContext = useAuthContext();
@@ -22,6 +25,7 @@ const App: React.FC = () => {
       <BrowserRouter>
         <GlobalStyle />
         <>
+        <ToastContainer />
           <Switch>
             <Route exact path="/" component={LandingPage} />
             <Route exact path="/register" component={RegisterPage} />

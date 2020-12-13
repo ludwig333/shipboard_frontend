@@ -29,13 +29,17 @@ const ForgotPassworPage = () => {
         setIsEmailed(true);
       })
       .catch((err) => {
-        setErrorMessage({
-          email: err.response.data.errors.email
-            ? err.response.data.errors.email[0]
-            : '',
-        });
+        if (err.response.status === 422) {
+          setErrorMessage({
+            email: err.response.data.errors.email
+              ? err.response.data.errors.email[0]
+              : '',
+          });
+        }
+      })
+      .finally(() => {
         setIsLoading(false);
-      });
+    })
   };
 
   return (
@@ -61,8 +65,8 @@ const ForgotPassworPage = () => {
             <span className="form-error">{errorMessage.email}</span>
           )}
           <FormButton type="submit" disabled={isLoading}>
-          {isLoading ? 'Loading...' : 'Email me'}
-        </FormButton>
+            {isLoading ? 'Loading...' : 'Email me'}
+          </FormButton>
         </form>
       )}
       {isEmailed && (

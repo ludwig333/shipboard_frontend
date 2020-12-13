@@ -5,6 +5,7 @@ import { PrimaryButton } from '../../../components/common/buttons';
 import { useModalContext } from '../../../services/Modal/ModalProvider';
 import BotModal from '../../../components/dashboard/Bots/Modal';
 
+
 const Bots = () => {
   const { openModal } = useModalContext();
 

@@ -56,20 +56,23 @@ const RegisterPage: React.FC = (props: any) => {
         props.history.push('/app');
       })
       .catch((err) => {
-        setErrorMessage({
-          email: err.response.data.errors.email
-            ? err.response.data.errors.email[0]
-            : '',
-          password: err.response.data.errors.password
-            ? err.response.data.errors.password[0]
-            : '',
-          name: err.response.data.errors.name
-            ? err.response.data.errors.name[0]
-            : '',
-          password_confirmation: err.response.data.errors.password_confirmation
-            ? err.response.data.errors.password_confirmation[0]
-            : '',
-        });
+        if (err.response.status === 422) {
+          setErrorMessage({
+            email: err.response.data.errors.email
+              ? err.response.data.errors.email[0]
+              : '',
+            password: err.response.data.errors.password
+              ? err.response.data.errors.password[0]
+              : '',
+            name: err.response.data.errors.name
+              ? err.response.data.errors.name[0]
+              : '',
+            password_confirmation: err.response.data.errors
+              .password_confirmation
+              ? err.response.data.errors.password_confirmation[0]
+              : '',
+          });
+        }
       });
   };
 
