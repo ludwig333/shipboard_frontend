@@ -1,14 +1,3 @@
-export type DataFetchType = {
-  data: object,
-  error: string,
-  isLoading: boolean
-}
-
-export type ReducerType = {
-  state: object,
-  action: () => object 
-}
-
 // AUTHENTICATION TYPES
 export type CredentialData = {
   email: string,
@@ -20,4 +9,9 @@ export type RegistrationData = {
   email: string,
   password: string,
   password_confirmation: string
+}
+
+// BOT TYPES
+export type BotDataType = {
+  name: string
 }

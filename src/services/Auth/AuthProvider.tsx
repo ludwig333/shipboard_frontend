@@ -8,7 +8,7 @@ interface AuthProviderProps {
 }
 const initialState = {
   name: "Guest",
-  isAuthenticated: !!getItem("token") && JWTValidator(getItem("token")) 
+  isAuthenticated: !!(getItem("token") && JWTValidator(getItem("token"))) ,
 };
 
 type InitialStateType = typeof initialState;

@@ -1,6 +1,4 @@
-import { useReducer, createContext, useContext } from 'react';
 import axios, { Method } from 'axios';
-import { ReducerType } from '../../types';
 import { getItem } from './storage';
 
 export const makeRequest = async (
@@ -28,41 +26,3 @@ axios.interceptors.request.use(async function (config: any) {
 
   return config;
 });
-
-
-const initialState = {
-  data: {},
-  error: '',
-  isLoading: true
-};
-
-const reducer = (state: object, action: {type:string, payload: string}) => {
-  switch (action.type) {
-    case 'FETCH_SUCCESS':
-      return {
-        data: action.payload,
-        error: '',
-        isLoading: false,
-      };
-    case 'FETCH_ERROR':
-      return {
-        data: {},
-        error: 'Something went wrong',
-        isLoading: false,
-      };
-
-    default:
-      return state;
-  }
-};
-
-const FetchDispatchContext = createContext({});
-
-export const useFetchDispatch = () => {
-  const context = useContext(FetchDispatchContext);
-  if (context === undefined) {
-    throw new Error("useFetchDispatch must be used within a FetchProvider")
-  }
-
-  return context;
-}

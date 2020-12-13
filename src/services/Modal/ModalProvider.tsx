@@ -112,18 +112,35 @@ const ModalWrapper = styled.div`
     overflow-x: hidden;
     padding: 4rem 0;
 
+    h1 {
+      padding-bottom: 1rem;
+    }
+
+    h2 {
+      margin-top: -1rem;
+    }
+
+    input {
+      margin-bottom: 1rem;
+      margin-top: 1rem;
+    }
+
+    .last-input {
+      margin-bottom: 3rem;
+    }
+
     &-exit {
-      position: absolute;
-      right: 1rem;
-      top: 1rem;
-      width: 10px;
-      height: 10px;
-      background: rgb(255, 0, 76, .7);
-      outline: none;
-      border: 0;
+      background: rgb(255, 0, 76, 0.7);
       border-radius: 10rem;
-      padding: 0.5rem;
+      border: 0;
       cursor: pointer;
+      height: 1.5rem;
+      outline: none;
+      padding: 0.5rem;
+      position: absolute;
+      right: 2rem;
+      top: 2rem;
+      width: 1.5rem;
 
       &:active {
         filter: brightness(0.8);
@@ -131,18 +148,19 @@ const ModalWrapper = styled.div`
     }
 
     &-body {
-      position: relative;
-      width: 90%;
-      max-width: 600px;
-      background: white;
-      padding: 2rem;
+      align-items: center;
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.12);
       margin: 0 auto;
-      border-radius: 1rem;
-
-      p,
+      max-width: 40rem;
+      min-height: 25rem;
+      padding: 4rem;
+      position: relative;
+      /* p,
       h2 {
         color: black;
-      }
+      } */
     }
   }
 `;

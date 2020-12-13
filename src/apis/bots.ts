@@ -1,14 +1,13 @@
-import { makeRequest, useFetchDispatch } from '../utils/request';
+import { makeRequest } from '../utils/request';
 import urls from '../constants/urls';
+import { getItem } from '../utils/storage';
+import { BotDataType } from '../../types';
 
-const fetchDispatch = useFetchDispatch();
 
-export const fetchBots = async () => {
-  return makeRequest(urls.bots, 'GET')
-    .then((response) => {
-      // fetchDispatch({ type: 'FETCH_SUCCESS', payload: response.data })
-    })
-    .catch((error) => {
-      // fetchDispatch(type: '/FETCH_ERROR')
-    });
-};
+export const getBots = async () => {
+  return makeRequest(urls.bots, 'GET', null, { Authorization: 'Bearer ' + getItem('token') }).then((response) => response.data)
+}
+
+export const saveBots = async (data: BotDataType) => {
+  return makeRequest(urls.bots, 'POST', data, { Authorization: 'Bearer ' + getItem('token') }).then((response) => response.data)
+}
