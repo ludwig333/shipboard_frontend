@@ -1,68 +1,52 @@
-import React from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { useSpring, animated } from 'react-spring';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-const ModalContext = React.createContext({
-  content: () => ({}),
-  closeModal: () => {},
-  open: false,
-  openModal: (content: any) => {},
+type ModalStateContextType = {
+  View?: React.FC<{ hideModal: () => void }>;
+  isOpen: boolean;
+  onRequestClose?: () => void;
+};
+
+type ModalStateModifierContextType = {
+  showModal: (View: React.FC, onRequestClose?: () => void) => void;
+  hideModal: () => void;
+};
+
+const ModalStateContext = createContext<
+  ModalStateContextType | null | undefined
+>(null);
+
+const ModalStateModifierContext = createContext<ModalStateModifierContextType>({
+  showModal: () => {},
+  hideModal: () => {},
 });
 
-export const useModalContext = () => {
-  return React.useContext(ModalContext);
-};
-
-interface ModalInnerInterface {
-  ModalContent: () => {
-    children?: JSX.Element;
-    title?: JSX.Element;
+const ModalProvider = ({ children }: { children: React.ReactNode }) => {
+  const [modalState, setModalState] = useState<ModalStateContextType | null>();
+  const { isOpen, View, onRequestClose } = modalState || {
+    View: undefined,
+    onRequestClose: undefined,
   };
-}
 
-const ModalInner: React.FC<ModalInnerInterface> = ({ ModalContent }) => {
-  const { children, title } = ModalContent();
-
-  return (
-    <React.Fragment>
-      <div className="modal-title">
-        <h2>{title}</h2>
-      </div>
-      <div className="modal-content">{children}</div>
-    </React.Fragment>
-  );
-};
-
-const Modal = () => {
-  const { closeModal, content: ModalContent } = useModalContext();
-  if (!ModalContent) {
-    return null;
-  }
-
-  return (
-    <div className="modal-body">
-      <button onClick={closeModal} className="modal-exit"></button>
-      <ModalInner ModalContent={ModalContent} />
-    </div>
-  );
-};
-
-interface ModalProviderInterface {
-  children?: JSX.Element;
-}
-
-export const ModalProvider: React.FC<ModalProviderInterface> = ({
-  children,
-}) => {
-  const [{ open, content }, setContent] = React.useState({
-    open: false,
-    content: () => ({}),
-  });
-
+  const showModal = (
+    View?: React.FC<{ hideModal: () => void }>,
+    onRequestClose?: () => void
+  ) => {
+    setModalState({ View, isOpen: true, onRequestClose });
+  };
+  const hideModal = () => {
+    setModalState({
+      View: undefined,
+      isOpen: false,
+      onRequestClose: undefined,
+    });
+  };
   const modalSpring = useSpring({
     from: { display: 'none' },
     to: async (next: any) => {
-      if (open) {
+      if (isOpen) {
         await next({
           display: 'block',
           transform: 'translate(0px,0px)',
@@ -76,30 +60,35 @@ export const ModalProvider: React.FC<ModalProviderInterface> = ({
       }
     },
   });
-
   return (
-    <ModalContext.Provider
-      value={{
-        open,
-        content,
-        openModal: (content) => {
-          setContent({ open: true, content });
-        },
-        closeModal: () => {
-          setContent((state) => ({ ...state, open: false }));
-        },
-      }}>
-      <ModalWrapper>
-        <animated.div style={modalSpring} className="modal">
-          <Modal />
-        </animated.div>
-      </ModalWrapper>
-      {children}
-    </ModalContext.Provider>
+    <ModalStateContext.Provider value={modalState}>
+      <ModalStateModifierContext.Provider value={{ showModal, hideModal }}>
+        {children}
+        <ModalWrapper>
+          <animated.div style={modalSpring} className="modal">
+            {View && <View hideModal={hideModal} />}
+          </animated.div>
+        </ModalWrapper>
+      </ModalStateModifierContext.Provider>
+    </ModalStateContext.Provider>
   );
 };
+ModalProvider.propTypes = {
+  children: PropTypes.element,
+};
 
-const ModalWrapper = styled.div`
+export default ModalProvider;
+
+export const useModal = () => {
+  const context = useContext(ModalStateModifierContext);
+  if (context === undefined) {
+    throw new Error('useModal must be used within a ModalProvider');
+  }
+  return context;
+};
+
+export const ModalWrapper = styled.div`
+
   .modal {
     position: fixed;
     left: 0;
@@ -111,24 +100,19 @@ const ModalWrapper = styled.div`
     overflow-y: scroll;
     overflow-x: hidden;
     padding: 4rem 0;
-
     h1 {
       padding-bottom: 1rem;
     }
-
     h2 {
       margin-top: -1rem;
     }
-
     input {
       margin-bottom: 1rem;
       margin-top: 1rem;
     }
-
     .last-input {
       margin-bottom: 3rem;
     }
-
     &-exit {
       background: rgb(255, 0, 76, 0.7);
       border-radius: 10rem;
@@ -141,12 +125,10 @@ const ModalWrapper = styled.div`
       right: 2rem;
       top: 2rem;
       width: 1.5rem;
-
       &:active {
         filter: brightness(0.8);
       }
     }
-
     &-body {
       align-items: center;
       background: #ffffff;

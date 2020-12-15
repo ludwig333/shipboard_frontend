@@ -13,10 +13,10 @@ import Bots from './pages/main/Bots/index';
 import Flows from './pages/main/Flows/index';
 import Templates from './pages/main/Templates/index';
 import Settings from './pages/main/Settings/index';
-import { ModalProvider } from './services/Modal/ModalProvider';
+import ModalProvider from './services/Modal/ModalProvider';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import AppLayout from './components/layout/AppLayout';
 
 const App: React.FC = () => {
   const authContext = useAuthContext();
@@ -25,7 +25,7 @@ const App: React.FC = () => {
       <BrowserRouter>
         <GlobalStyle />
         <>
-        <ToastContainer />
+          <ToastContainer />
           <Switch>
             <Route exact path="/" component={LandingPage} />
             <Route exact path="/register" component={RegisterPage} />
@@ -35,13 +35,17 @@ const App: React.FC = () => {
               path="/forgot-password"
               component={ForgotPassworPage}
             />
-            <ProtectedRoute exact path="/app" component={Dashboard} />
-            <ProtectedRoute exact path="/bots" component={Bots} />
-            <ProtectedRoute exact path="/flows" component={Flows} />
-            <ProtectedRoute exact path="/templates" component={Templates} />
-            <ProtectedRoute exact path="/settings" component={Settings} />
-            <Route path="*" component={NotFound} />
           </Switch>
+          <AppLayout>
+            <Switch>
+              <ProtectedRoute exact path="/app" component={Dashboard} />
+              <ProtectedRoute exact path="/bots" component={Bots} />
+              <ProtectedRoute exact path="/flows" component={Flows} />
+              <ProtectedRoute exact path="/templates" component={Templates} />
+              <ProtectedRoute exact path="/settings" component={Settings} />
+              <Route path="*" component={NotFound} />
+            </Switch>
+          </AppLayout>
         </>
       </BrowserRouter>
     </ModalProvider>
