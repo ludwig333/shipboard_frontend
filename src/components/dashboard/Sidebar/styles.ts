@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 export const SidebarWrapper = styled.div`
+  position: relative;
   display: flex;
 `;
 
@@ -11,7 +12,9 @@ export const ToggleBar = styled.div`
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  transition: all .3s;
+  transition: all 0.3s;
+  position: relative;
+  z-index: 20;
 
   svg {
     height: 3.5rem;
@@ -33,7 +36,7 @@ export const SidebarMenu = styled.nav<{ isOpen: boolean }>`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  width: ${(props => (props.isOpen) ? '22rem' : '6rem' )};
+  width: ${(props) => (props.isOpen ? '22rem' : '6rem')};
   flex-grow: 0;
   flex-shrink: 0;
   transition: all 1s;
@@ -54,7 +57,7 @@ export const SidebarMenu = styled.nav<{ isOpen: boolean }>`
 `;
 
 export const LogoWrapper = styled.div`
-  height: 6rem;
+  height: 5rem;
   display: flex;
   align-items: center;
   padding-left: 1.7rem;
@@ -64,7 +67,7 @@ export const LogoWrapper = styled.div`
   }
 `;
 
-export const UserInfoWrapper = styled(LogoWrapper)<{isOpen: boolean}>`
+export const UserInfoWrapper = styled(LogoWrapper)<{ isOpen: boolean }>`
   height: 6.2rem;
   background: transparent;
 
@@ -93,14 +96,16 @@ export const UserInfoWrapper = styled(LogoWrapper)<{isOpen: boolean}>`
     }
   }
 
-  ${props => !props.isOpen && `
+  ${(props) =>
+    !props.isOpen &&
+    `
     .user-info {
       display: none
     }
   `}
 `;
 
-export const MenuItem = styled.li<{ isActive?: boolean, isOpen: boolean }>`
+export const MenuItem = styled.li<{ isActive?: boolean; isOpen: boolean }>`
   align-items: center;
   background-color: ${(props) => (props.isActive ? '#161e2e' : 'transparent')};
   color: #ffffff;
@@ -126,8 +131,6 @@ export const MenuItem = styled.li<{ isActive?: boolean, isOpen: boolean }>`
   }
 
   p {
-    display: ${props => props.isOpen ? 'inline' : 'none' }
+    display: ${(props) => (props.isOpen ? 'inline' : 'none')};
   }
-
-
 `;

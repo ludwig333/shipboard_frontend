@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, Ref } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import logo from '../../../assets/images/logo-light.png';
-import shortLogo from '../../../assets/images/logo-short.png'
+import shortLogo from '../../../assets/images/logo-short.png';
 import avatar from '../../../assets/images/avatar.jpg';
 import { AiOutlineDashboard, AiOutlineRobot } from 'react-icons/ai';
 import { TiFlowMerge } from 'react-icons/ti';

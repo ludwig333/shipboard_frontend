@@ -13,10 +13,9 @@ export const saveBots = async (data: BotDataType) => {
 }
 
 export const updateBot = async (data: BotDataType, id: string) => {
-  console.log(urls.bots+'/'+id)
-  return makeRequest(urls.bots + '/' + id, 'PATCH', { Authorization: 'Bearer ' + getItem('token') }).then((response) => response.data);
+  return makeRequest(urls.bots + '/' + id, 'PATCH', data, { Authorization: 'Bearer ' + getItem('token') }).then((response) => response.data);
 }
 
 export const deleteBot = async (id : string) => {
-  return makeRequest(urls.bots + '/' + id, 'DELETE', { Authorization: 'Bearer ' + getItem('token') }).then((response) => response.data);
+  return makeRequest(urls.bots + '/' + id, 'DELETE', null, { Authorization: 'Bearer ' + getItem('token') }).then((response) => response.data);
 }

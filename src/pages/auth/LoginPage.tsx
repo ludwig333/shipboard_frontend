@@ -52,7 +52,7 @@ const LoginPage: React.FC = (props: any) => {
       })
       .finally(() => {
         setIsLoading(false);
-    })
+      });
   };
 
   return (
@@ -70,9 +70,7 @@ const LoginPage: React.FC = (props: any) => {
             handleChange('email', e.target.value);
           }}
         />
-        {errorMessage && (
-          <span className="form-error">{errorMessage}</span>
-        )}
+        {errorMessage && <span className="form-error">{errorMessage}</span>}
         <InputField
           isError={!!errorMessage}
           className="last-input"

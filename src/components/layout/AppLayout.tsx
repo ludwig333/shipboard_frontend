@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import Sidebar from '../dashboard/Sidebar';
+import Breadcrumb from '../dashboard/Breadcrumb';
+import { BuilderProvider } from '../../services/Builder/BuilderProvider';
 
 interface LayoutProps {
   children?: any;
@@ -10,14 +12,19 @@ const AppLayout: React.FC<LayoutProps> = (props) => {
   const [isOpen, setIsOpen] = React.useState<boolean>(true);
   const sidebarState = React.useRef();
 
-  const handleSidebarState = React.useCallback(isOpen => {
+  const handleSidebarState = React.useCallback((isOpen) => {
     setIsOpen(isOpen);
-  }, [])
+  }, []);
 
   return (
     <LayoutWrapper>
       <Sidebar handleSidebarState={handleSidebarState} />
-      <AppContainer>{props.children}</AppContainer>
+      <BuilderProvider>
+        <AppContainer>
+          <Breadcrumb />
+          {props.children}
+        </AppContainer>
+      </BuilderProvider>
     </LayoutWrapper>
   );
 };
@@ -30,6 +37,7 @@ const LayoutWrapper = styled.div`
 `;
 
 const AppContainer = styled.div`
+  margin-left: -2rem;
   flex-grow: 1;
 
   h1 {

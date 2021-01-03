@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import { useAuthContext } from '../services/Auth/AuthProvider';
+import AppLayout from '../components/layout/AppLayout';
 
 interface ProtectedRouteInterface {
   component: any;
@@ -19,7 +20,11 @@ export const ProtectedRoute: React.FC<ProtectedRouteInterface> = ({
       {...rest}
       render={(props) => {
         if (authContext.isAuthenticated) {
-          return <Component {...props} />;
+          return (
+            <AppLayout>
+              <Component {...props} />
+            </AppLayout>
+          );
         } else {
           return (
             <Redirect

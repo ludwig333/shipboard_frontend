@@ -28,11 +28,33 @@ export const SecondaryHeader = styled.h1`
   line-height: 5.6rem;
   color: #000;
   font-size: 2.4rem;
-`;
+`; 
 
 export const Paragraph = styled.p`
   font-family: inherit;
   font-size: 1.5rem;
   color: ${(props) => props.theme.darkerGrey};
   line-height: 2.8rem;
+`;
+
+export const ToolbarHeading = styled.h2`
+  font-family: Roboto, sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 1.8rem;
+  line-height: 2.1rem;
+  color: #797979;
+`;
+
+export const VerticalGap = styled.div<{size: string}>`
+  width: auto;
+  height: ${(props) => props.size}rem;
+  display: block;
+  flex-shrink: 0;
+`;
+
+export const HorizontalGap = styled.div<{size: string}>`
+  width: ${(props) => props.size}rem;
+  height: auto;
+  display: block;
 `;

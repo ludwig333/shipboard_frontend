@@ -35,17 +35,13 @@ const App: React.FC = () => {
               path="/forgot-password"
               component={ForgotPassworPage}
             />
+            <ProtectedRoute exact path="/app" component={Dashboard} />
+            <ProtectedRoute exact path="/bots" component={Bots} />
+            <ProtectedRoute exact path="/flows" component={Flows} />
+            <ProtectedRoute exact path="/templates" component={Templates} />
+            <ProtectedRoute exact path="/settings" component={Settings} />
+            <Route path="*" component={NotFound} />
           </Switch>
-          <AppLayout>
-            <Switch>
-              <ProtectedRoute exact path="/app" component={Dashboard} />
-              <ProtectedRoute exact path="/bots" component={Bots} />
-              <ProtectedRoute exact path="/flows" component={Flows} />
-              <ProtectedRoute exact path="/templates" component={Templates} />
-              <ProtectedRoute exact path="/settings" component={Settings} />
-              <Route path="*" component={NotFound} />
-            </Switch>
-          </AppLayout>
         </>
       </BrowserRouter>
     </ModalProvider>

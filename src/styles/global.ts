@@ -40,6 +40,12 @@ body {
     font-size: 1rem;
     color: red;
 }
+
+.Toastify__toast-body {
+    font-size: 1.6rem;
+    font-family: "Roboto", sans-serif;
+}
+
 ::selection {
     background-color: #5850EB;
     color: #ffffff;

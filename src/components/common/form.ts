@@ -11,7 +11,7 @@ export const InputField = styled.input<{isError?: boolean}>`
   min-width: 30rem;
   padding: .8rem;
   outline: none;
-  font-family: Roboto;
+  font-family: Roboto, sans-serif;
   font-style: normal;
   font-weight: 400;
   font-size: 1.4rem;

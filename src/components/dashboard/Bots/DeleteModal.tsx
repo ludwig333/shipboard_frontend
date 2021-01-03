@@ -9,7 +9,7 @@ const DeleteModal = ({ hideModal, bot, reloadPage }) => {
     deleteBot(bot.id).then((response) => {
       hideModal();
       reloadPage();
-      toast.success('Bot added successfully');
+      toast.success('Bot deleted successfully');
     });
   };
 
