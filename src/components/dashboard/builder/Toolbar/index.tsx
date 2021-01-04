@@ -6,6 +6,7 @@ import { BuilderContext } from '../../../../services/Builder/BuilderProvider';
 import { v4 as uuidv4 } from 'uuid';
 import FormImage from '../Form/Image/index';
 import FormText from '../Form/Text/index';
+import FormCard from '../Form/Card/index';
 import { InputField } from '../../../common/form';
 
 const Toolbar = ({ id, hideToolbar }) => {
@@ -23,7 +24,7 @@ const Toolbar = ({ id, hideToolbar }) => {
   };
 
   return (
-    <ToolbarWrapper onBlur={hideToolbar}>
+    <ToolbarWrapper>
       <ToolbarMenu>
         <div className="header">
           <ToolbarHeading>
@@ -81,7 +82,28 @@ const ToolbarButtons = ({ index }) => {
   const addCard = () => {
     setBuilderState([
       ...builderState,
-      builderState[index].children.push({ id: uuidv4(), type: 'card' }),
+      builderState[index].children.push({
+        id: uuidv4(),
+        type: 'card',
+        cards: [
+          {
+            id: uuidv4(),
+            active: true,
+            selectedImage: null,
+            imagePreviewUrl: '',
+            heading: 'subtitle #1',
+            body: 'This is the body paragraph',
+          },
+          {
+            id: uuidv4(),
+            active:false,
+            selectedImage: null,
+            imagePreviewUrl: '',
+            heading: 'subtitle #2',
+            body: 'This is body paragraph of second',
+          },
+        ],
+      }),
     ]);
   };
 
@@ -143,5 +165,7 @@ const getChildren = (children, messageId) => {
     return <FormText messageId={messageId} childId={children.id} />;
   } else if (children.type === 'image') {
     return <FormImage messageId={messageId} childId={children.id} />;
+  } else if (children.type === 'card') {
+    return <FormCard messageId={messageId} childId={children.id} />;
   }
 };

@@ -53,11 +53,11 @@ const FormImage = ({ messageId, childId }) => {
           <input
             ref={register}
             type="file"
-            id="file"
+              id={"file"+ childIndex}
             name="image"
             accept="image/*"
           />
-          <label htmlFor="file">
+            <label htmlFor={"file" + childIndex}>
             <BiImageAdd />
             <p>Upload image</p>
           </label>

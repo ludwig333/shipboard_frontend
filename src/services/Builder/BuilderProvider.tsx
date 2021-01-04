@@ -47,6 +47,23 @@ const initialBuilderState = [
         id: uuidv4(),
         type: 'text',
       },
+      {
+        id: uuidv4(),
+        type: 'card',
+        cards: [{
+          id: uuidv4(),
+          selectedImage: null,
+          imagePreviewUrl: '',
+          heading: 'subtitle #1',
+          body: 'This is the body paragraph'
+        }, {
+            id: uuidv4(),
+            selectedImage: null,
+            imagePreviewUrl: '',
+            heading: 'subtitle #2',
+            body: 'This is body paragraph of second'
+        }]
+      }
     ],
   },
 ];
