@@ -73,10 +73,8 @@ const ToolbarButtons = ({ index }) => {
     setBuilderState([
       ...builderState,
       (builderState[index].height = height),
-      builderState[index].children.push({ id: uuidv4(), type: 'text' }),
+      builderState[index].children.push({ id: uuidv4(), type: 'text', value: 'Change text' }),
     ]);
-
-    console.log(builderState[index]);
   };
 
   const addCard = () => {
@@ -114,13 +112,6 @@ const ToolbarButtons = ({ index }) => {
     ]);
   };
 
-  const addGallery = () => {
-    setBuilderState([
-      ...builderState,
-      builderState[index].children.push({ id: uuidv4(), type: 'gallery' }),
-    ]);
-  };
-
   return (
     <React.Fragment>
       <ToolbarButtonGroup>
@@ -144,13 +135,6 @@ const ToolbarButtons = ({ index }) => {
           fontSize="1.2rem"
           onClick={addImage}>
           + Image
-        </ToolbarButton>
-        <ToolbarButton
-          height="6rem"
-          width="6rem"
-          fontSize="1.2rem"
-          onClick={addGallery}>
-          + Gallery
         </ToolbarButton>
         <ToolbarButton height="4rem" width="25rem">
           Next Button

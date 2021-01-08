@@ -4,6 +4,7 @@ export const ImageWrapper = styled.div`
   width: 25rem;
   display: flex;
   border-radius: 7px 7px 7px 7px;
+  box-shadow: 0px 4px 12px #95bbdf;
   background: #f2f5f7;
   background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='7' ry='7' stroke='%238392ABFF' stroke-width='4' stroke-dasharray='10%2c10' stroke-dashoffset='23' stroke-linecap='round'/%3e%3c/svg%3e");
   &:hover {
@@ -39,6 +40,7 @@ export const ImageWrapper = styled.div`
   img {
     height: 100%;
     width: 100%;
+    border-radius: 7px 7px 7px 7px;
   }
 
   form {

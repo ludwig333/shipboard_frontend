@@ -84,7 +84,7 @@ export const CardWrapper = styled.div`
   flex-direction: column;
 
   .card-image {
-    /* padding: 2rem; */
+    border-radius: 7px 7px 7px 7px;
   }
 
   .card-text {
@@ -94,25 +94,32 @@ export const CardWrapper = styled.div`
       padding-bottom: 0rem;
       font-size: 1.4rem;
       font-weight: 500;
-      font-family: Roboto 'sans-serif';
+      font-family: Roboto, 'sans-serif';
 
       &:hover {
         background-color: #f2f5f7;
+        input {
+          background-color: #f2f5f7;
+        }
       }
 
-      h3 {
-        font-size: inherit;
-        font-weight: inherit;
+      &.active {
+        background-color: #f2f5f7;
+        input {
+          background-color: #f2f5f7;
+        }
       }
 
       input {
-        font-size: inherit;
-        width: 100%;
-        font-family: inherit;
-        font-weight: inherit;
+        font-size: 1.4rem;
+        font-weight: 400;
+        font-family: Roboto, 'sans-serif';
+        backface-visibility: hidden;
+        border: none;
+        outline: none;
 
         &:focus {
-          border: 1px solid #5850ec;
+          border: none;
           outline: none;
         }
       }
@@ -122,8 +129,35 @@ export const CardWrapper = styled.div`
       max-width: 25rem;
       font-size: 1.2rem;
       padding: 1rem;
+      font-size: 1.2rem;
+      font-weight: 400;
+      font-family: Roboto, 'sans-serif';
+
       &:hover {
         background-color: #f2f5f7;
+        border-radius: 7px 7px 7px 7px;
+
+        textarea {
+          background-color: #f2f5f7;
+        }
+      }
+      &.active {
+        background-color: #f2f5f7;
+        textarea {
+          background-color: #f2f5f7;
+        }
+      }
+
+      textarea {
+        border: none;
+        outline: none;
+        width: 100%;
+        font-size: 1.2rem;
+        font-weight: 400;
+        font-family: Roboto, 'sans-serif';
+        backface-visibility: hidden;
+        border-radius: 7px 7px 7px 7px;
+
       }
     }
   }

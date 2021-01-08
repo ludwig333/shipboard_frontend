@@ -1,21 +1,22 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
+import { useForm } from 'react-hook-form';
 import { CardSlider, CardWrapper } from './styles';
 import { BuilderContext } from '../../../../../services/Builder/BuilderProvider';
 import { AddTextButton } from '../../../../common/buttons';
 import { ImageWrapper } from '../Image/styles';
 import { v4 as uuidv4 } from 'uuid';
-
+import Textarea from 'react-expanding-textarea';
 import {
   BiImageAdd,
   BiTrash,
   BiChevronRight,
   BiChevronLeft,
-  BiPlus
+  BiPlus,
 } from 'react-icons/bi';
-import { TextArea } from '../Text/styles';
 
 const FormCard = ({ messageId, childId }) => {
   const [builderState, setBuilderState] = useContext(BuilderContext);
+  const { register, handleSubmit } = useForm({ mode: 'onChange' });
   const [isChangingHeading, setIsChangingHeading] = useState(false);
   const [isChangingBody, setIsChangingBody] = useState(false);
 
@@ -27,10 +28,7 @@ const FormCard = ({ messageId, childId }) => {
     (obj) => obj.id == childId
   );
 
-  const handleHeadingChange = (e) => {};
-
-  const handleBodyChange = (e) => {};
-
+  //Card Navigation functions
   const handleNextButton = (id) => {
     const cards = builderState[messageId].children[childIndex].cards;
     const length = cards.length - 1;
@@ -51,7 +49,12 @@ const FormCard = ({ messageId, childId }) => {
     }
   };
 
-  const makeCardActive = (cardIndex, activeCardIndex, length = 0, addNew = false) => {
+  const makeCardActive = (
+    cardIndex,
+    activeCardIndex,
+    length = 0,
+    addNew = false
+  ) => {
     if (addNew) {
       setBuilderState([
         ...builderState,
@@ -63,7 +66,7 @@ const FormCard = ({ messageId, childId }) => {
           active: true,
           selectedImage: null,
           imagePreviewUrl: '',
-          heading: 'Subtitle #'+ length,
+          heading: 'Subtitle #' + length,
           body: 'This is body paragraph',
         }),
       ]);
@@ -84,6 +87,12 @@ const FormCard = ({ messageId, childId }) => {
     return cards.findIndex((obj) => obj.active == true);
   };
 
+  const getCardIndex = (id) => {
+    return builderState[messageId].children[childIndex].cards.findIndex(
+      (obj) => obj.id === id
+    );
+  };
+
   const isLastCard = () => {
     const cards = builderState[messageId].children[childIndex].cards;
     const length = cards.length - 1;
@@ -91,10 +100,78 @@ const FormCard = ({ messageId, childId }) => {
     return activeCardIndex == length;
   };
 
+  //Form input submit methods
+  const onUploadImage = (data, id) => {
+    let cardIndex = getCardIndex(id);
+
+    let reader = new FileReader();
+
+    reader.onloadend = () => {
+      var updatedCard = {
+        ...builderState[messageId].children[childIndex].cards[cardIndex],
+        selectedImage: data.image[0],
+        imagePreviewUrl: reader.result,
+      };
+
+      setBuilderState([
+        ...builderState,
+        (builderState[messageId].children[childIndex].cards[
+          cardIndex
+        ] = updatedCard),
+      ]);
+    };
+
+    reader.readAsDataURL(data.image[0]);
+  };
+
+  const onHeadingChange = (data, id) => {
+    let cardIndex = getCardIndex(id);
+    var updatedCard = {
+      ...builderState[messageId].children[childIndex].cards[cardIndex],
+      heading: data.heading,
+    };
+    setBuilderState([
+      ...builderState,
+      (builderState[messageId].children[childIndex].cards[
+        cardIndex
+      ] = updatedCard),
+    ]);
+  };
+
+  const onParagraphChange = (data, id) => {
+    let cardIndex = getCardIndex(id);
+    var updatedCard = {
+      ...builderState[messageId].children[childIndex].cards[cardIndex],
+      body: data.body,
+    };
+    setBuilderState([
+      ...builderState,
+      (builderState[messageId].children[childIndex].cards[
+        cardIndex
+      ] = updatedCard),
+    ]);
+  };
+
+  const handleDelete = () => {
+    setBuilderState([
+      ...builderState,
+      builderState[messageId].children.splice(childIndex, 1),
+    ]);
+  };
+  //UseEffects
   useEffect(() => {
-    headingRef.current && headingRef.current.focus();
-    paragraphRef.current && paragraphRef.current.focus();
+    if (headingRef.current) {
+      register(headingRef.current);
+      headingRef.current.focus();
+    }
   }, [isChangingHeading]);
+
+  useEffect(() => {
+    if (paragraphRef.current) {
+      register(paragraphRef.current);
+      paragraphRef.current.focus();
+    }
+  }, [isChangingBody]);
 
   return (
     <CardSlider>
@@ -104,7 +181,7 @@ const FormCard = ({ messageId, childId }) => {
       <div className="navigation_btn next" onClick={handleNextButton}>
         {isLastCard() ? <BiPlus /> : <BiChevronRight />}
       </div>
-      <button className="action-btn">
+      <button className="action-btn" onClick={handleDelete}>
         <BiTrash />
       </button>
       {builderState[messageId].children[childIndex].cards.map((card) => {
@@ -113,51 +190,73 @@ const FormCard = ({ messageId, childId }) => {
             <CardWrapper>
               <div className="card-image">
                 <ImageWrapper>
-                  <form>
-                    <input
-                      type="file"
-                      id="card_image"
-                      name="image"
-                      accept="image/*"
-                    />
-                    <label htmlFor="card_image">
-                      <BiImageAdd />
-                      <p>Upload image</p>
-                    </label>
-                  </form>
+                  {card.imagePreviewUrl ? (
+                    <div>
+                      <img src={card.imagePreviewUrl} alt="card-image" />
+                    </div>
+                  ) : (
+                    <form
+                      onChange={handleSubmit((data) =>
+                        onUploadImage(data, card.id)
+                      )}>
+                      <input
+                        ref={register}
+                        type="file"
+                        id={'card_image' + getCardIndex(card.id)}
+                        name="image"
+                        accept="image/*"
+                      />
+                      <label htmlFor={'card_image' + getCardIndex(card.id)}>
+                        <BiImageAdd />
+                        <p>Upload image</p>
+                      </label>
+                    </form>
+                  )}
                 </ImageWrapper>
               </div>
               <div className="card-text">
-                <div className="card-heading">
-                  {isChangingHeading ? (
-                    <form>
-                      <input
-                        ref={headingRef}
-                        type="text"
-                        id="heading"
-                        value="Subtitle"
-                        onChange={handleHeadingChange}
-                        onBlur={() => setIsChangingHeading(false)}
-                      />
-                    </form>
-                  ) : (
-                      <h3 onClick={() => setIsChangingHeading(true)}>{card.heading}</h3>
-                  )}
+                <div
+                  className={
+                    isChangingHeading ? 'card-heading active' : 'card-heading'
+                  }>
+                  <form
+                    onBlur={handleSubmit((data) =>
+                      onHeadingChange(data, card.id)
+                    )}>
+                    <input
+                      ref={headingRef}
+                      type="text"
+                      id="heading"
+                      name="heading"
+                      defaultValue={card.heading}
+                      onBlur={() => setIsChangingHeading(false)}
+                      onClick={() => {
+                        setIsChangingBody(false);
+                        setIsChangingHeading(true);
+                      }}
+                    />
+                  </form>
                 </div>
-                <div className="card-body">
-                  {isChangingBody ? (
-                    <TextArea
-                      id="paragraph"
-                      ref={paragraphRef}
-                      height="2"
+                <div
+                  className={isChangingBody ? 'card-body active' : 'card-body'}>
+                  <form
+                    onBlur={handleSubmit((data) =>
+                      onParagraphChange(data, card.id)
+                    )}>
+                    <Textarea
+                      maxLength={3000}
                       placeholder="Enter your text here"
                       onBlur={() => setIsChangingBody(false)}
+                      defaultValue={card.body}
+                      id="body"
+                      name="body"
+                      ref={paragraphRef}
+                      onClick={() => {
+                        setIsChangingHeading(false);
+                        setIsChangingBody(true);
+                      }}
                     />
-                  ) : (
-                    <p onClick={() => setIsChangingBody(true)}>
-                        {card.body}
-                    </p>
-                  )}
+                  </form>
                 </div>
               </div>
             </CardWrapper>

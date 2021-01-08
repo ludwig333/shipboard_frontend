@@ -43,7 +43,7 @@ const FormImage = ({ messageId, childId }) => {
     <ImageWrapper>
       {image.imagePreviewUrl ? (
         <div>
-          <img src={image.imagePreviewUrl} />
+          <img src={image.imagePreviewUrl} alt="image"/>
           {/* <AddTextButton height="4rem" width="100%">
             Add Button
           </AddTextButton> */}

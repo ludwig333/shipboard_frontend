@@ -4,6 +4,7 @@ export const AddTextWrapper = styled.div`
   width: 25rem;
   height: auto;
   border-radius: 7px 7px 7px 7px;
+  box-shadow: 0px 4px 12px #95bbdf;
 
   .action-btn {
     position: absolute;
@@ -32,19 +33,20 @@ export const AddTextWrapper = styled.div`
       visibility: visible;
     }
   }
-`;
 
-export const TextArea = styled.textarea<{ height: string }>`
-  padding: 1rem;
-  width: 100%;
-  height: ${(props) => props.height}px;
-  min-height: 2rem;
-  background: #f2f5f7;
-  border-radius: 7px 7px 0px 0px;
-  outline: none;
-  font-family: Roboto, sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 1.4rem;
-  border: none;
+  form,
+  textarea {
+    backface-visibility: hidden;
+    background-color: #f2f5f7;
+    border-radius: 7px 7px 0px 0px;
+    border: none;
+    font-family: Roboto, sans-serif;
+    font-size: 1.2rem;
+    font-style: normal;
+    font-weight: 400;
+    min-height: 2rem;
+    outline: none;
+    padding: 1rem;
+    width: 100%;
+  }
 `;
