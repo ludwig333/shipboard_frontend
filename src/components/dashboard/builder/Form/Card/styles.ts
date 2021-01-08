@@ -98,21 +98,22 @@ export const CardWrapper = styled.div`
 
       &:hover {
         background-color: #f2f5f7;
-        input {
+        .card-title {
           background-color: #f2f5f7;
         }
       }
 
       &.active {
         background-color: #f2f5f7;
-        input {
+        .card-title {
           background-color: #f2f5f7;
         }
       }
 
-      input {
+      .card-title {
         font-size: 1.4rem;
-        font-weight: 400;
+        font-weight: 500;
+        width: 100%;
         font-family: Roboto, 'sans-serif';
         backface-visibility: hidden;
         border: none;
@@ -137,18 +138,18 @@ export const CardWrapper = styled.div`
         background-color: #f2f5f7;
         border-radius: 7px 7px 7px 7px;
 
-        textarea {
+        .card-body {
           background-color: #f2f5f7;
         }
       }
       &.active {
         background-color: #f2f5f7;
-        textarea {
+        .card-body {
           background-color: #f2f5f7;
         }
       }
 
-      textarea {
+      .card-body {
         border: none;
         outline: none;
         width: 100%;

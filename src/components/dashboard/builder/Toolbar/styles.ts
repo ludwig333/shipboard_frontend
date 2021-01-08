@@ -27,6 +27,39 @@ export const ToolbarMenu = styled.div`
     height: 5rem;
     width: 100%;
     background: #e1e5ea;
+
+    &.active {
+      input {
+        background-color: white;
+      }
+    }
+  }
+
+  .heading-input {
+    font-size: 1.6rem;
+    font-weight: 500;
+    font-family: Roboto, 'sans-serif';
+    border: none;
+    outline: none;
+    background: #e1e5ea;
+    width: 100%;
+
+    &:focus {
+      border: none;
+      outline: none;
+    }
+  }
+
+  .no-content-text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.6rem;
+    font-weight: 500;
+    font-family: Roboto, 'sans-serif';
+    height: 5rem;
+    width: 20rem;
+    background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='7' ry='7' stroke='%238392ABFF' stroke-width='4' stroke-dasharray='10%2c10' stroke-dashoffset='23' stroke-linecap='round'/%3e%3c/svg%3e");
   }
 `;
 

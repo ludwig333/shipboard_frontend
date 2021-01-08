@@ -223,9 +223,10 @@ const FormCard = ({ messageId, childId }) => {
                     onBlur={handleSubmit((data) =>
                       onHeadingChange(data, card.id)
                     )}>
-                    <input
+                    <Textarea
+                      className="card-title"
                       ref={headingRef}
-                      type="text"
+                      maxLength={27}
                       id="heading"
                       name="heading"
                       defaultValue={card.heading}
@@ -244,7 +245,8 @@ const FormCard = ({ messageId, childId }) => {
                       onParagraphChange(data, card.id)
                     )}>
                     <Textarea
-                      maxLength={3000}
+                      className="card-body"
+                      maxLength={200}
                       placeholder="Enter your text here"
                       onBlur={() => setIsChangingBody(false)}
                       defaultValue={card.body}

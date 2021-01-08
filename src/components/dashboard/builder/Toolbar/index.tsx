@@ -1,4 +1,5 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useRef, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import { ToolbarWrapper, ToolbarMenu, ToolbarButtonGroup } from './styles';
 import { ToolbarHeading, VerticalGap } from '../../../common/typography';
 import { ToolbarButton } from '../../../common/buttons';
@@ -8,40 +9,48 @@ import FormImage from '../Form/Image/index';
 import FormText from '../Form/Text/index';
 import FormCard from '../Form/Card/index';
 import { InputField } from '../../../common/form';
+import Textarea from 'react-expanding-textarea';
 
 const Toolbar = ({ id, hideToolbar }) => {
   const [builderState, setBuilderState] = useContext(BuilderContext);
   const [isChangingTitle, setIsChangingTitle] = useState(false);
+  const { register, handleSubmit } = useForm({ mode: 'onChange' });
+
+  const titleRef = useRef<HTMLInputElement>(null);
 
   //Find index of specific object using findIndex method.
   const objIndex = builderState.findIndex((obj) => obj.id == id);
 
-  const handleTitleChange = (e) => {
+  const onChangeTitle = (data) => {
     setBuilderState([
       ...builderState,
-      (builderState[objIndex].name = e.target.value),
+      (builderState[objIndex].name = data.title),
     ]);
   };
+
+  //UseEffects
+  useEffect(() => {
+    if (titleRef.current) {
+      register(titleRef.current);
+      titleRef.current.focus();
+    }
+  }, [isChangingTitle]);
 
   return (
     <ToolbarWrapper>
       <ToolbarMenu>
-        <div className="header">
-          <ToolbarHeading>
-            {isChangingTitle ? (
-              <InputField
-                type="text"
-                id="title"
-                value={builderState[objIndex].name}
-                onChange={handleTitleChange}
-                onBlur={() => setIsChangingTitle(false)}
-              />
-            ) : (
-              <ToolbarHeading onClick={() => setIsChangingTitle(true)}>
-                {builderState[objIndex].name}
-              </ToolbarHeading>
-            )}
-          </ToolbarHeading>
+        <div className={isChangingTitle ? 'header active' : 'header'}>
+          <form onBlur={handleSubmit(onChangeTitle)}>
+            <Textarea
+              maxLength={40}
+              className="heading-input"
+              ref={titleRef}
+              id="title"
+              name="title"
+              defaultValue={builderState[objIndex].name}
+              onBlur={() => setIsChangingTitle(false)}
+            />
+          </form>
         </div>
         {builderState[objIndex].children.length > 0 ? (
           builderState[objIndex].children.map((child) => {
@@ -53,7 +62,10 @@ const Toolbar = ({ id, hideToolbar }) => {
             );
           })
         ) : (
-          <p>No content</p>
+          <React.Fragment>
+            <VerticalGap size="3" />
+            <p className="no-content-text">No content</p>
+          </React.Fragment>
         )}
         <VerticalGap size="3" />
         <ToolbarButtons index={objIndex} />
@@ -73,7 +85,11 @@ const ToolbarButtons = ({ index }) => {
     setBuilderState([
       ...builderState,
       (builderState[index].height = height),
-      builderState[index].children.push({ id: uuidv4(), type: 'text', value: 'Change text' }),
+      builderState[index].children.push({
+        id: uuidv4(),
+        type: 'text',
+        value: 'Change text',
+      }),
     ]);
   };
 
@@ -91,14 +107,6 @@ const ToolbarButtons = ({ index }) => {
             imagePreviewUrl: '',
             heading: 'subtitle #1',
             body: 'This is the body paragraph',
-          },
-          {
-            id: uuidv4(),
-            active:false,
-            selectedImage: null,
-            imagePreviewUrl: '',
-            heading: 'subtitle #2',
-            body: 'This is body paragraph of second',
           },
         ],
       }),
