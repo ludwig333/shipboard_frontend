@@ -89,25 +89,17 @@ export const CardWrapper = styled.div`
 
   .card-text {
     .card-heading {
-      padding: 1rem;
-      padding-bottom: 0;
-      padding-bottom: 0rem;
+      padding: 0.8rem;
       font-size: 1.4rem;
       font-weight: 500;
       font-family: Roboto, 'sans-serif';
 
       &:hover {
         background-color: #f2f5f7;
-        .card-title {
-          background-color: #f2f5f7;
-        }
       }
 
       &.active {
         background-color: #f2f5f7;
-        .card-title {
-          background-color: #f2f5f7;
-        }
       }
 
       .card-title {
@@ -116,8 +108,10 @@ export const CardWrapper = styled.div`
         width: 100%;
         font-family: Roboto, 'sans-serif';
         backface-visibility: hidden;
+        border-radius: 7px 7px 7px 7px;
         border: none;
         outline: none;
+        padding: 0.5rem;
 
         &:focus {
           border: none;
@@ -128,28 +122,21 @@ export const CardWrapper = styled.div`
 
     .card-body {
       max-width: 25rem;
-      font-size: 1.2rem;
-      padding: 1rem;
+      padding: .8rem;
       font-size: 1.2rem;
       font-weight: 400;
       font-family: Roboto, 'sans-serif';
+      margin-top: -1rem;
 
       &:hover {
         background-color: #f2f5f7;
-        border-radius: 7px 7px 7px 7px;
-
-        .card-body {
-          background-color: #f2f5f7;
-        }
       }
+
       &.active {
         background-color: #f2f5f7;
-        .card-body {
-          background-color: #f2f5f7;
-        }
       }
 
-      .card-body {
+      .card-paragraph {
         border: none;
         outline: none;
         width: 100%;
@@ -158,7 +145,7 @@ export const CardWrapper = styled.div`
         font-family: Roboto, 'sans-serif';
         backface-visibility: hidden;
         border-radius: 7px 7px 7px 7px;
-
+        padding: 0.5rem;
       }
     }
   }

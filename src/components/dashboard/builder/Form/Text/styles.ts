@@ -32,12 +32,23 @@ export const AddTextWrapper = styled.div`
     .action-btn {
       visibility: visible;
     }
+    .card-body {
+      background-color: #f2f5f7;
+    }
+  }
+  .card-body {
+    padding: .8rem;
+    &.active {
+      background-color: #f2f5f7;
+    }
   }
 
-  form,
+  form {
+    display: flex;
+  }
+
   textarea {
     backface-visibility: hidden;
-    background-color: #f2f5f7;
     border-radius: 7px 7px 0px 0px;
     border: none;
     font-family: Roboto, sans-serif;
@@ -46,7 +57,7 @@ export const AddTextWrapper = styled.div`
     font-weight: 400;
     min-height: 2rem;
     outline: none;
-    padding: 1rem;
+    padding: .5rem;
     width: 100%;
   }
 `;

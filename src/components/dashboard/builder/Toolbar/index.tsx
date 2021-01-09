@@ -42,7 +42,7 @@ const Toolbar = ({ id, hideToolbar }) => {
         <div className={isChangingTitle ? 'header active' : 'header'}>
           <form onBlur={handleSubmit(onChangeTitle)}>
             <Textarea
-              maxLength={40}
+              maxLength={35}
               className="heading-input"
               ref={titleRef}
               id="title"

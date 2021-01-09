@@ -24,15 +24,10 @@ export const ToolbarMenu = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 5rem;
+    height: 8rem;
     width: 100%;
+    padding: 1rem;
     background: #e1e5ea;
-
-    &.active {
-      input {
-        background-color: white;
-      }
-    }
   }
 
   .heading-input {
@@ -41,8 +36,11 @@ export const ToolbarMenu = styled.div`
     font-family: Roboto, 'sans-serif';
     border: none;
     outline: none;
-    background: #e1e5ea;
     width: 100%;
+    text-align: center;
+    border-radius: 7px 7px 7px 7px;
+    min-width: 25rem;
+    padding: .5rem;
 
     &:focus {
       border: none;

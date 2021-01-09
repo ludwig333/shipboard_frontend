@@ -51,13 +51,14 @@ const FormText = ({ messageId, childId }) => {
       <div className={isChangingBody ? 'card-body active' : 'card-body'}>
         <form onBlur={handleSubmit(onTextChange)}>
           <Textarea
-            maxLength={3000}
+            maxLength={500}
             placeholder="Enter your text here"
             onBlur={() => setIsChangingBody(false)}
             defaultValue={builderState[messageId].children[childIndex].value}
             id="text"
             name="text"
             ref={textAreaRef}
+            onClick={() => setIsChangingBody(true)}
           />
         </form>
       </div>

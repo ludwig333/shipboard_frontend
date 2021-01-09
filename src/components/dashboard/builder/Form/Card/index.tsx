@@ -245,7 +245,7 @@ const FormCard = ({ messageId, childId }) => {
                       onParagraphChange(data, card.id)
                     )}>
                     <Textarea
-                      className="card-body"
+                      className="card-paragraph"
                       maxLength={200}
                       placeholder="Enter your text here"
                       onBlur={() => setIsChangingBody(false)}
