@@ -21,7 +21,7 @@ const Flows = (props: any) => {
   const [state, setState] = useState({
     layerScale: 1,
     layerX: 0,
-    layerY: 0
+    layerY: 0,
   });
 
   const hideToolbar = () => {
@@ -34,17 +34,18 @@ const Flows = (props: any) => {
     setIsToolbarActive(true);
   };
 
+
   const calculateCardHeight = (state) => {
     // var height;
     // state.foreach(item => {
     //     if(item.type == )
     // })
     return 100;
-  };  
+  };
 
   const getStageWidth = () => {
-    return sidebar ? window.innerWidth - 280 : window.innerWidth - 90.
-  }
+    return sidebar ? window.innerWidth - 280 : window.innerWidth - 90;
+  };
   return (
     <FlowBuilderWrapper>
       {isToolbarActive && <Toolbar id={id} hideToolbar={hideToolbar} />}
@@ -98,7 +99,21 @@ const Flows = (props: any) => {
             typeof builderState == 'object' &&
             builderState.map((item) => {
               return (
-                <Group draggable onClick={(e) => showToolbar(item.id)}>
+                <Group
+                  draggable
+                  onClick={(e) => showToolbar(item.id)}
+                  hitOnDragEnabled={true}
+                  onDragEnd={(e) => {
+                    var updatedPosition = {
+                      x: e.target.x(),
+                      y: e.target.y(),
+                    };
+                    var index = builderState.findIndex((obj) => obj.id == item.id)  
+                    setBuilderState([
+                      ...builderState,
+                      (builderState[index].position = updatedPosition),
+                    ]);
+                  }}>
                   <Rect
                     cornerRadius={16}
                     height={calculateHeightOfMessageBox(item.children)}
