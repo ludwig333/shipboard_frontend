@@ -10,8 +10,8 @@ export const ToolbarWrapper = styled.div`
 export const ToolbarMenu = styled.div`
   position: relative;
   width: 32rem;
-  max-height: 91vh;
-  height: 91vh;
+  max-height: calc(100vh - 5rem);
+  height: calc(100vh - 5rem);
   display: flex;
   flex-direction: column;
   justify-content: flex-start;

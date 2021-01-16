@@ -1,9 +1,13 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext, Children } from 'react';
 import { FlowBuilderWrapper } from './styles';
-import { Stage, Layer, Rect, Line, Text, Group, Circle } from 'react-konva';
+import { Stage, Layer, Rect, Image, Text, Group, Circle } from 'react-konva';
 import Toolbar from '../../../components/dashboard/builder/Toolbar/index';
 import { v4 as uuidv4 } from 'uuid';
-
+import {
+  handleRenderingChildrens,
+  calculateHeightOfMessageBox,
+  handleWheel,
+} from './helper';
 import {
   BuilderContext,
   useBuilder,
@@ -11,13 +15,13 @@ import {
 
 const Flows = (props: any) => {
   const [isToolbarActive, setIsToolbarActive] = useState(null);
-  const [builderState, setBuilderState] = useBuilder();
+  const [builderState, setBuilderState, sidebar] = useBuilder();
   const [id, setId] = useState(null);
 
   const [state, setState] = useState({
     layerScale: 1,
     layerX: 0,
-    layerY: 0,
+    layerY: 0
   });
 
   const hideToolbar = () => {
@@ -30,12 +34,23 @@ const Flows = (props: any) => {
     setIsToolbarActive(true);
   };
 
+  const calculateCardHeight = (state) => {
+    // var height;
+    // state.foreach(item => {
+    //     if(item.type == )
+    // })
+    return 100;
+  };  
+
+  const getStageWidth = () => {
+    return sidebar ? window.innerWidth - 280 : window.innerWidth - 90.
+  }
   return (
     <FlowBuilderWrapper>
       {isToolbarActive && <Toolbar id={id} hideToolbar={hideToolbar} />}
       <Stage
-        width={window.innerWidth}
-        height={window.innerHeight}
+        width={getStageWidth()}
+        height={window.innerHeight - 70}
         scaleX={state.layerScale}
         scaleY={state.layerScale}
         x={0}
@@ -80,18 +95,19 @@ const Flows = (props: any) => {
             />
           </Group>
           {builderState &&
+            typeof builderState == 'object' &&
             builderState.map((item) => {
               return (
                 <Group draggable onClick={(e) => showToolbar(item.id)}>
                   <Rect
                     cornerRadius={16}
-                    height={item.height}
-                    width={300}
+                    height={calculateHeightOfMessageBox(item.children)}
+                    width={340}
                     fill="#FDFDFD"
-                    strokeWidth={2}
-                    shadowColor="gray"
-                    shadowOpacity={0.7}
-                    shadowBlur={2}
+                    strokeWidth={1}
+                    shadowColor="black"
+                    shadowOpacity={0.5}
+                    shadowBlur={7}
                   />
                   <Circle x={30} y={30} radius={15} fill="#5850EB" />
                   <Text
@@ -121,17 +137,27 @@ const Flows = (props: any) => {
                   {typeof item.children == 'object' ? (
                     <>
                       {item.children.length > 0 ? (
-                        item.children.map((child) => {
-                          return getChildren(child);
-                        })
+                        handleRenderingChildrens(item)
                       ) : (
-                        <Rect
-                          x={30}
-                          y={100}
-                          height={60}
-                          width={250}
-                          fill="#EEF1F4"
-                        />
+                        <Group>
+                          <Rect
+                            x={20}
+                            y={75}
+                            height={60}
+                            width={300}
+                            fill="#EEF1F4"
+                            cornerRadius={16}
+                          />
+                          <Text
+                            text="No Content"
+                            x={110}
+                            y={95}
+                            fontFamily={'Roboto'}
+                            fontSize={20}
+                            fontWeight={300}
+                            fill={'blue'}
+                          />
+                        </Group>
                       )}
                     </>
                   ) : null}
@@ -141,23 +167,23 @@ const Flows = (props: any) => {
         </Layer>
         <Layer name="layer_2">
           <Circle
-            x={1525}
+            x={document.body.clientWidth}
             y={40}
             radius={24}
             fill="#5850EB"
             onClick={() => {
-
               let number = builderState.length + 1;
-              builderState.push({
+              const newState = {
                 id: uuidv4(),
                 name: 'Send Message #' + number,
                 position: {
                   x: 1300,
                   y: 50,
                 },
-                height: 250,
+                height: 200,
                 children: [],
-              });
+              };
+              setBuilderState([...builderState, newState]);
             }}
           />
         </Layer>
@@ -167,75 +193,3 @@ const Flows = (props: any) => {
 };
 
 export default Flows;
-
-const getChildren = (children) => {
-  if (children.type === 'text') {
-    return (
-      <>
-        <Rect
-          x={100}
-          y={100}
-          fill="#F0F4F7"
-          stroke="lightgray"
-          cornerRadius={5}
-          height={100}
-          width={200}
-        />
-        <Text x={150} y={150} text={children.value} fontSize={16} />
-      </>
-    );
-  } else if (children.type === 'image') {
-    return (
-      <Rect
-        x={100}
-        y={200}
-        fill="black"
-        stroke="lightgray"
-        cornerRadius={5}
-        height={50}
-        width={200}
-      />
-    );
-  }
-};
-
-const handleWheel = (e) => {
-  e.evt.preventDefault();
-
-  const scaleBy = 0.9;
-  const stage = e.target.getStage();
-  const layer = stage.find('.layer_1')[0];
-
-  const oldScale = layer.scaleX();
-  const newScale = e.evt.deltaY > 0 ? oldScale * scaleBy : oldScale / scaleBy;
-  layer.scale({ x: newScale, y: newScale });
-
-  const layerPointerPosition = getRelativePointerPosition(layer);
-  const correctedLayerPointerPosition = {
-    x: layer.x() + layerPointerPosition.x * newScale,
-    y: layer.y() + layerPointerPosition.y * newScale,
-  };
-
-  const mousePointTo = {
-    x: correctedLayerPointerPosition.x / oldScale - layer.x() / oldScale,
-    y: correctedLayerPointerPosition.y / oldScale - layer.y() / oldScale,
-  };
-
-  const newLayerPos = {
-    x:
-      -(mousePointTo.x - correctedLayerPointerPosition.x / newScale) * newScale,
-    y:
-      -(mousePointTo.y - correctedLayerPointerPosition.y / newScale) * newScale,
-  };
-
-  layer.position(newLayerPos);
-  stage.draw();
-};
-
-const getRelativePointerPosition = (node) => {
-  // returns mouse pointer position relative to the input node
-  var transform = node.getAbsoluteTransform().copy();
-  transform.invert();
-  var pos = node.getStage().getPointerPosition();
-  return transform.point(pos);
-};

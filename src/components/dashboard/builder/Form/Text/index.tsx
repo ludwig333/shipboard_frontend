@@ -19,9 +19,11 @@ const FormText = ({ messageId, childId }) => {
   );
 
   const onTextChange = (data) => {
+    var height = textAreaRef.current.scrollHeight;
+
     var updatedCard = {
       ...builderState[messageId].children[childIndex],
-      value: data.text,
+      value: data.text, height
     };
     setBuilderState([
       ...builderState,
@@ -30,8 +32,10 @@ const FormText = ({ messageId, childId }) => {
   };
 
   const handleDelete = () => {
+    var height = builderState[messageId].height - textAreaRef.current.scrollHeight;
+
     setBuilderState([
-      ...builderState,
+      ...builderState, builderState[messageId].height = height,
       builderState[messageId].children.splice(childIndex, 1),
     ]);
   };

@@ -19,7 +19,7 @@ const AppLayout: React.FC<LayoutProps> = (props) => {
   return (
     <LayoutWrapper>
       <Sidebar handleSidebarState={handleSidebarState} />
-      <BuilderProvider>
+      <BuilderProvider sidebar={isOpen}>
         <AppContainer>
           <Breadcrumb />
           {props.children}

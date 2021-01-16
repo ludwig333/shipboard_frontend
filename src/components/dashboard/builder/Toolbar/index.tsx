@@ -81,7 +81,7 @@ const ToolbarButtons = ({ index }) => {
 
   const addText = () => {
     let height = builderState[index].height;
-    height = height + 50;
+    height = height + 30;
     setBuilderState([
       ...builderState,
       (builderState[index].height = height),
@@ -89,13 +89,18 @@ const ToolbarButtons = ({ index }) => {
         id: uuidv4(),
         type: 'text',
         value: 'Change text',
+        height: 30,
       }),
     ]);
   };
 
   const addCard = () => {
+    let height = builderState[index].height;
+    height = height + 150;
+
     setBuilderState([
       ...builderState,
+      (builderState[index].height = height),
       builderState[index].children.push({
         id: uuidv4(),
         type: 'card',
@@ -105,8 +110,9 @@ const ToolbarButtons = ({ index }) => {
             active: true,
             selectedImage: null,
             imagePreviewUrl: '',
-            heading: 'subtitle #1',
+            heading: 'subtitle #11',
             body: 'This is the body paragraph',
+            height: 250,
           },
         ],
       }),
@@ -114,9 +120,19 @@ const ToolbarButtons = ({ index }) => {
   };
 
   const addImage = () => {
+    let height = builderState[index].height;
+    height = height + 150;
+
     setBuilderState([
       ...builderState,
-      builderState[index].children.push({ id: uuidv4(), type: 'image' }),
+      (builderState[index].height = height),
+      builderState[index].children.push({
+        id: uuidv4(),
+        type: 'image',
+        height: 150,
+        imagePreviewUrl: '',
+        selectedImage: null,
+      }),
     ]);
   };
 

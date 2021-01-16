@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useEffect, useRef, useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { ImageWrapper } from './styles';
 import { BuilderContext } from '../../../../../services/Builder/BuilderProvider';
@@ -9,6 +9,8 @@ import { BiImageAdd, BiTrash } from 'react-icons/bi';
 const FormImage = ({ messageId, childId }) => {
   const [builderState, setBuilderState] = useContext(BuilderContext);
   const { register, handleSubmit } = useForm({ mode: 'onChange' });
+
+  const imageRef = useRef<HTMLInputElement>(null);
 
   //Find index of specific object using findIndex method.
   const childIndex = builderState[messageId].children.findIndex(
@@ -21,8 +23,9 @@ const FormImage = ({ messageId, childId }) => {
     let reader = new FileReader();
 
     reader.onloadend = () => {
-      var updatedChildren = { ...builderState[messageId].children[childIndex], selectedImage: data.image[0], imagePreviewUrl: reader.result }
-
+      var height = 180
+      var updatedChildren = { ...builderState[messageId].children[childIndex], selectedImage: data.image[0], imagePreviewUrl: reader.result, height }  
+      
       setBuilderState([
         ...builderState,
         builderState[messageId].children[childIndex] = updatedChildren
@@ -33,11 +36,19 @@ const FormImage = ({ messageId, childId }) => {
   };
 
   const handleDelete = () => {
+    
     setBuilderState([
       ...builderState,
+      builderState[messageId].height -= 150,
       builderState[messageId].children.splice(childIndex, 1),
     ]);
   };
+
+  useEffect(() => {
+    if (imageRef.current) {
+      register(imageRef.current);
+    }
+  });
 
   return (
     <ImageWrapper>
@@ -51,7 +62,7 @@ const FormImage = ({ messageId, childId }) => {
       ) : (
         <form onChange={handleSubmit(onSubmit)}>
           <input
-            ref={register}
+            ref={imageRef}
             type="file"
               id={"file"+ childIndex}
             name="image"

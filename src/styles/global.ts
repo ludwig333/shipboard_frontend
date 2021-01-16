@@ -36,6 +36,8 @@ body {
     font-weight: 400;
     line-height: 1.7;
     backface-visibility: hidden;
+    overflow-x: hidden;
+
 }
 .form-error {
     font-size: 1rem;

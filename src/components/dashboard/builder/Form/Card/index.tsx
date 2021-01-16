@@ -22,6 +22,7 @@ const FormCard = ({ messageId, childId }) => {
 
   const headingRef = useRef<HTMLInputElement>(null);
   const paragraphRef = useRef<HTMLTextAreaElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   //Find index of specific object using findIndex method.
   const childIndex = builderState[messageId].children.findIndex(
@@ -68,6 +69,7 @@ const FormCard = ({ messageId, childId }) => {
           imagePreviewUrl: '',
           heading: 'Subtitle #' + length,
           body: 'This is body paragraph',
+          height: 290,
         }),
       ]);
     } else {
@@ -107,10 +109,12 @@ const FormCard = ({ messageId, childId }) => {
     let reader = new FileReader();
 
     reader.onloadend = () => {
+      var height = cardRef.current.scrollHeight;
       var updatedCard = {
         ...builderState[messageId].children[childIndex].cards[cardIndex],
         selectedImage: data.image[0],
         imagePreviewUrl: reader.result,
+        height,
       };
 
       setBuilderState([
@@ -126,9 +130,11 @@ const FormCard = ({ messageId, childId }) => {
 
   const onHeadingChange = (data, id) => {
     let cardIndex = getCardIndex(id);
+    var height = cardRef.current.scrollHeight;
     var updatedCard = {
       ...builderState[messageId].children[childIndex].cards[cardIndex],
       heading: data.heading,
+      height,
     };
     setBuilderState([
       ...builderState,
@@ -140,9 +146,11 @@ const FormCard = ({ messageId, childId }) => {
 
   const onParagraphChange = (data, id) => {
     let cardIndex = getCardIndex(id);
+    var height = cardRef.current.scrollHeight;
     var updatedCard = {
       ...builderState[messageId].children[childIndex].cards[cardIndex],
       body: data.body,
+      height,
     };
     setBuilderState([
       ...builderState,
@@ -155,6 +163,7 @@ const FormCard = ({ messageId, childId }) => {
   const handleDelete = () => {
     setBuilderState([
       ...builderState,
+      builderState[messageId].height -= 250,
       builderState[messageId].children.splice(childIndex, 1),
     ]);
   };
@@ -187,7 +196,7 @@ const FormCard = ({ messageId, childId }) => {
       {builderState[messageId].children[childIndex].cards.map((card) => {
         if (card.active) {
           return (
-            <CardWrapper>
+            <CardWrapper ref={cardRef}>
               <div className="card-image">
                 <ImageWrapper>
                   {card.imagePreviewUrl ? (
