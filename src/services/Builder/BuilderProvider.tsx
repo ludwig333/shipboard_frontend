@@ -8,7 +8,7 @@ const initialBuilderState = [
     name: 'Send Message #1',
     height: 200,
     position: {
-      x: 50,
+      x: 700,
       y: 50,
     },
     children: [],
@@ -18,7 +18,7 @@ const initialBuilderState = [
     name: 'Send Message #2',
     height: 200,
     position: {
-      x: 400,
+      x: 700,
       y: 50,
     },
     children: [],

@@ -5,6 +5,7 @@ export const ToolbarWrapper = styled.div`
   position: relative;
   z-index: 2;
   float: left;
+  
 `;
 
 export const ToolbarMenu = styled.div`
@@ -19,15 +20,18 @@ export const ToolbarMenu = styled.div`
   background: #fdfdfd;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.25);
   overflow-y: scroll;
+  overflow-x: hidden;
+
 
   .header {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 8rem;
+    height: 5rem;
     width: 100%;
     padding: 1rem;
     background: #e1e5ea;
+    margin-left: -2rem;
   }
 
   .heading-input {

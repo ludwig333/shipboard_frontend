@@ -7,11 +7,13 @@ import {
   handleRenderingChildrens,
   calculateHeightOfMessageBox,
   handleWheel,
+  Edge,
 } from './helper';
 import {
   BuilderContext,
   useBuilder,
 } from '../../../services/Builder/BuilderProvider';
+import { BiMessageSquareAdd } from 'react-icons/bi';
 
 const Flows = (props: any) => {
   const [isToolbarActive, setIsToolbarActive] = useState(null);
@@ -34,7 +36,6 @@ const Flows = (props: any) => {
     setIsToolbarActive(true);
   };
 
-
   const calculateCardHeight = (state) => {
     // var height;
     // state.foreach(item => {
@@ -48,6 +49,28 @@ const Flows = (props: any) => {
   };
   return (
     <FlowBuilderWrapper>
+      <div className="header">
+        Flows
+      </div>
+      <div className="stage-action">
+        <BiMessageSquareAdd
+          onClick={() => {
+            let number = builderState.length + 1;
+            const newState = {
+              id: uuidv4(),
+              name: 'Send Message #' + number,
+              position: {
+                x: 1200,
+                y: 50,
+              },
+              height: 200,
+              children: [],
+            };
+            setBuilderState([...builderState, newState]);
+          }}
+        />
+      </div>
+
       {isToolbarActive && <Toolbar id={id} hideToolbar={hideToolbar} />}
       <Stage
         width={getStageWidth()}
@@ -100,6 +123,8 @@ const Flows = (props: any) => {
             builderState.map((item) => {
               return (
                 <Group
+                  x={item.position?.x}
+                  y={item.position?.y}
                   draggable
                   onClick={(e) => showToolbar(item.id)}
                   hitOnDragEnabled={true}
@@ -108,7 +133,9 @@ const Flows = (props: any) => {
                       x: e.target.x(),
                       y: e.target.y(),
                     };
-                    var index = builderState.findIndex((obj) => obj.id == item.id)  
+                    var index = builderState.findIndex(
+                      (obj) => obj.id == item.id
+                    );
                     setBuilderState([
                       ...builderState,
                       (builderState[index].position = updatedPosition),
@@ -179,28 +206,6 @@ const Flows = (props: any) => {
                 </Group>
               );
             })}
-        </Layer>
-        <Layer name="layer_2">
-          <Circle
-            x={document.body.clientWidth}
-            y={40}
-            radius={24}
-            fill="#5850EB"
-            onClick={() => {
-              let number = builderState.length + 1;
-              const newState = {
-                id: uuidv4(),
-                name: 'Send Message #' + number,
-                position: {
-                  x: 1300,
-                  y: 50,
-                },
-                height: 200,
-                children: [],
-              };
-              setBuilderState([...builderState, newState]);
-            }}
-          />
         </Layer>
       </Stage>
     </FlowBuilderWrapper>

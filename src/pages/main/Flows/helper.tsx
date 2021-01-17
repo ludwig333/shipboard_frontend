@@ -1,7 +1,25 @@
 import React from 'react';
-import { Stage, Layer, Rect, Image, Text, Group, Circle } from 'react-konva';
+import {Rect, Image, Text, Group, Shape } from 'react-konva';
 import useImage from 'use-image';
 
+export const Edge = ({ node1, node2 }) => {
+  const p1 = { x: (node1.x + node2.x) / 2, y: node1.y };
+  const p2 = { x: (node1.x + node2.x) / 2, y: node2.y };
+
+  return (
+    <Shape
+      sceneFunc={(context, shape) => {
+        context.beginPath();
+        context.moveTo(node1.x, node1.y);
+        context.bezierCurveTo(p1.x, p1.y, p2.x, p2.y, node2.x, node2.y);
+        // (!) Konva specific method, it is very important
+        context.fillStrokeShape(shape);
+      }}
+      stroke="black"
+      strokeWidth={3}
+    />
+  );
+};
 
 export const handleRenderingChildrens = (item) => {
   var lastPosition = 70;

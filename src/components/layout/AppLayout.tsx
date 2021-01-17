@@ -21,7 +21,7 @@ const AppLayout: React.FC<LayoutProps> = (props) => {
       <Sidebar handleSidebarState={handleSidebarState} />
       <BuilderProvider sidebar={isOpen}>
         <AppContainer>
-          <Breadcrumb />
+          {/* <Breadcrumb /> */}
           {props.children}
         </AppContainer>
       </BuilderProvider>
