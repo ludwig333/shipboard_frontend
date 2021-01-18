@@ -26,6 +26,14 @@ const Flows = (props: any) => {
     layerY: 0,
   });
 
+  const getNextNode = (id) => {
+    if (id) {
+      const nextIndex = builderState.findIndex((obj) => obj.id == id);
+      return builderState[nextIndex].position;
+    }
+    return null;
+  };
+
   const hideToolbar = () => {
     setIsToolbarActive(false);
     setId(0);
@@ -49,9 +57,7 @@ const Flows = (props: any) => {
   };
   return (
     <FlowBuilderWrapper>
-      <div className="header">
-        Flows
-      </div>
+      <div className="header">Flows</div>
       <div className="stage-action">
         <BiMessageSquareAdd
           onClick={() => {
@@ -122,13 +128,20 @@ const Flows = (props: any) => {
             typeof builderState == 'object' &&
             builderState.map((item) => {
               return (
+                <React.Fragment>
+                   {item.next ? (
+                  <Edge
+                    node1={item.position}
+                    node2={getNextNode(item.next)}
+                  />
+                ) : null}
                 <Group
                   x={item.position?.x}
                   y={item.position?.y}
                   draggable
                   onClick={(e) => showToolbar(item.id)}
                   hitOnDragEnabled={true}
-                  onDragEnd={(e) => {
+                  onDragMove={(e) => {
                     var updatedPosition = {
                       x: e.target.x(),
                       y: e.target.y(),
@@ -204,6 +217,7 @@ const Flows = (props: any) => {
                     </>
                   ) : null}
                 </Group>
+              </React.Fragment>
               );
             })}
         </Layer>

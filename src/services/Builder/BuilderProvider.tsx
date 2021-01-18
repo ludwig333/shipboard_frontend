@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 const initialBuilderState = [
   {
-    id: uuidv4(),
+    id: '12kl23-23k23l0-23l2',
     name: 'Send Message #1',
     height: 200,
     position: {
@@ -12,14 +12,15 @@ const initialBuilderState = [
       y: 50,
     },
     children: [],
+    next: '2323-23jljkj23-23jo2i3'
   },
   {
-    id: uuidv4(),
+    id: '2323-23jljkj23-23jo2i3',
     name: 'Send Message #2',
     height: 200,
     position: {
-      x: 700,
-      y: 50,
+      x: 1000,
+      y: 100,
     },
     children: [],
   },

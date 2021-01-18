@@ -5,7 +5,6 @@ import useImage from 'use-image';
 export const Edge = ({ node1, node2 }) => {
   const p1 = { x: (node1.x + node2.x) / 2, y: node1.y };
   const p2 = { x: (node1.x + node2.x) / 2, y: node2.y };
-
   return (
     <Shape
       sceneFunc={(context, shape) => {
@@ -16,7 +15,7 @@ export const Edge = ({ node1, node2 }) => {
         context.fillStrokeShape(shape);
       }}
       stroke="black"
-      strokeWidth={3}
+      strokeWidth={2}
     />
   );
 };
