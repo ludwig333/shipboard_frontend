@@ -55,6 +55,46 @@ const Flows = (props: any) => {
   const getStageWidth = () => {
     return sidebar ? window.innerWidth - 280 : window.innerWidth - 90;
   };
+  const setSelectedTrue = (messageId) => {
+    var previousSelected = getSelectedNode(builderState);
+    console.log(previousSelected);
+    if (previousSelected >= 0) {
+      setBuilderState([
+        ...builderState,
+        (builderState[messageId].isSelected = true),
+        (builderState[previousSelected].isSelected = false),
+      ]);
+    } else {
+      setBuilderState([
+        ...builderState,
+        (builderState[messageId].isSelected = true),
+      ]);
+    }
+  };
+
+  const setHoverTrue = (messageId) => {
+    var previousHover = getHoveredNode(builderState);
+    if (previousHover >= 0) {
+      setBuilderState([
+        ...builderState,
+        (builderState[messageId].isHover = true),
+        (builderState[previousHover].isHover = false),
+      ]);
+    } else {
+      setBuilderState([
+        ...builderState,
+        (builderState[messageId].isHover = true),
+      ]);
+    }
+  };
+
+  const setHoverFalse = (messageId) => {
+    setBuilderState([
+      ...builderState,
+      (builderState[messageId].isHover = false),
+    ]);
+  };
+
   return (
     <FlowBuilderWrapper>
       <div className="header">Flows</div>
@@ -71,6 +111,8 @@ const Flows = (props: any) => {
               },
               height: 200,
               children: [],
+              isHover: false,
+              isSelected: false,
             };
             setBuilderState([...builderState, newState]);
           }}
@@ -126,104 +168,132 @@ const Flows = (props: any) => {
           </Group>
           {builderState &&
             typeof builderState == 'object' &&
-            builderState.map((item) => {
+            builderState.map((item, index) => {
               return (
                 <React.Fragment>
-                   {item.next ? (
-                  <Edge
-                    node1={item.position}
-                    node2={getNextNode(item.next)}
-                  />
-                ) : null}
-                <Group
-                  x={item.position?.x}
-                  y={item.position?.y}
-                  draggable
-                  onClick={(e) => showToolbar(item.id)}
-                  hitOnDragEnabled={true}
-                  onDragMove={(e) => {
-                    var updatedPosition = {
-                      x: e.target.x(),
-                      y: e.target.y(),
-                    };
-                    var index = builderState.findIndex(
-                      (obj) => obj.id == item.id
-                    );
-                    setBuilderState([
-                      ...builderState,
-                      (builderState[index].position = updatedPosition),
-                    ]);
-                  }}>
-                  <Rect
-                    cornerRadius={16}
-                    height={calculateHeightOfMessageBox(item.children)}
-                    width={340}
-                    fill="#FDFDFD"
-                    strokeWidth={1}
-                    shadowColor="black"
-                    shadowOpacity={0.5}
-                    shadowBlur={7}
-                  />
-                  <Circle x={30} y={30} radius={15} fill="#5850EB" />
-                  <Text
-                    x={55}
-                    y={22}
-                    text={item.name}
-                    fontFamily={'Roboto'}
-                    fontSize={20}
-                    fill={'gray'}
-                  />
-                  <Circle
-                    x={280}
-                    y={item.height - 20}
-                    radius={9}
-                    fill="#8392AB"
-                    strokeWidth={1}
-                  />
-                  <Text
-                    x={195}
-                    y={item.height - 25}
-                    text="Next Step"
-                    fontFamily={'Roboto'}
-                    fontSize={15}
-                    fontWeight={300}
-                    fill={'gray'}
-                  />
-                  {typeof item.children == 'object' ? (
-                    <>
-                      {item.children.length > 0 ? (
-                        handleRenderingChildrens(item)
-                      ) : (
-                        <Group>
-                          <Rect
-                            x={20}
-                            y={75}
-                            height={60}
-                            width={300}
-                            fill="#EEF1F4"
-                            cornerRadius={16}
-                          />
-                          <Text
-                            text="No Content"
-                            x={110}
-                            y={95}
-                            fontFamily={'Roboto'}
-                            fontSize={20}
-                            fontWeight={300}
-                            fill={'blue'}
-                          />
-                        </Group>
-                      )}
-                    </>
+                  {item.next ? (
+                    <Edge
+                      height={item.height}
+                      node1={item.position}
+                      node2={getNextNode(item.next)}
+                    />
                   ) : null}
-                </Group>
-              </React.Fragment>
+                  <Group
+                    x={item.position?.x}
+                    y={item.position?.y}
+                    draggable
+                    onClick={(e) => {
+                      showToolbar(item.id);
+                      setSelectedTrue(index);
+                    }}
+                    onMouseEnter={(e) => {
+                      setHoverTrue(index);
+                    }}
+                    onMouseLeave={(e) => {
+                      setHoverFalse(index);
+                    }}
+                    hitOnDragEnabled={true}
+                    onDragMove={(e) => {
+                      var updatedPosition = {
+                        x: e.target.x(),
+                        y: e.target.y(),
+                      };
+                      var index = builderState.findIndex(
+                        (obj) => obj.id == item.id
+                      );
+                      setBuilderState([
+                        ...builderState,
+                        (builderState[index].position = updatedPosition),
+                      ]);
+                    }}>
+                    <Rect
+                      cornerRadius={16}
+                      height={calculateHeightOfMessageBox(item.children)}
+                      width={340}
+                      fill="#FDFDFD"
+                      strokeWidth={5}
+                      shadowColor={getShadowColor(item)}
+                      shadowOpacity={1}
+                      shadowBlur={10}
+                    />
+                    <Circle x={30} y={30} radius={15} fill="#5850EB" />
+                    <Text
+                      x={55}
+                      y={22}
+                      text={item.name}
+                      fontFamily={'Roboto'}
+                      fontSize={20}
+                      fill={'gray'}
+                    />
+                    <Group x={340} y={item.height - 20} onClick={connectEdge}>
+                      <Circle radius={9} fill="#8392AB" strokeWidth={1} />
+                      <Text
+                        x={-80}
+                        y={-8}
+                        text="Next Step"
+                        fontFamily={'Roboto'}
+                        fontSize={15}
+                        fontWeight={300}
+                        fill={'gray'}
+                      />
+                    </Group>
+                    {typeof item.children == 'object' ? (
+                      <>
+                        {item.children.length > 0 ? (
+                          handleRenderingChildrens(item)
+                        ) : (
+                          <Group>
+                            <Rect
+                              x={20}
+                              y={75}
+                              height={60}
+                              width={300}
+                              fill="#EEF1F4"
+                              cornerRadius={16}
+                            />
+                            <Text
+                              text="No Content"
+                              x={110}
+                              y={95}
+                              fontFamily={'Roboto'}
+                              fontSize={20}
+                              fontWeight={300}
+                              fill={'blue'}
+                            />
+                          </Group>
+                        )}
+                      </>
+                    ) : null}
+                  </Group>
+                </React.Fragment>
               );
             })}
         </Layer>
       </Stage>
     </FlowBuilderWrapper>
   );
+};
+
+const connectEdge = () => {
+  console.log('connect');
+};
+
+const getShadowColor = (item) => {
+  if (item.isSelected) {
+    return '#1e824c';
+  } else if (item.isHover) {
+    return '#1f3a93';
+  } else {
+    return 'black';
+  }
+};
+
+const getSelectedNode = (state) => {
+  return state.findIndex((obj) => obj.isSelected == true);
+};
+
+const getHoveredNode = (state) => {
+  return state.findIndex((obj) => obj.isHovered == true);
 };
 
 export default Flows;

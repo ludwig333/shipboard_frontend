@@ -12,7 +12,9 @@ const initialBuilderState = [
       y: 50,
     },
     children: [],
-    next: '2323-23jljkj23-23jo2i3'
+    next: '2323-23jljkj23-23jo2i3',
+    isHover: false,
+    isSelected: false,
   },
   {
     id: '2323-23jljkj23-23jo2i3',
@@ -23,6 +25,8 @@ const initialBuilderState = [
       y: 100,
     },
     children: [],
+    isHover: false,
+    isSelected: false,
   },
 ];
 

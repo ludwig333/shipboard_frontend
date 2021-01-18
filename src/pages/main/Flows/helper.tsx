@@ -2,7 +2,15 @@ import React from 'react';
 import {Rect, Image, Text, Group, Shape } from 'react-konva';
 import useImage from 'use-image';
 
-export const Edge = ({ node1, node2 }) => {
+export const Edge = ({ height, node1, node2 }) => {
+  node1 = {
+    x: node1.x + 300,
+    y: node1.y + 10
+  }
+  node2 = {
+    x: node2.x + 20,
+    y: node2.y + 20
+  }
   const p1 = { x: (node1.x + node2.x) / 2, y: node1.y };
   const p2 = { x: (node1.x + node2.x) / 2, y: node2.y };
   return (
