@@ -5,7 +5,7 @@ import AppLayout from '../components/layout/AppLayout';
 
 interface ProtectedRouteInterface {
   component: any;
-  exact: any;
+  exact?: any;
   path: string;
 }
 

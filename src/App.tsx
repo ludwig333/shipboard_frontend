@@ -37,7 +37,7 @@ const App: React.FC = () => {
             />
             <ProtectedRoute exact path="/app" component={Dashboard} />
             <ProtectedRoute exact path="/bots" component={Bots} />
-            <ProtectedRoute exact path="/flows" component={Flows} />
+            <ProtectedRoute path="/bot/:id" component={Flows} />
             <ProtectedRoute exact path="/templates" component={Templates} />
             <ProtectedRoute exact path="/settings" component={Settings} />
             <Route path="*" component={NotFound} />

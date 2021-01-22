@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useContext, Children } from 'react';
+import React, { useState } from 'react';
+import {withRouter} from 'react-router-dom'
 import { FlowBuilderWrapper } from './styles';
 import { Stage, Layer, Rect, Image, Text, Group, Circle } from 'react-konva';
 import Toolbar from '../../../components/dashboard/builder/Toolbar/index';
@@ -15,7 +16,7 @@ import {
 } from '../../../services/Builder/BuilderProvider';
 import { BiMessageSquareAdd } from 'react-icons/bi';
 
-const Flows = (props: any) => {
+const Flows = (props) => {
   const [isToolbarActive, setIsToolbarActive] = useState(null);
   const [builderState, setBuilderState, sidebar] = useBuilder();
   const [id, setId] = useState(null);
@@ -192,7 +193,7 @@ const Flows = (props: any) => {
   };
   return (
     <FlowBuilderWrapper>
-      <div className="header">Flows</div>
+      <div className="header">Flows of { props.match.params.id}</div>
       <div className="stage-action">
         <BiMessageSquareAdd
           onClick={() => {
@@ -398,4 +399,4 @@ const getHoveredNode = (state) => {
   return state.findIndex((obj) => obj.isHovered == true);
 };
 
-export default Flows;
+export default withRouter(Flows);

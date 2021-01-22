@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Link, Route, Switch } from 'react-router-dom';
 import AppLayout from '../../../components/layout/AppLayout';
 import { PrimaryButton } from '../../../components/common/buttons';
 import BotModal from '../../../components/dashboard/Bots/Modal';
@@ -10,6 +11,8 @@ import { DropdownWrapper } from '../../../components/common/Dropdown/styles';
 import { HiDotsVertical } from 'react-icons/hi';
 import DeleteModal from '../../../components/dashboard/Bots/DeleteModal';
 import { useModal } from '../../../services/Modal/ModalProvider';
+import Flows from '../Flows/index';
+import { ProtectedRoute } from '../../../routes/ProtectedRoute';
 
 type BotType = {
   id: string;
@@ -91,10 +94,11 @@ const Bots = () => {
           <p className="table-col-1">Action</p>
         </div>
 
+        <Router>
         {bots &&
           bots.map((data: BotType) => {
             return (
-              <div className="table-row table-row-data">
+              <Link to={"bot/"+data.id} className="table-row table-row-data">
                 <p className="table-col-1"></p>
                 <p className="table-col-3">{data.name}</p>
                 <p className="table-col-3">-</p>
@@ -123,9 +127,10 @@ const Bots = () => {
                     </div>
                   </DropdownWrapper>
                 </p>
-              </div>
+              </Link>
             );
           })}
+        </Router>
       </TableWrapper>
 
       <Pagination
