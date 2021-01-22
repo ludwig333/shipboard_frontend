@@ -19,6 +19,12 @@ const Flows = (props: any) => {
   const [isToolbarActive, setIsToolbarActive] = useState(null);
   const [builderState, setBuilderState, sidebar] = useBuilder();
   const [id, setId] = useState(null);
+  const [mousePosition, setMousePosition] = useState({
+    x: 0,
+    y: 0,
+  });
+  const [isEdging, setIsSetting] = useState(false);
+  const [isSecondClick, setIsSecondClick] = useState(false);
 
   const [state, setState] = useState({
     layerScale: 1,
@@ -29,9 +35,11 @@ const Flows = (props: any) => {
   const getNextNode = (id) => {
     if (id) {
       const nextIndex = builderState.findIndex((obj) => obj.id == id);
+      if (nextIndex == -1) {
+        return mousePosition;
+      }
       return builderState[nextIndex].position;
     }
-    return null;
   };
 
   const hideToolbar = () => {
@@ -45,56 +53,143 @@ const Flows = (props: any) => {
   };
 
   const calculateCardHeight = (state) => {
-    // var height;
-    // state.foreach(item => {
-    //     if(item.type == )
-    // })
-    return 100;
+    var height;
+    state.foreach((item) => {
+      if (item.type == 'card') {
+        height += item.cards[0].height;
+      } else {
+        height += item.height;
+      }
+    });
+    return height;
   };
 
   const getStageWidth = () => {
     return sidebar ? window.innerWidth - 280 : window.innerWidth - 90;
   };
+
   const setSelectedTrue = (messageId) => {
     var previousSelected = getSelectedNode(builderState);
-    console.log(previousSelected);
     if (previousSelected >= 0) {
-      setBuilderState([
-        ...builderState,
-        (builderState[messageId].isSelected = true),
-        (builderState[previousSelected].isSelected = false),
-      ]);
+      setBuilderState(
+        builderState.map((item, index) => {
+          if (index == messageId) {
+            item.isSelected = true;
+          }
+          if (index == previousSelected) {
+            item.isSelected = false;
+          }
+          return item;
+        })
+      );
     } else {
-      setBuilderState([
-        ...builderState,
-        (builderState[messageId].isSelected = true),
-      ]);
+      setBuilderState(
+        builderState.map((item, index) => {
+          if (index == messageId) {
+            item.isSelected = true;
+          }
+          return item;
+        })
+      );
     }
   };
 
   const setHoverTrue = (messageId) => {
     var previousHover = getHoveredNode(builderState);
     if (previousHover >= 0) {
-      setBuilderState([
-        ...builderState,
-        (builderState[messageId].isHover = true),
-        (builderState[previousHover].isHover = false),
-      ]);
+      setBuilderState(
+        builderState.map((item, index) => {
+          if (index == messageId) {
+            item.isHover = true;
+          }
+          if (index == previousHover) {
+            item.isHover = false;
+          }
+          return item;
+        })
+      );
     } else {
-      setBuilderState([
-        ...builderState,
-        (builderState[messageId].isHover = true),
-      ]);
+      setBuilderState(
+        builderState.map((item, index) => {
+          if (index == messageId) {
+            item.isHover = true;
+          }
+          return item;
+        })
+      );
     }
   };
 
   const setHoverFalse = (messageId) => {
-    setBuilderState([
-      ...builderState,
-      (builderState[messageId].isHover = false),
-    ]);
+    setBuilderState(
+      builderState.map((item, index) => {
+        if (index == messageId) {
+          item.isHover = false;
+        }
+        return item;
+      })
+    );
   };
 
+  const connectEdge = (messageId) => {
+    setIsSetting(true);
+    setBuilderState(
+      builderState.map((item, index) => {
+        if (index == messageId) {
+          item.next = 'dummy';
+        }
+        return item;
+      })
+    );
+  };
+
+  const handleMousePosition = (event) => {
+    if (isEdging) {
+      var point = event.target.getStage().getPointerPosition();
+      setMousePosition({
+        x: point.x,
+        y: point.y,
+      });
+    }
+  };
+
+  const handleClickOnCanvas = () => {
+    setIsSecondClick(true);
+    if (isSecondClick && isEdging) {
+      setIsSetting(false);
+      // window.removeEventListener('mousemove', handleMousePosition);
+      let number = builderState.length + 1;
+      var id = uuidv4();
+      const newState = {
+        id: id,
+        name: 'Send Message #' + number,
+        position: {
+          x: mousePosition.x,
+          y: mousePosition.y,
+        },
+        height: 200,
+        children: [],
+        isHover: false,
+        isSelected: false,
+      };
+      setIsSecondClick(false);
+
+      //find the message with next: dummy
+      var dummyNextMessage = builderState.findIndex(
+        (obj) => obj.next === 'dummy'
+      );
+
+      setBuilderState(
+        builderState.map((item, index) => {
+          if (index == dummyNextMessage) {
+            item.next = id;
+          }
+          return item;
+        })
+      );
+      setBuilderState([...builderState, newState]);
+    }
+  };
   return (
     <FlowBuilderWrapper>
       <div className="header">Flows</div>
@@ -125,8 +220,10 @@ const Flows = (props: any) => {
         height={window.innerHeight - 70}
         scaleX={state.layerScale}
         scaleY={state.layerScale}
+        onMouseMove={handleMousePosition}
         x={0}
-        y={0}>
+        y={0}
+        onClick={handleClickOnCanvas}>
         <Layer name="layer_1" draggable onWheel={handleWheel}>
           <Rect
             x={-window.innerWidth}
@@ -170,7 +267,7 @@ const Flows = (props: any) => {
             typeof builderState == 'object' &&
             builderState.map((item, index) => {
               return (
-                <React.Fragment>
+                <React.Fragment key={item.id}>
                   {item.next ? (
                     <Edge
                       height={item.height}
@@ -201,10 +298,14 @@ const Flows = (props: any) => {
                       var index = builderState.findIndex(
                         (obj) => obj.id == item.id
                       );
-                      setBuilderState([
-                        ...builderState,
-                        (builderState[index].position = updatedPosition),
-                      ]);
+                      setBuilderState(
+                        builderState.map((item, ind) => {
+                          if (ind == index) {
+                            item.position = updatedPosition;
+                          }
+                          return item;
+                        })
+                      );
                     }}>
                     <Rect
                       cornerRadius={16}
@@ -225,7 +326,10 @@ const Flows = (props: any) => {
                       fontSize={20}
                       fill={'gray'}
                     />
-                    <Group x={340} y={item.height - 20} onClick={connectEdge}>
+                    <Group
+                      x={340}
+                      y={item.height - 20}
+                      onClick={(e) => connectEdge(index)}>
                       <Circle radius={9} fill="#8392AB" strokeWidth={1} />
                       <Text
                         x={-80}
@@ -242,25 +346,27 @@ const Flows = (props: any) => {
                         {item.children.length > 0 ? (
                           handleRenderingChildrens(item)
                         ) : (
-                          <Group>
-                            <Rect
-                              x={20}
-                              y={75}
-                              height={60}
-                              width={300}
-                              fill="#EEF1F4"
-                              cornerRadius={16}
-                            />
-                            <Text
-                              text="No Content"
-                              x={110}
-                              y={95}
-                              fontFamily={'Roboto'}
-                              fontSize={20}
-                              fontWeight={300}
-                              fill={'blue'}
-                            />
-                          </Group>
+                          <React.Fragment key={item}>
+                            <Group>
+                              <Rect
+                                x={20}
+                                y={75}
+                                height={60}
+                                width={300}
+                                fill="#EEF1F4"
+                                cornerRadius={16}
+                              />
+                              <Text
+                                text="No Content"
+                                x={110}
+                                y={95}
+                                fontFamily={'Roboto'}
+                                fontSize={20}
+                                fontWeight={300}
+                                fill={'blue'}
+                              />
+                            </Group>
+                          </React.Fragment>
                         )}
                       </>
                     ) : null}
@@ -272,10 +378,6 @@ const Flows = (props: any) => {
       </Stage>
     </FlowBuilderWrapper>
   );
-};
-
-const connectEdge = () => {
-  console.log('connect');
 };
 
 const getShadowColor = (item) => {

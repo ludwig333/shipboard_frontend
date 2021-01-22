@@ -73,15 +73,22 @@ const FormCard = ({ messageId, childId }) => {
         }),
       ]);
     } else {
-      setBuilderState([
-        ...builderState,
-        (builderState[messageId].children[childIndex].cards[
-          cardIndex
-        ].active = true),
-        (builderState[messageId].children[childIndex].cards[
-          activeCardIndex
-        ].active = false),
-      ]);
+      setBuilderState(builderState.map((message, index) => { 
+        if (index == messageId) { 
+          message.children.map((child, ind) => { 
+            if (ind == childIndex) {
+              child.cards.map((card, inx) => { 
+                if (inx == cardIndex) { 
+                  card.active = true
+                }
+                if (inx == activeCardIndex) { 
+                  card.active = false
+                }
+              })
+            }
+          })
+        }
+      }));
     }
   };
 
@@ -110,19 +117,25 @@ const FormCard = ({ messageId, childId }) => {
 
     reader.onloadend = () => {
       var height = cardRef.current.scrollHeight;
-      var updatedCard = {
-        ...builderState[messageId].children[childIndex].cards[cardIndex],
-        selectedImage: data.image[0],
-        imagePreviewUrl: reader.result,
-        height,
-      };
 
-      setBuilderState([
-        ...builderState,
-        (builderState[messageId].children[childIndex].cards[
-          cardIndex
-        ] = updatedCard),
-      ]);
+      setBuilderState(
+        builderState.map((item, index) => {
+          if (index == messageId) {
+            item.children.map((child, ind) => {
+              if (ind == childIndex) {
+                child.cards.map((card, s) => {
+                  if (s == cardIndex) {
+                    card.selectedImage = data.image[0];
+                    card.imagePreviewUrl = reader.result;
+                    card.height = height;
+                  }
+                });
+              }
+            });
+          }
+          return item;
+        })
+      );
     };
 
     reader.readAsDataURL(data.image[0]);
@@ -131,42 +144,61 @@ const FormCard = ({ messageId, childId }) => {
   const onHeadingChange = (data, id) => {
     let cardIndex = getCardIndex(id);
     var height = cardRef.current.scrollHeight;
-    var updatedCard = {
-      ...builderState[messageId].children[childIndex].cards[cardIndex],
-      heading: data.heading,
-      height,
-    };
-    setBuilderState([
-      ...builderState,
-      (builderState[messageId].children[childIndex].cards[
-        cardIndex
-      ] = updatedCard),
-    ]);
+
+    setBuilderState(
+      builderState.map((item, index) => {
+        if (index == messageId) {
+          item.children.map((child, ind) => {
+            if (ind == childIndex) {
+              child.cards.map((card, s) => {
+                if (s == cardIndex) {
+                  card.heading = data.heading;
+                  card.height = height;
+                }
+              });
+            }
+          });
+        }
+        return item;
+      })
+    );
   };
 
   const onParagraphChange = (data, id) => {
     let cardIndex = getCardIndex(id);
     var height = cardRef.current.scrollHeight;
-    var updatedCard = {
-      ...builderState[messageId].children[childIndex].cards[cardIndex],
-      body: data.body,
-      height,
-    };
-    setBuilderState([
-      ...builderState,
-      (builderState[messageId].children[childIndex].cards[
-        cardIndex
-      ] = updatedCard),
-    ]);
+
+    setBuilderState(
+      builderState.map((item, index) => {
+        if (index == messageId) {
+          item.children.map((child, ind) => {
+            if (ind == childIndex) {
+              child.cards.map((card, s) => {
+                if (s == cardIndex) {
+                  card.body = data.body;
+                  card.height = height;
+                }
+              });
+            }
+          });
+        }
+        return item;
+      })
+    );
   };
 
   const handleDelete = () => {
-    setBuilderState([
-      ...builderState,
-      builderState[messageId].height -= 250,
-      builderState[messageId].children.splice(childIndex, 1),
-    ]);
+    setBuilderState(
+      builderState.map((item, index) => {
+        if (index == messageId) {
+          item.height -= 250;
+          item.children.splice(childIndex, 1);
+        }
+        return item;
+      })
+    );
   };
+
   //UseEffects
   useEffect(() => {
     if (headingRef.current) {

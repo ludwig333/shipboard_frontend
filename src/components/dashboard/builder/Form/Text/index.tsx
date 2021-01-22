@@ -20,24 +20,33 @@ const FormText = ({ messageId, childId }) => {
 
   const onTextChange = (data) => {
     var height = textAreaRef.current.scrollHeight;
-
-    var updatedCard = {
-      ...builderState[messageId].children[childIndex],
-      value: data.text, height
-    };
-    setBuilderState([
-      ...builderState,
-      (builderState[messageId].children[childIndex] = updatedCard),
-    ]);
+    setBuilderState(
+      builderState.map((item, index) => {
+        if (index == messageId) {
+          item.children.map((child, ind) => {
+            if (ind == childIndex) {
+              child.value = data.text;
+              child.height = height;
+            }
+          });
+        }
+        return item;
+      })
+    );
   };
 
   const handleDelete = () => {
-    var height = builderState[messageId].height - textAreaRef.current.scrollHeight;
-
-    setBuilderState([
-      ...builderState, builderState[messageId].height = height,
-      builderState[messageId].children.splice(childIndex, 1),
-    ]);
+    var height =
+      builderState[messageId].height - textAreaRef.current.scrollHeight;
+    setBuilderState(
+      builderState.map((item, index) => {
+        if (index == messageId) {
+          item.height = height;
+          item.children.splice(childIndex,1)
+        }
+        return item;
+      })
+    );
   };
 
   useEffect(() => {
@@ -49,7 +58,7 @@ const FormText = ({ messageId, childId }) => {
 
   return (
     <AddTextWrapper>
-       <button className="action-btn">
+      <button className="action-btn">
         <BiTrash onClick={handleDelete} />
       </button>
       <div className={isChangingBody ? 'card-body active' : 'card-body'}>
@@ -67,9 +76,9 @@ const FormText = ({ messageId, childId }) => {
         </form>
       </div>
 
-      {/* <AddTextButton height="4rem" width="100%">
+      <AddTextButton height="4rem" width="100%">
         Add Button
-      </AddTextButton> */}
+      </AddTextButton>
     </AddTextWrapper>
   );
 };

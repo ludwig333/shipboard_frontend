@@ -22,10 +22,14 @@ const Toolbar = ({ id, hideToolbar }) => {
   const objIndex = builderState.findIndex((obj) => obj.id == id);
 
   const onChangeTitle = (data) => {
-    setBuilderState([
-      ...builderState,
-      (builderState[objIndex].name = data.title),
-    ]);
+    setBuilderState(
+      builderState.map((item, ind) => {
+        if (ind == objIndex) {
+         item.name = data.title
+        }
+        return item;
+      })
+    );
   };
 
   //UseEffects
@@ -81,59 +85,70 @@ const ToolbarButtons = ({ index }) => {
 
   const addText = () => {
     let height = builderState[index].height;
-    height = height + 30;
-    setBuilderState([
-      ...builderState,
-      (builderState[index].height = height),
-      builderState[index].children.push({
-        id: uuidv4(),
-        type: 'text',
-        value: 'Change text',
-        height: 30,
-      }),
-    ]);
+    height = height + 50;
+    setBuilderState(
+      builderState.map((item, ind) => {
+        if (ind == index) {
+          item.height = height;
+          item.children.push({
+            id: uuidv4(),
+            type: 'text',
+            value: 'Change text',
+            height: 50,
+          });
+        }
+        return item;
+      })
+    );
   };
 
   const addCard = () => {
     let height = builderState[index].height;
     height = height + 150;
 
-    setBuilderState([
-      ...builderState,
-      (builderState[index].height = height),
-      builderState[index].children.push({
-        id: uuidv4(),
-        type: 'card',
-        cards: [
-          {
+    setBuilderState(
+      builderState.map((item, ind) => {
+        if (ind == index) {
+          item.height = height;
+          item.children.push({
             id: uuidv4(),
-            active: true,
-            selectedImage: null,
-            imagePreviewUrl: '',
-            heading: 'subtitle #11',
-            body: 'This is the body paragraph',
-            height: 250,
-          },
-        ],
-      }),
-    ]);
+            type: 'card',
+            cards: [
+              {
+                id: uuidv4(),
+                active: true,
+                selectedImage: null,
+                imagePreviewUrl: '',
+                heading: 'subtitle #11',
+                body: 'This is the body paragraph',
+                height: 150,
+              },
+            ],
+          });
+        }
+        return item;
+      })
+    );
   };
 
   const addImage = () => {
     let height = builderState[index].height;
     height = height + 150;
-
-    setBuilderState([
-      ...builderState,
-      (builderState[index].height = height),
-      builderState[index].children.push({
-        id: uuidv4(),
-        type: 'image',
-        height: 150,
-        imagePreviewUrl: '',
-        selectedImage: null,
-      }),
-    ]);
+    setBuilderState(
+      builderState.map((item, ind) => {
+        if (ind == index) {
+          item.height = height;
+          item.children.push({
+            id: uuidv4(),
+            type: 'image',
+            height: 150,
+            imagePreviewUrl: '',
+            selectedImage: null,
+          });
+        }
+        return item;
+      })
+    );
   };
 
   return (

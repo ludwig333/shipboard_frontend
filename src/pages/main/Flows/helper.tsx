@@ -36,7 +36,6 @@ export const handleRenderingChildrens = (item) => {
       lastPosition = lastPosition + child.cards[0].height + 10;
     } else {
       lastPosition = lastPosition + child.height + 40;
-      console.log("lstPot", lastPosition);
 
     }
     return getChildren(child, yposition);
@@ -46,18 +45,18 @@ export const handleRenderingChildrens = (item) => {
 export const calculateHeightOfMessageBox = (message) => {
   var height = 200;
 
-  // if (typeof message == 'object') {
-  //   if (message.length > 0) {
-  //     message.forEach((item) => {
-  //       if (item.type === 'card') {
-  //         var activeCard = getActiveCard(item.cards);
-
-  //         height = height + item.cards[activeCard].height;
-  //       }
-  //       height = height + item.height;
-  //     });
-  //   }
-  // }
+  if (typeof message == 'object') {
+    if (message.length > 0) {
+      message.forEach((item) => {
+        if (item.type === 'card') {
+          var activeCard = getActiveCard(item.cards);
+          height = height + item.cards[activeCard].height;
+        } else {
+          height = height + item.height;
+        }
+      });
+    }
+  }
   return height;
 };
 export const getChildren = (children, lastPosition) => {
