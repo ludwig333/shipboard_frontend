@@ -16,6 +16,11 @@ export type BotDataType = {
   name: string
 }
 
+// FLOW TYPES
+export type FlowDataType = {
+  name: string
+  bot: string
+}
 
 // FLOW BUILDER
 

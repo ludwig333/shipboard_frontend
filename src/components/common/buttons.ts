@@ -2,6 +2,9 @@ import styled from 'styled-components';
 import Toolbar from '../dashboard/builder/Toolbar/index';
 
 export const StyledButton = styled.button`
+  display:flex;
+  align-items:center;
+  justify-content:center;
   background: #ffffff;
   border-radius: 12px 12px 12px 0px;
   border: 2px solid #5850eb;
@@ -16,6 +19,7 @@ export const StyledButton = styled.button`
 
 export const PrimaryButton = styled(StyledButton)`
   background-color: #5850eb;
+  height: 2.5rem;
   color: #ffffff;
   margin-right: 0rem;
   &:focus {
@@ -28,6 +32,7 @@ export const FormButton = styled(PrimaryButton)`
   height: 3.5rem;
   font-size: 1.6rem;
   font-weight: 600;
+  margin-top: 1.5rem;
 `;
 
 export const AuthButton = styled(StyledButton)`

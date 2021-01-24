@@ -17,7 +17,9 @@ const Pagination: React.FC<PaginationPropsInteface> = (props) => {
       <PaginationItem>
         <BiChevronLeft
           onClick={() => {
-            props.onChange(props.activePage - 1);
+            if (props.activePage != 0) {
+              props.onChange(props.activePage - 1);
+            }
           }}
         />
       </PaginationItem>
@@ -30,7 +32,8 @@ const Pagination: React.FC<PaginationPropsInteface> = (props) => {
                 isActive={isActive}
                 onClick={() => {
                   props.onChange(page);
-                }}>
+                }}
+              key={index}>
                 {page}
               </PaginationItem>
             );
@@ -41,7 +44,9 @@ const Pagination: React.FC<PaginationPropsInteface> = (props) => {
       <PaginationItem>
         <BiChevronRight
           onClick={() => {
-            props.onChange(props.activePage + 1);
+            if (props.activePage != props.total) {
+              props.onChange(props.activePage + 1);
+            }
           }}
         />
       </PaginationItem>

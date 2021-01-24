@@ -1,402 +1,158 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { GridWrapper } from '../../../components/common/grid';
+import { PrimaryButton } from './../../../components/common/buttons';
+import { HiDotsVertical } from 'react-icons/hi';
+import { DropdownWrapper } from '../../../components/common/Dropdown/styles';
+import { useModal } from '../../../services/Modal/ModalProvider';
+import { getFlows } from '../../../apis/flows';
 import {withRouter} from 'react-router-dom'
-import { FlowBuilderWrapper } from './styles';
-import { Stage, Layer, Rect, Image, Text, Group, Circle } from 'react-konva';
-import Toolbar from '../../../components/dashboard/builder/Toolbar/index';
-import { v4 as uuidv4 } from 'uuid';
-import {
-  handleRenderingChildrens,
-  calculateHeightOfMessageBox,
-  handleWheel,
-  Edge,
-} from './helper';
-import {
-  BuilderContext,
-  useBuilder,
-} from '../../../services/Builder/BuilderProvider';
-import { BiMessageSquareAdd } from 'react-icons/bi';
+import FlowCreateModal from '../../../components/dashboard/Flows/CreateModal';
+import FlowEditModal from '../../../components/dashboard/Flows/EditModal';
+import FlowDeleteModal from '../../../components/dashboard/Flows/DeleteModal';
+import Pagination from '../../../components/common/Pagination/index';
+
+
+
+type FlowType = {
+  id: string;
+  name: string;
+  last_modified: string;
+};
 
 const Flows = (props) => {
-  const [isToolbarActive, setIsToolbarActive] = useState(null);
-  const [builderState, setBuilderState, sidebar] = useBuilder();
-  const [id, setId] = useState(null);
-  const [mousePosition, setMousePosition] = useState({
-    x: 0,
-    y: 0,
-  });
-  const [isEdging, setIsSetting] = useState(false);
-  const [isSecondClick, setIsSecondClick] = useState(false);
+  const { showModal, hideModal } = useModal();
+  const [flows, setFlows] = useState<Array<FlowType>>();
+  const [pageNumber, setPageNumber] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
+  const [lastPage, setLastPage] = useState(1);
 
-  const [state, setState] = useState({
-    layerScale: 1,
-    layerX: 0,
-    layerY: 0,
-  });
+  const botId = props.match.params.id;
 
-  const getNextNode = (id) => {
-    if (id) {
-      const nextIndex = builderState.findIndex((obj) => obj.id == id);
-      if (nextIndex == -1) {
-        return mousePosition;
-      }
-      return builderState[nextIndex].position;
-    }
-  };
-
-  const hideToolbar = () => {
-    setIsToolbarActive(false);
-    setId(0);
-  };
-
-  const showToolbar = (id) => {
-    setId(id);
-    setIsToolbarActive(true);
-  };
-
-  const calculateCardHeight = (state) => {
-    var height;
-    state.foreach((item) => {
-      if (item.type == 'card') {
-        height += item.cards[0].height;
-      } else {
-        height += item.height;
-      }
-    });
-    return height;
-  };
-
-  const getStageWidth = () => {
-    return sidebar ? window.innerWidth - 280 : window.innerWidth - 90;
-  };
-
-  const setSelectedTrue = (messageId) => {
-    var previousSelected = getSelectedNode(builderState);
-    if (previousSelected >= 0) {
-      setBuilderState(
-        builderState.map((item, index) => {
-          if (index == messageId) {
-            item.isSelected = true;
-          }
-          if (index == previousSelected) {
-            item.isSelected = false;
-          }
-          return item;
-        })
-      );
-    } else {
-      setBuilderState(
-        builderState.map((item, index) => {
-          if (index == messageId) {
-            item.isSelected = true;
-          }
-          return item;
-        })
-      );
-    }
-  };
-
-  const setHoverTrue = (messageId) => {
-    var previousHover = getHoveredNode(builderState);
-    if (previousHover >= 0) {
-      setBuilderState(
-        builderState.map((item, index) => {
-          if (index == messageId) {
-            item.isHover = true;
-          }
-          if (index == previousHover) {
-            item.isHover = false;
-          }
-          return item;
-        })
-      );
-    } else {
-      setBuilderState(
-        builderState.map((item, index) => {
-          if (index == messageId) {
-            item.isHover = true;
-          }
-          return item;
-        })
-      );
-    }
-  };
-
-  const setHoverFalse = (messageId) => {
-    setBuilderState(
-      builderState.map((item, index) => {
-        if (index == messageId) {
-          item.isHover = false;
-        }
-        return item;
+  const getFlowsData = (bot:string, pageNumber: number) => {
+    getFlows(bot, pageNumber)
+      .then((response) => {
+        setFlows(response.data);
+        setPageNumber(response.meta.current_page);
+        setLastPage(response.meta.last_page);
       })
-    );
-  };
-
-  const connectEdge = (messageId) => {
-    setIsSetting(true);
-    setBuilderState(
-      builderState.map((item, index) => {
-        if (index == messageId) {
-          item.next = 'dummy';
-        }
-        return item;
+      .catch((err) => {
+        console.log(err);
       })
-    );
-  };
-
-  const handleMousePosition = (event) => {
-    if (isEdging) {
-      var point = event.target.getStage().getPointerPosition();
-      setMousePosition({
-        x: point.x,
-        y: point.y,
+      .finally(() => {
+        setIsLoading(false);
       });
-    }
   };
 
-  const handleClickOnCanvas = () => {
-    setIsSecondClick(true);
-    if (isSecondClick && isEdging) {
-      setIsSetting(false);
-      // window.removeEventListener('mousemove', handleMousePosition);
-      let number = builderState.length + 1;
-      var id = uuidv4();
-      const newState = {
-        id: id,
-        name: 'Send Message #' + number,
-        position: {
-          x: mousePosition.x,
-          y: mousePosition.y,
-        },
-        height: 200,
-        children: [],
-        isHover: false,
-        isSelected: false,
-      };
-      setIsSecondClick(false);
+  useEffect(() => {
+    getFlowsData(botId, pageNumber);
+  }, [pageNumber, lastPage]);
 
-      //find the message with next: dummy
-      var dummyNextMessage = builderState.findIndex(
-        (obj) => obj.next === 'dummy'
-      );
 
-      setBuilderState(
-        builderState.map((item, index) => {
-          if (index == dummyNextMessage) {
-            item.next = id;
-          }
-          return item;
-        })
-      );
-      setBuilderState([...builderState, newState]);
-    }
+  const handleCreateOpen = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    showModal(() => (
+      <FlowCreateModal bot={botId} hideModal={hideModal} handleCreateFlow={ handleCreateFlow } />
+    ));
   };
-  return (
-    <FlowBuilderWrapper>
-      <div className="header">Flows of { props.match.params.id}</div>
-      <div className="stage-action">
-        <BiMessageSquareAdd
-          onClick={() => {
-            let number = builderState.length + 1;
-            const newState = {
-              id: uuidv4(),
-              name: 'Send Message #' + number,
-              position: {
-                x: 1200,
-                y: 50,
-              },
-              height: 200,
-              children: [],
-              isHover: false,
-              isSelected: false,
-            };
-            setBuilderState([...builderState, newState]);
-          }}
-        />
-      </div>
 
-      {isToolbarActive && <Toolbar id={id} hideToolbar={hideToolbar} />}
-      <Stage
-        width={getStageWidth()}
-        height={window.innerHeight - 70}
-        scaleX={state.layerScale}
-        scaleY={state.layerScale}
-        onMouseMove={handleMousePosition}
-        x={0}
-        y={0}
-        onClick={handleClickOnCanvas}>
-        <Layer name="layer_1" draggable onWheel={handleWheel}>
-          <Rect
-            x={-window.innerWidth}
-            y={-window.innerHeight}
-            width={window.innerWidth * 3}
-            height={window.innerHeight * 3}
-            fill=""
-          />
-          <Group draggable x={200} y={200}>
-            <Rect
-              cornerRadius={16}
-              width={300}
-              height={100}
-              fill="#FDFDFD"
-              strokeWidth={2}
-              shadowColor="gray"
-              shadowOpacity={0.7}
-              shadowBlur={2}
-            />
-            <Circle x={30} y={30} radius={15} fill="green" />
-            <Text
-              x={55}
-              y={22}
-              text="Starting Step"
-              fontFamily={'Roboto'}
-              fontSize={20}
-              fill={'gray'}
-            />
-            <Circle x={280} y={80} radius={9} fill="#8392AB" strokeWidth={1} />
-            <Text
-              x={195}
-              y={72}
-              text="Next Step"
-              fontFamily={'Roboto'}
-              fontSize={15}
-              fontWeight={300}
-              fill={'gray'}
-            />
-          </Group>
-          {builderState &&
-            typeof builderState == 'object' &&
-            builderState.map((item, index) => {
-              return (
-                <React.Fragment key={item.id}>
-                  {item.next ? (
-                    <Edge
-                      height={item.height}
-                      node1={item.position}
-                      node2={getNextNode(item.next)}
-                    />
-                  ) : null}
-                  <Group
-                    x={item.position?.x}
-                    y={item.position?.y}
-                    draggable
-                    onClick={(e) => {
-                      showToolbar(item.id);
-                      setSelectedTrue(index);
-                    }}
-                    onMouseEnter={(e) => {
-                      setHoverTrue(index);
-                    }}
-                    onMouseLeave={(e) => {
-                      setHoverFalse(index);
-                    }}
-                    hitOnDragEnabled={true}
-                    onDragMove={(e) => {
-                      var updatedPosition = {
-                        x: e.target.x(),
-                        y: e.target.y(),
-                      };
-                      var index = builderState.findIndex(
-                        (obj) => obj.id == item.id
-                      );
-                      setBuilderState(
-                        builderState.map((item, ind) => {
-                          if (ind == index) {
-                            item.position = updatedPosition;
-                          }
-                          return item;
-                        })
-                      );
-                    }}>
-                    <Rect
-                      cornerRadius={16}
-                      height={calculateHeightOfMessageBox(item.children)}
-                      width={340}
-                      fill="#FDFDFD"
-                      strokeWidth={5}
-                      shadowColor={getShadowColor(item)}
-                      shadowOpacity={1}
-                      shadowBlur={10}
-                    />
-                    <Circle x={30} y={30} radius={15} fill="#5850EB" />
-                    <Text
-                      x={55}
-                      y={22}
-                      text={item.name}
-                      fontFamily={'Roboto'}
-                      fontSize={20}
-                      fill={'gray'}
-                    />
-                    <Group
-                      x={340}
-                      y={item.height - 20}
-                      onClick={(e) => connectEdge(index)}>
-                      <Circle radius={9} fill="#8392AB" strokeWidth={1} />
-                      <Text
-                        x={-80}
-                        y={-8}
-                        text="Next Step"
-                        fontFamily={'Roboto'}
-                        fontSize={15}
-                        fontWeight={300}
-                        fill={'gray'}
-                      />
-                    </Group>
-                    {typeof item.children == 'object' ? (
-                      <>
-                        {item.children.length > 0 ? (
-                          handleRenderingChildrens(item)
-                        ) : (
-                          <React.Fragment key={item}>
-                            <Group>
-                              <Rect
-                                x={20}
-                                y={75}
-                                height={60}
-                                width={300}
-                                fill="#EEF1F4"
-                                cornerRadius={16}
-                              />
-                              <Text
-                                text="No Content"
-                                x={110}
-                                y={95}
-                                fontFamily={'Roboto'}
-                                fontSize={20}
-                                fontWeight={300}
-                                fill={'blue'}
-                              />
-                            </Group>
-                          </React.Fragment>
-                        )}
-                      </>
-                    ) : null}
-                  </Group>
-                </React.Fragment>
-              );
-            })}
-        </Layer>
-      </Stage>
-    </FlowBuilderWrapper>
-  );
-};
+  const handleEditOpen = (data: FlowType) => {
+    showModal(() => (
+      <FlowEditModal hideModal={hideModal} flow={data} handleEditFlow={ handleEditFlow } />
+    ));
+  };
 
-const getShadowColor = (item) => {
-  if (item.isSelected) {
-    return '#1e824c';
-  } else if (item.isHover) {
-    return '#1f3a93';
-  } else {
-    return 'black';
+  const handleDeleteConfirmation = (data: FlowType) => {
+    showModal(() => (
+      <FlowDeleteModal hideModal={hideModal} flow={data} handleDeleteFlow={ handleDeleteFlow }/>
+    ));
+  };
+
+  const handlePageChange = (pageNumber: number) => {
+    setPageNumber(pageNumber);
+  };
+
+  const handleCreateFlow = (newFlow: FlowType) => { 
+    const newFlowList = flows.concat(newFlow);
+    setFlows(newFlowList)
   }
-};
 
-const getSelectedNode = (state) => {
-  return state.findIndex((obj) => obj.isSelected == true);
-};
+  const handleEditFlow = (data) => {
+    const flowId = flows.findIndex(
+      (obj) => obj.id == data.id
+    );
+    setFlows(flows.map((item, index) => {
+      if (index == flowId) {
+        item.name = data.name
+      }
+      return item;
+    }));
+  }
 
-const getHoveredNode = (state) => {
-  return state.findIndex((obj) => obj.isHovered == true);
+  const handleDeleteFlow = (id) => {
+    const flowId = flows.findIndex(
+      (obj) => obj.id == id
+    );
+
+    setFlows(flows.splice(flowId, 1));
+  }
+  
+  return (
+    <React.Fragment>
+    <div className="page-header">
+      <h1 className="main-heading">Flows</h1>
+        <PrimaryButton onClick={handleCreateOpen}>Add Flow</PrimaryButton>
+    </div>
+      <GridWrapper>
+        <div className="grid-row">
+          {flows && flows.map((data: FlowType) => {
+            return (
+              <React.Fragment key={ data.id }>
+                <div className="grid-item">
+                  <div className="grid-item-wrapper">
+                    <div className="grid-item-container">
+                      <div className="image">
+                        Image
+                      </div>
+                      <div className="tag">
+                        <p>{data.name}</p>
+                        <DropdownWrapper>
+                          <label className="dropbtn">
+                            <HiDotsVertical />
+                          </label>
+                          <div className="dropdown-content">
+                            <p
+                              onClick={() => {
+                                handleEditOpen(data);
+                              }}>
+                              Edit
+                            </p>
+                            <p
+                              onClick={() => {
+                                handleDeleteConfirmation(data);
+                              }}>
+                              Delete
+                            </p>
+                          </div>
+                        </DropdownWrapper>
+                      </div>           
+                   </div>
+                 </div>
+               </div>
+             </React.Fragment>
+            );
+          })}
+      </div>
+    </GridWrapper>
+
+    <Pagination
+      activePage={pageNumber}
+      total={lastPage}
+      onChange={handlePageChange}
+    />
+  </React.Fragment>
+
+   );
 };
 
 export default withRouter(Flows);

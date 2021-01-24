@@ -40,18 +40,18 @@ const AppContainer = styled.div`
   margin-left: -2rem;
   flex-grow: 1;
 
-  h1 {
-    margin-top: 2rem;
-    margin-left: 2rem;
-  }
-
   .page-header {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin: 2rem;
 
     .button {
       align-self: center;
     }
+  }
+
+  .container {
+    margin: 0 4rem;
   }
 `;

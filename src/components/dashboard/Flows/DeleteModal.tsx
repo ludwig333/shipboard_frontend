@@ -1,20 +1,20 @@
 import React from 'react';
 import { FormHeader, FormSubHeader } from '../../common/typography';
 import { FormButton } from '../../common/buttons';
-import { deleteBot } from '../../../apis/bots';
+import { deleteFlow } from '../../../apis/flows';
 import { toast } from 'react-toastify';
 
-const BotDeleteModal = ({ hideModal, bot, handleDeleteBot }) => {
+const FlowDeleteModal = ({ hideModal, flow, handleDeleteFlow }) => {
   const [isLoading, setIsLoading] = React.useState(false);
 
   const onSubmit = (event) => {
     event.preventDefault();
     setIsLoading(true);
-    deleteBot(bot.id)
+    deleteFlow(flow.id)
       .then((response) => {
-        handleDeleteBot(bot.id)
+        handleDeleteFlow(flow.id)
         hideModal();
-        toast.success("Bot deleted successfully");
+        toast.success("Flow deleted successfully");
 
       }).catch((err) => { 
         toast.error('Something went wrong')
@@ -33,7 +33,7 @@ const BotDeleteModal = ({ hideModal, bot, handleDeleteBot }) => {
         <div className="modal-content">
           <form className="bot-create-form" onSubmit={onSubmit}>
             <FormSubHeader className="last-input">
-              Are you sure you want to delete bot "{ bot.name }"?
+              Are you sure you want to delete flow "{ flow.name }"?
             </FormSubHeader>
             <FormButton type="submit" disabled={isLoading}>
             {isLoading ? 'Loading...' : 'Delete'}
@@ -45,4 +45,4 @@ const BotDeleteModal = ({ hideModal, bot, handleDeleteBot }) => {
   );
 };
 
-export default BotDeleteModal;
+export default FlowDeleteModal;

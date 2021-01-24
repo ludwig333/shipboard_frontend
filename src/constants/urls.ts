@@ -9,7 +9,9 @@ const urls = {
   logOut: `${baseUrl}/logout`,
   
   bots: `${baseUrl}/bots`,
-  configureBots: `${baseUrl}/configure`
+  configureBots: `${baseUrl}/configure`,
+
+  flows: `${baseUrl}/flows`,
 };
 
 export default urls;
