@@ -93,8 +93,7 @@ const Flows = (props) => {
     const flowId = flows.findIndex(
       (obj) => obj.id == id
     );
-
-    setFlows(flows.splice(flowId, 1));
+    flows.splice(flowId, 1);
   }
   
   return (

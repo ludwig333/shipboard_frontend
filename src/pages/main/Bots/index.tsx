@@ -90,8 +90,7 @@ const Bots = () => {
     const botId = bots.findIndex(
       (obj) => obj.id == id
     );
-
-    setBots(bots.splice(botId, 1));
+    bots.splice(botId, 1);
   }
   
 
