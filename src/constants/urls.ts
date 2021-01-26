@@ -14,6 +14,8 @@ const urls = {
   flows: `${baseUrl}/flows`,
   
   messages: `${baseUrl}/messages`,
+
+  texts: `${baseUrl}/texts`,
 };
 
 export default urls;

@@ -10,6 +10,7 @@ import FormText from '../Form/Text/index';
 import FormCard from '../Form/Card/index';
 import { updateMessage } from '../../../../apis/messages';
 import { toast } from 'react-toastify';
+import { saveText } from '../../../../apis/texts';
 
 
 const Toolbar = ({ id, hideToolbar }) => {
@@ -80,7 +81,7 @@ const Toolbar = ({ id, hideToolbar }) => {
               </React.Fragment>
             )}
           <VerticalGap size="3" />
-          <ToolbarButtons index={objIndex} />
+        <ToolbarButtons id={id} index={objIndex} />
         </ToolbarMenu>
       }
     </ToolbarWrapper>
@@ -89,26 +90,31 @@ const Toolbar = ({ id, hideToolbar }) => {
 
 export default Toolbar;
 
-const ToolbarButtons = ({ index }) => {
+const ToolbarButtons = ({ id, index }) => {
   const [builderState, setBuilderState] = useContext(BuilderContext);
 
   const addText = () => {
-    let height = builderState[index].height;
+    var height = builderState[index].height;
     height = height + 50;
-    setBuilderState(
-      builderState.map((item, ind) => {
-        if (ind == index) {
-          item.height = height;
-          item.children.push({
-            id: uuidv4(),
-            type: 'text',
-            value: 'Change text',
-            height: 50,
-          });
-        }
-        return item;
-      })
-    );
+    const positionIndex = builderState[index].children.length + 1;
+    saveText({
+      body: 'Change text',
+      message: id,
+      index: 1
+    }).then((response) => {
+      console.log(response.data);
+      setBuilderState(
+        builderState.map((item, ind) => {
+          if (ind == index) {
+            item.height = height;
+            item.children.push(response.data);
+          }
+          return item;
+        })
+      );
+    }).catch((err) => {
+      toast.error("Something went wrong");
+    })
   };
 
   const addCard = () => {
