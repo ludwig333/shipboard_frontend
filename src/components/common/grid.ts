@@ -4,6 +4,17 @@ export const GridWrapper = styled.div`
 
   max-width: 144rem;  
   margin: 0 4rem;
+  a {
+      text-decoration: none;
+      font-family: "Roboto", sans-serif;
+      font-weight: 400;
+      font-size: 1.4rem;
+
+      &:visited, :hover, :active, :link{
+          color: black;
+      }
+    }
+    
   .grid-row {
   display: flex;
   flex-flow: row wrap;

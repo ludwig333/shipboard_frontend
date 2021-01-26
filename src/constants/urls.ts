@@ -12,6 +12,8 @@ const urls = {
   configureBots: `${baseUrl}/configure`,
 
   flows: `${baseUrl}/flows`,
+  
+  messages: `${baseUrl}/messages`,
 };
 
 export default urls;

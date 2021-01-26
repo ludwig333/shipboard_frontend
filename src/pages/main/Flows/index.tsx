@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { GridWrapper } from '../../../components/common/grid';
 import { PrimaryButton } from './../../../components/common/buttons';
 import { HiDotsVertical } from 'react-icons/hi';
@@ -106,39 +107,41 @@ const Flows = (props) => {
         <div className="grid-row">
           {flows && flows.map((data: FlowType) => {
             return (
-              <React.Fragment key={ data.id }>
-                <div className="grid-item">
-                  <div className="grid-item-wrapper">
-                    <div className="grid-item-container">
-                      <div className="image">
-                        Image
-                      </div>
-                      <div className="tag">
-                        <p>{data.name}</p>
-                        <DropdownWrapper>
-                          <label className="dropbtn">
-                            <HiDotsVertical />
-                          </label>
-                          <div className="dropdown-content">
-                            <p
-                              onClick={() => {
-                                handleEditOpen(data);
-                              }}>
-                              Edit
-                            </p>
-                            <p
-                              onClick={() => {
-                                handleDeleteConfirmation(data);
-                              }}>
-                              Delete
-                            </p>
-                          </div>
-                        </DropdownWrapper>
-                      </div>           
-                   </div>
-                 </div>
-               </div>
-             </React.Fragment>
+              <React.Fragment key={data.id}>
+                <Link to={'flow/' + data.id}>
+                  <div className="grid-item">
+                    <div className="grid-item-wrapper">
+                      <div className="grid-item-container">
+                        <div className="image">
+                          Image
+                        </div>
+                        <div className="tag">
+                          <p>{data.name}</p>
+                          <DropdownWrapper>
+                            <label className="dropbtn">
+                              <HiDotsVertical />
+                            </label>
+                            <div className="dropdown-content">
+                              <p
+                                onClick={() => {
+                                  handleEditOpen(data);
+                                }}>
+                                Edit
+                              </p>
+                              <p
+                                onClick={() => {
+                                  handleDeleteConfirmation(data);
+                                }}>
+                                Delete
+                              </p>
+                            </div>
+                          </DropdownWrapper>
+                        </div>           
+                    </div>
+                  </div>
+                </div>
+                </Link>
+              </React.Fragment>
             );
           })}
       </div>

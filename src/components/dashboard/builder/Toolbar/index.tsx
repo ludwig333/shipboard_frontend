@@ -1,79 +1,88 @@
 import React, { useContext, useState, useRef, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ToolbarWrapper, ToolbarMenu, ToolbarButtonGroup } from './styles';
-import { ToolbarHeading, VerticalGap } from '../../../common/typography';
+import { VerticalGap } from '../../../common/typography';
 import { ToolbarButton } from '../../../common/buttons';
 import { BuilderContext } from '../../../../services/Builder/BuilderProvider';
 import { v4 as uuidv4 } from 'uuid';
 import FormImage from '../Form/Image/index';
 import FormText from '../Form/Text/index';
 import FormCard from '../Form/Card/index';
-import { InputField } from '../../../common/form';
-import Textarea from 'react-expanding-textarea';
+import { updateMessage } from '../../../../apis/messages';
+import { toast } from 'react-toastify';
+
 
 const Toolbar = ({ id, hideToolbar }) => {
   const [builderState, setBuilderState] = useContext(BuilderContext);
   const [isChangingTitle, setIsChangingTitle] = useState(false);
   const { register, handleSubmit } = useForm({ mode: 'onChange' });
 
-  const titleRef = useRef<HTMLInputElement>(null);
+  // const titleRef = useRef<HTMLInputElement>(null);
 
   //Find index of specific object using findIndex method.
   const objIndex = builderState.findIndex((obj) => obj.id == id);
 
   const onChangeTitle = (data) => {
-    setBuilderState(
-      builderState.map((item, ind) => {
-        if (ind == objIndex) {
-         item.name = data.title
-        }
-        return item;
-      })
-    );
+    updateMessage({
+      name: data.title
+    }, id).then((response) => {
+      setBuilderState(
+        builderState.map((item, ind) => {
+          if (ind == objIndex) {
+           item.name = data.title
+          }
+          return item;
+        })
+      );
+    }).catch((err) => {
+      toast.error('Something went wrong')
+    })    
   };
 
-  //UseEffects
-  useEffect(() => {
-    if (titleRef.current) {
-      register(titleRef.current);
-      titleRef.current.focus();
-    }
-  }, [isChangingTitle]);
+  // //UseEffects
+  // useEffect(() => {
+  //   if (titleRef.current) {
+  //     register(titleRef.current);
+  //     titleRef.current.focus();
+  //   }
+  // }, [isChangingTitle]);
 
   return (
     <ToolbarWrapper>
-      <ToolbarMenu>
-        <div className={isChangingTitle ? 'header active' : 'header'}>
-          <form onBlur={handleSubmit(onChangeTitle)}>
-            <Textarea
-              maxLength={35}
-              className="heading-input"
-              ref={titleRef}
-              id="title"
-              name="title"
-              defaultValue={builderState[objIndex].name}
-              onBlur={() => setIsChangingTitle(false)}
-            />
-          </form>
-        </div>
-        {builderState[objIndex].children.length > 0 ? (
-          builderState[objIndex].children.map((child) => {
-            return (
+      {builderState[objIndex] &&
+        <ToolbarMenu>
+          <div className={isChangingTitle ? 'header active' : 'header'}>
+            <form onBlur={handleSubmit(onChangeTitle)}>
+              <input
+                maxLength={35}
+                className="heading-input"
+                ref={register({required: true, minLength: 3})}
+                id="title"
+                name="title"
+                defaultValue={builderState[objIndex].name}
+                onBlur={() => setIsChangingTitle(false)}
+              />
+            </form>
+          </div>
+          {builderState[objIndex].children.length > 0 ? (
+            builderState[objIndex].children.map((child) => {
+              return (
+                <React.Fragment>
+                  <VerticalGap size="3" />
+                  {getChildren(child, objIndex)}
+                </React.Fragment>
+              );
+            })
+          ) : (
               <React.Fragment>
                 <VerticalGap size="3" />
-                {getChildren(child, objIndex)}
+                <p className="no-content-text">No content</p>
               </React.Fragment>
-            );
-          })
-        ) : (
-          <React.Fragment>
-            <VerticalGap size="3" />
-            <p className="no-content-text">No content</p>
-          </React.Fragment>
-        )}
-        <VerticalGap size="3" />
-        <ToolbarButtons index={objIndex} />
-      </ToolbarMenu>
+            )}
+          <VerticalGap size="3" />
+          <ToolbarButtons index={objIndex} />
+        </ToolbarMenu>
+      }
     </ToolbarWrapper>
   );
 };

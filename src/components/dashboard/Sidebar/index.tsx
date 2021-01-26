@@ -77,12 +77,6 @@ const Sidebar: React.FC<SidebarProps> = ({ handleSidebarState }) => {
                 <p>Bots</p>
               </MenuItem>
             </Link>
-            <Link to="/flows">
-              <MenuItem isOpen={isOpen}>
-                <TiFlowMerge className="menu-icon" />
-                <p>Flows</p>
-              </MenuItem>
-            </Link>
             <Link to="/templates">
               <MenuItem isOpen={isOpen}>
                 <HiTemplate className="menu-icon" />

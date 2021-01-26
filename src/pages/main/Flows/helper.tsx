@@ -212,9 +212,19 @@ const getCardImage = (children) => {
   }
 };
 
-export const URLImage = ({ x, y, image, height, width }) => {
-  const [img] = useImage(image);
-  return <Image image={img} x={x} y={y} height={height} width={width} />;
+type URLImageType = {
+  x: any,
+  y: any,
+  image: any,
+  height: any,
+  width: any,
+  onMouseOver?: any,
+  onMouseOut?: any,
+  onClick?: any
+}
+export const URLImage = (props:URLImageType) => {
+  const [img] = useImage(props.image);
+  return <Image image={img} x={props.x} y={props.y} height={props.height} width={props.width} onMouseOver={props.onMouseOver} onMouseOut={props.onMouseOut} onClick={props.onClick}/>;
 };
 
 export const getActiveCard = (cards) => {

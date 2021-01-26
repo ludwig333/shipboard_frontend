@@ -11,6 +11,7 @@ import NotFound from './pages/error/404';
 import { useAuthContext } from './services/Auth/AuthProvider';
 import Bots from './pages/main/Bots/index';
 import Flows from './pages/main/Flows/index';
+import FlowBuilder from './pages/main/Flows/builder';
 import Templates from './pages/main/Templates/index';
 import Settings from './pages/main/Settings/index';
 import ModalProvider from './services/Modal/ModalProvider';
@@ -37,7 +38,8 @@ const App: React.FC = () => {
             />
             <ProtectedRoute exact path="/app" component={Dashboard} />
             <ProtectedRoute exact path="/bots" component={Bots} />
-            <ProtectedRoute path="/bot/:id" component={Flows} />
+            <ProtectedRoute exact path="/bot/:id" component={Flows} />
+            <ProtectedRoute exact path="/bot/flow/:id" component={ FlowBuilder } />
             <ProtectedRoute exact path="/templates" component={Templates} />
             <ProtectedRoute exact path="/settings" component={Settings} />
             <Route path="*" component={NotFound} />
