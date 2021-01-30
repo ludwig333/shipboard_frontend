@@ -11,6 +11,7 @@ import FormCard from '../Form/Card/index';
 import { updateMessage } from '../../../../apis/messages';
 import { toast } from 'react-toastify';
 import { saveText } from '../../../../apis/texts';
+import { saveImage } from '../../../../apis/images';
 
 
 const Toolbar = ({ id, hideToolbar }) => {
@@ -68,7 +69,7 @@ const Toolbar = ({ id, hideToolbar }) => {
           {builderState[objIndex].children.length > 0 ? (
             builderState[objIndex].children.map((child) => {
               return (
-                <React.Fragment>
+                <React.Fragment key={child.id}>
                   <VerticalGap size="3" />
                   {getChildren(child, objIndex)}
                 </React.Fragment>
@@ -98,11 +99,10 @@ const ToolbarButtons = ({ id, index }) => {
     height = height + 50;
     const positionIndex = builderState[index].children.length + 1;
     saveText({
-      body: 'Change text',
+      text: 'Change text',
       message: id,
-      index: 1
+      position: positionIndex
     }).then((response) => {
-      console.log(response.data);
       setBuilderState(
         builderState.map((item, ind) => {
           if (ind == index) {
@@ -149,21 +149,24 @@ const ToolbarButtons = ({ id, index }) => {
   const addImage = () => {
     let height = builderState[index].height;
     height = height + 150;
-    setBuilderState(
-      builderState.map((item, ind) => {
-        if (ind == index) {
-          item.height = height;
-          item.children.push({
-            id: uuidv4(),
-            type: 'image',
-            height: 150,
-            imagePreviewUrl: '',
-            selectedImage: null,
-          });
-        }
-        return item;
-      })
-    );
+    const positionIndex = builderState[index].children.length + 1;
+
+    saveImage({
+      message: id,
+      position: positionIndex
+    }).then((response) => {
+      setBuilderState(
+        builderState.map((item, ind) => {
+          if (ind == index) {
+            item.height = height;
+            item.children.push(response.data);
+          }
+          return item;
+        })
+      );
+    }).catch((err) => {
+      toast.error("Something went wrong");
+    })
   };
 
   return (

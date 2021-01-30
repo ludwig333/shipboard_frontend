@@ -10,6 +10,7 @@ import { useModal } from '../../../services/Modal/ModalProvider';
 import BotCreateModal from '../../../components/dashboard/Bots/CreateModal';
 import BotEditModal from '../../../components/dashboard/Bots/EditModal';
 import BotDeleteModal from '../../../components/dashboard/Bots/DeleteModal';
+import { toast } from 'react-toastify';
 
 type BotType = {
   id: string;
@@ -32,7 +33,7 @@ const Bots = () => {
         setLastPage(response.meta.last_page);
       })
       .catch((err) => {
-        console.log(err);
+        toast.error("Something went wrong");
       })
       .finally(() => {
         setIsLoading(false);

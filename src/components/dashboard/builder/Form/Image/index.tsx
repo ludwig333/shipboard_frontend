@@ -4,6 +4,8 @@ import { ImageWrapper } from './styles';
 import { BuilderContext } from '../../../../../services/Builder/BuilderProvider';
 import { AddTextButton } from '../../../../common/buttons';
 import { BiImageAdd, BiTrash } from 'react-icons/bi';
+import { uploadImage, deleteImage } from '../../../../../apis/images';
+import { toast } from 'react-toastify';
 
 const FormImage = ({ messageId, childId }) => {
   const [builderState, setBuilderState] = useContext(BuilderContext);
@@ -20,39 +22,51 @@ const FormImage = ({ messageId, childId }) => {
 
   const onSubmit = (data) => {
     let reader = new FileReader();
+    const formData = new FormData();
 
+    formData.append('image', data.image[0]);
+    formData.append('name', data.image[0].name);
+    
     reader.onloadend = () => {
       var height = 180;
-
-      setBuilderState(
-        builderState.map((item, index) => {
-          if (index == messageId) {
-            item.children.map((child, ind) => {
-              if (ind == childIndex) {
-                child.selectedImage = data.image[0];
-                child.imagePreviewUrl = reader.result;
-                child.height = height;
-              }
-            });
-          }
-          return item;
-        })
-      );
+      uploadImage(formData, childId).then((response) => {
+        setBuilderState(
+          builderState.map((item, index) => {
+            if (index == messageId) {
+              item.children.map((child, ind) => {
+                if (ind == childIndex) {
+                  child.selectedImage = data.image[0];
+                  child.imagePreviewUrl = reader.result;
+                  child.height = height;
+                }
+              });
+            }
+            return item;
+          })
+        );
+      }).catch((err) => {
+        toast.error("Something went wrong")
+      })
     };
 
     reader.readAsDataURL(data.image[0]);
   };
 
   const handleDelete = () => {
-    setBuilderState(
-      builderState.map((item, index) => {
-        if (index == messageId) {
-          item.height -= 150;
-          item.children.splice(childIndex,1)
-        }
-        return item;
-      })
-    );
+    deleteImage(childId).then((response) => {
+      setBuilderState(
+        builderState.map((item, index) => {
+          if (index == messageId) {
+            item.height -= 150;
+            item.children.splice(childIndex,1)
+          }
+          return item;
+        })
+      );
+    }).catch((err) => {
+      toast.error("Something went wrong");
+    })
+   
   };
 
   useEffect(() => {

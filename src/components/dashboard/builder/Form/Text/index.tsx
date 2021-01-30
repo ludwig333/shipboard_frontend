@@ -5,6 +5,8 @@ import { AddTextWrapper } from './styles';
 import { AddTextButton } from '../../../../common/buttons';
 import { BiTrash } from 'react-icons/bi';
 import Textarea from 'react-expanding-textarea';
+import { updateText, deleteText } from '../../../../../apis/texts';
+import { toast } from 'react-toastify';
 
 const FormText = ({ messageId, childId }) => {
   const [builderState, setBuilderState] = useContext(BuilderContext);
@@ -20,33 +22,44 @@ const FormText = ({ messageId, childId }) => {
 
   const onTextChange = (data) => {
     var height = textAreaRef.current.scrollHeight;
-    setBuilderState(
-      builderState.map((item, index) => {
-        if (index == messageId) {
-          item.children.map((child, ind) => {
-            if (ind == childIndex) {
-              child.value = data.text;
-              child.height = height;
-            }
-          });
-        }
-        return item;
-      })
-    );
+    updateText({
+      text: data.text
+    }, childId).then((response) => {
+      setBuilderState(
+        builderState.map((item, index) => {
+          if (index == messageId) {
+            item.children.map((child, ind) => {
+              if (ind == childIndex) {
+                child.value = data.text;
+                child.height = height;
+              }
+            });
+          }
+          return item;
+        })
+      );
+    }).catch((err) => {
+      toast.error("Something went wrong");
+    })
   };
 
   const handleDelete = () => {
-    var height =
-      builderState[messageId].height - textAreaRef.current.scrollHeight;
-    setBuilderState(
-      builderState.map((item, index) => {
-        if (index == messageId) {
-          item.height = height;
-          item.children.splice(childIndex,1)
-        }
-        return item;
+    var height = builderState[messageId].height - textAreaRef.current.scrollHeight;
+    deleteText(childId)
+      .then(() => {
+        setBuilderState(
+          builderState.map((item, index) => {
+            if (index == messageId) {
+              item.height = height;
+              item.children.splice(childIndex,1)
+            }
+            return item;
+          })
+        );
       })
-    );
+      .catch((err) => {
+        toast.error("Something went wrong");
+    })
   };
 
   useEffect(() => {
@@ -76,9 +89,9 @@ const FormText = ({ messageId, childId }) => {
         </form>
       </div>
 
-      <AddTextButton height="4rem" width="100%">
+      {/* <AddTextButton height="4rem" width="100%">
         Add Button
-      </AddTextButton>
+      </AddTextButton> */}
     </AddTextWrapper>
   );
 };

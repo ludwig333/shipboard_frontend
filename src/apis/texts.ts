@@ -8,7 +8,7 @@ export const saveText = async (data) => {
 }
 
 export const updateText = async (data, id: string) => {
-  return makeRequest(urls.texts + '/' + id, 'PUT', data, { Authorization: 'Bearer ' + getItem('token') });
+  return makeRequest(urls.texts + '/' + id, 'PUT', data, { Authorization: 'Bearer ' + getItem('token') }).then((response) => response.data);
 }
 
 export const deleteText = async (id: string) => {

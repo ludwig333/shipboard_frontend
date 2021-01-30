@@ -16,6 +16,9 @@ const urls = {
   messages: `${baseUrl}/messages`,
 
   texts: `${baseUrl}/texts`,
+
+  images: `${baseUrl}/images`,
+  image: `${baseUrl}/image`
 };
 
 export default urls;

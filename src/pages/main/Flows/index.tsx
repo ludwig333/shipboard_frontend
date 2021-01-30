@@ -37,7 +37,7 @@ const Flows = (props) => {
         setLastPage(response.meta.last_page);
       })
       .catch((err) => {
-        console.log(err);
+        console.log("Something went wrong");
       })
       .finally(() => {
         setIsLoading(false);
