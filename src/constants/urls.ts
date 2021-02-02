@@ -18,7 +18,10 @@ const urls = {
   texts: `${baseUrl}/texts`,
 
   images: `${baseUrl}/images`,
-  image: `${baseUrl}/image`
+  image: `${baseUrl}/image`,
+
+  cardGroups: `${baseUrl}/card-groups`,
+  card: `${baseUrl}/card`
 };
 
 export default urls;

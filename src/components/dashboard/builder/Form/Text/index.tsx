@@ -64,10 +64,9 @@ const FormText = ({ messageId, childId }) => {
 
   useEffect(() => {
     if (textAreaRef.current) {
-      register(textAreaRef.current);
-      textAreaRef.current.focus();
+      register(textAreaRef.current, {required: true, minLength: 3});
     }
-  }, [isChangingBody]);
+  }, []);
 
   return (
     <AddTextWrapper>

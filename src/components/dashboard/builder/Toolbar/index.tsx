@@ -12,6 +12,7 @@ import { updateMessage } from '../../../../apis/messages';
 import { toast } from 'react-toastify';
 import { saveText } from '../../../../apis/texts';
 import { saveImage } from '../../../../apis/images';
+import { addCardGroup } from '../../../../apis/cards';
 
 
 const Toolbar = ({ id, hideToolbar }) => {
@@ -120,30 +121,26 @@ const ToolbarButtons = ({ id, index }) => {
   const addCard = () => {
     let height = builderState[index].height;
     height = height + 150;
+    const positionIndex = builderState[index].children.length + 1;
 
-    setBuilderState(
-      builderState.map((item, ind) => {
-        if (ind == index) {
-          item.height = height;
-          item.children.push({
-            id: uuidv4(),
-            type: 'card',
-            cards: [
-              {
-                id: uuidv4(),
-                active: true,
-                selectedImage: null,
-                imagePreviewUrl: '',
-                heading: 'subtitle #11',
-                body: 'This is the body paragraph',
-                height: 150,
-              },
-            ],
-          });
-        }
-        return item;
-      })
-    );
+
+    addCardGroup({
+      message: id,
+      position: positionIndex
+    }).then((response) => {
+      console.log(response.data);
+      setBuilderState(
+        builderState.map((item, ind) => {
+          if (ind == index) {
+            item.height = height;
+            item.children.push(response.data);
+          }
+          return item;
+        })
+      );
+    }).catch((err) => {
+      toast.error("Something went wrong");
+    });
   };
 
   const addImage = () => {

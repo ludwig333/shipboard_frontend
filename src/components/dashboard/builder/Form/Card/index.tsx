@@ -13,6 +13,8 @@ import {
   BiChevronLeft,
   BiPlus,
 } from 'react-icons/bi';
+import { addCard, deleteCardGroup, updateCard, uploadImage } from '../../../../../apis/cards';
+import { toast } from 'react-toastify';
 
 const FormCard = ({ messageId, childId }) => {
   const [builderState, setBuilderState] = useContext(BuilderContext);
@@ -57,38 +59,54 @@ const FormCard = ({ messageId, childId }) => {
     addNew = false
   ) => {
     if (addNew) {
-      setBuilderState([
-        ...builderState,
-        (builderState[messageId].children[childIndex].cards[
-          activeCardIndex
-        ].active = false),
-        builderState[messageId].children[childIndex].cards.push({
-          id: uuidv4(),
-          active: true,
-          selectedImage: null,
-          imagePreviewUrl: '',
-          heading: 'Subtitle #' + length,
-          body: 'This is body paragraph',
-          height: 290,
-        }),
-      ]);
-    } else {
-      setBuilderState(builderState.map((message, index) => { 
-        if (index == messageId) { 
-          message.children.map((child, ind) => { 
-            if (ind == childIndex) {
-              child.cards.map((card, inx) => { 
-                if (inx == cardIndex) { 
-                  card.active = true
-                }
-                if (inx == activeCardIndex) { 
-                  card.active = false
+      addCard(childId).then((response) => {
+        setBuilderState(
+          builderState.map((message, index) => { 
+            if (index == messageId) { 
+              message.children.map((child, ind) => { 
+                if (ind == childIndex) {
+                  //First set active card to inactive
+                  child.cards.map((card, inx) => {
+                    console.log(activeCardIndex);
+                  if (inx == activeCardIndex) {
+                    card.active = false
+                  }
+                    return card;
+                })
+                //Then push a new card with active true;
+                  child.cards.push(response.data)
                 }
               })
             }
+            return message;
           })
-        }
-      }));
+        );
+      }).catch((err) => {
+        console.log(err);
+        toast.error("Something went wrong");
+      });
+    } else {
+      setBuilderState(
+        builderState.map((message, index) => { 
+          if (index == messageId) { 
+            message.children.map((child, ind) => { 
+              if (ind == childIndex) {
+                child.cards.map((card, inx) => { 
+                  if (inx == cardIndex) { 
+                    card.active = true
+                  }
+                  if (inx == activeCardIndex) { 
+                    card.active = false
+                  }
+                  return card;
+                })
+              }
+              return child;
+            })
+          }
+          return message;
+        })
+      );
     }
   };
 
@@ -112,12 +130,48 @@ const FormCard = ({ messageId, childId }) => {
   //Form input submit methods
   const onUploadImage = (data, id) => {
     let cardIndex = getCardIndex(id);
-
     let reader = new FileReader();
+    const formData = new FormData();
+    formData.append('image', data.image[0]);
+    formData.append('name', data.image[0].name);
 
     reader.onloadend = () => {
       var height = cardRef.current.scrollHeight;
+      uploadImage(formData, id).then((response) => {
+        setBuilderState(
+          builderState.map((item, index) => {
+            if (index == messageId) {
+              item.children.map((child, ind) => {
+                if (ind == childIndex) {
+                  child.cards.map((card, s) => {
+                    if (s == cardIndex) {
+                      card.selectedImage = data.image[0];
+                      card.imagePreviewUrl = reader.result;
+                      card.height = height;
+                    }
+                    return card;
+                  });
+                }
+                return child;
+              });
+            }
+            return item;
+          })
+        );
+      }).catch((err) => {
+        toast.error("Something went wrong");
+      })
+    };
 
+    reader.readAsDataURL(data.image[0]);
+  };
+
+  const onHeadingChange = (data, id) => {
+    let cardIndex = getCardIndex(id);
+    var height = cardRef.current.scrollHeight;
+    updateCard({
+      heading: data.heading,
+    }, id).then((response) => {
       setBuilderState(
         builderState.map((item, index) => {
           if (index == messageId) {
@@ -125,8 +179,7 @@ const FormCard = ({ messageId, childId }) => {
               if (ind == childIndex) {
                 child.cards.map((card, s) => {
                   if (s == cardIndex) {
-                    card.selectedImage = data.image[0];
-                    card.imagePreviewUrl = reader.result;
+                    card.heading = data.heading;
                     card.height = height;
                   }
                 });
@@ -136,83 +189,55 @@ const FormCard = ({ messageId, childId }) => {
           return item;
         })
       );
-    };
-
-    reader.readAsDataURL(data.image[0]);
-  };
-
-  const onHeadingChange = (data, id) => {
-    let cardIndex = getCardIndex(id);
-    var height = cardRef.current.scrollHeight;
-
-    setBuilderState(
-      builderState.map((item, index) => {
-        if (index == messageId) {
-          item.children.map((child, ind) => {
-            if (ind == childIndex) {
-              child.cards.map((card, s) => {
-                if (s == cardIndex) {
-                  card.heading = data.heading;
-                  card.height = height;
-                }
-              });
-            }
-          });
-        }
-        return item;
-      })
-    );
+    }).catch((err) => {
+      toast.error("Something went wrong");
+    })
   };
 
   const onParagraphChange = (data, id) => {
     let cardIndex = getCardIndex(id);
     var height = cardRef.current.scrollHeight;
 
-    setBuilderState(
-      builderState.map((item, index) => {
-        if (index == messageId) {
-          item.children.map((child, ind) => {
-            if (ind == childIndex) {
-              child.cards.map((card, s) => {
-                if (s == cardIndex) {
-                  card.body = data.body;
-                  card.height = height;
-                }
-              });
-            }
-          });
-        }
-        return item;
-      })
-    );
+    updateCard({
+      body: data.body,
+    }, id).then((response) => {
+      setBuilderState(
+        builderState.map((item, index) => {
+          if (index == messageId) {
+            item.children.map((child, ind) => {
+              if (ind == childIndex) {
+                child.cards.map((card, s) => {
+                  if (s == cardIndex) {
+                    card.body = data.body;
+                    card.height = height;
+                  }
+                });
+              }
+            });
+          }
+          return item;
+        })
+      );
+    }).catch((err) => {
+      toast.error("Something went wrong");
+    })
   };
 
   const handleDelete = () => {
-    setBuilderState(
-      builderState.map((item, index) => {
-        if (index == messageId) {
-          item.height -= 250;
-          item.children.splice(childIndex, 1);
-        }
-        return item;
-      })
-    );
+    deleteCardGroup(childId).then((response) => {
+      setBuilderState(
+        builderState.map((item, index) => {
+          if (index == messageId) {
+            item.height -= 250;
+            item.children.splice(childIndex, 1);
+          }
+          return item;
+        })
+      );
+    }).catch((err) => {
+      toast.error("Something went wrong");
+    })
   };
-
-  //UseEffects
-  useEffect(() => {
-    if (headingRef.current) {
-      register(headingRef.current);
-      headingRef.current.focus();
-    }
-  }, [isChangingHeading]);
-
-  useEffect(() => {
-    if (paragraphRef.current) {
-      register(paragraphRef.current);
-      paragraphRef.current.focus();
-    }
-  }, [isChangingBody]);
 
   return (
     <CardSlider>
@@ -264,9 +289,9 @@ const FormCard = ({ messageId, childId }) => {
                     onBlur={handleSubmit((data) =>
                       onHeadingChange(data, card.id)
                     )}>
-                    <Textarea
+                    <input
                       className="card-title"
-                      ref={headingRef}
+                      ref={register({required: true, minLength: 3 })}
                       maxLength={27}
                       id="heading"
                       name="heading"
@@ -293,7 +318,7 @@ const FormCard = ({ messageId, childId }) => {
                       defaultValue={card.body}
                       id="body"
                       name="body"
-                      ref={paragraphRef}
+                      ref={register({required: true, minLength: 3})}
                       onClick={() => {
                         setIsChangingHeading(false);
                         setIsChangingBody(true);
