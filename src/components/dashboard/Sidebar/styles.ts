@@ -36,7 +36,7 @@ export const SidebarMenu = styled.nav<{ isOpen: boolean }>`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  width: ${(props) => (props.isOpen ? '22rem' : '6rem')};
+  width: ${(props) => (props.isOpen ? '20rem' : '6rem')};
   flex-grow: 0;
   flex-shrink: 0;
   transition: all 1s;

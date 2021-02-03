@@ -33,28 +33,31 @@ export const handleRenderingChildrens = (item) => {
   return item.children.map(function (child) {
     var yposition = lastPosition;
     if (child.type === 'card') {
-      lastPosition = lastPosition + child.cards[0].height + 10;
-    } else {
-      lastPosition = lastPosition + child.height + 40;
-
+      lastPosition = lastPosition + child.cards[0].height;
+    } else if(child.type === 'text'){
+      lastPosition = lastPosition + child.height + 50;
+    } else if (child.type === 'image') {
+      lastPosition = lastPosition + child.height + 20;
     }
     return getChildren(child, yposition);
   });
 };
 
 export const calculateHeightOfMessageBox = (message) => {
-  var height = 200;
+  var height = 70;
 
   if (typeof message == 'object') {
     if (message.length > 0) {
       message.forEach((item) => {
         if (item.type === 'card') {
           var activeCard = getActiveCard(item.cards);
-          height = height + item.cards[activeCard].height;
+          height = height + item.cards[activeCard].height + 20;
         } else {
-          height = height + item.height;
+          height = height + item.height + 20;
         }
       });
+    } else {
+      height += 130;
     }
   }
   return height;
