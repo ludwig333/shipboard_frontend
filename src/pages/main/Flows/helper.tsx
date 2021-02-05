@@ -4,11 +4,11 @@ import useImage from 'use-image';
 
 export const Edge = ({ height, node1, node2 }) => {
   node1 = {
-    x: node1.x + 300,
-    y: node1.y + 10
+    x: node1.x + 350,
+    y: node1.y + height - 20
   }
   node2 = {
-    x: node2.x + 20,
+    x: node2.x,
     y: node2.y + 20
   }
   const p1 = { x: (node1.x + node2.x) / 2, y: node1.y };
@@ -62,6 +62,7 @@ export const calculateHeightOfMessageBox = (message) => {
   }
   return height;
 };
+
 export const getChildren = (children, lastPosition) => {
   if (children.type === 'text') {
     return (

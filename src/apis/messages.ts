@@ -11,7 +11,12 @@ export const saveMessage = async (data) => {
   return makeRequest(urls.messages, 'POST', data, { Authorization: 'Bearer ' + getItem('token') }).then((response) => response.data);
 }
 
+export const createAndConnectMessage = async (data, id: string) => {
+  return makeRequest(urls.message + '/create-and-connect/' + id, 'POST', data, { Authorization: 'Bearer ' + getItem('token') }).then((response) => response.data);
+}
+
 export const updateMessage = async (data, id: string) => {
+  console.log(data);
   return makeRequest(urls.messages + '/' + id, 'PUT', data, { Authorization: 'Bearer ' + getItem('token') });
 }
 

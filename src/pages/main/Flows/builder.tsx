@@ -15,7 +15,7 @@ import {
   useBuilder,
 } from '../../../services/Builder/BuilderProvider';
 import { BiMessageSquareAdd } from 'react-icons/bi';
-import { saveMessage, getMessages, updateMessage, deleteMessage } from '../../../apis/messages';
+import { saveMessage, getMessages, updateMessage, deleteMessage, createAndConnectMessage } from '../../../apis/messages';
 import { toast } from 'react-toastify';
 
 const FlowBuilder = (props) => {
@@ -28,6 +28,8 @@ const FlowBuilder = (props) => {
   });
   const [isEdging, setIsSetting] = useState(false);
   const [isSecondClick, setIsSecondClick] = useState(false);
+  const [showToolOption, setShowToolOption] = useState(false);
+  const [edgingMessageId, setEdgingMessageId] = useState(null);
 
   const [state, setState] = useState({
     layerScale: 1,
@@ -137,19 +139,22 @@ const FlowBuilder = (props) => {
   };
 
   const connectEdge = (messageId) => {
-    setIsSetting(true);
-    setBuilderState(
-      builderState.map((item, index) => {
-        if (index == messageId) {
-          item.next = 'dummy';
-        }
-        return item;
-      })
-    );
+    if (!showToolOption) {
+      setIsSetting(true);
+      setEdgingMessageId(messageId);
+      setBuilderState(
+        builderState.map((item) => {
+          if (item.id == messageId) {
+            item.next = 'dummy';
+          }
+          return item;
+        })
+      );
+    }
   };
 
   const handleMousePosition = (event) => {
-    if (isEdging) {
+    if (isEdging && !showToolOption) {
       var point = event.target.getStage().getPointerPosition();
       setMousePosition({
         x: point.x,
@@ -159,40 +164,30 @@ const FlowBuilder = (props) => {
   };
 
   const handleClickOnCanvas = () => {
-    setIsSecondClick(true);
-    if (isSecondClick && isEdging) {
-      setIsSetting(false);
-      // window.removeEventListener('mousemove', handleMousePosition);
-      let number = builderState.length + 1;
-      var id = uuidv4();
-      const newState = {
-        id: id,
-        name: 'Send Message #' + number,
-        position: {
-          x: mousePosition.x,
-          y: mousePosition.y,
-        },
-        height: 200,
-        children: [],
-        isHover: false,
-        isSelected: false,
-      };
-      setIsSecondClick(false);
-
-      //find the message with next: dummy
-      var dummyNextMessage = builderState.findIndex(
-        (obj) => obj.next === 'dummy'
-      );
-
-      setBuilderState(
-        builderState.map((item, index) => {
-          if (index == dummyNextMessage) {
-            item.next = id;
-          }
-          return item;
-        })
-      );
-      setBuilderState([...builderState, newState]);
+    if (isEdging) {
+      var hoveredIndex = getHoveredNode(builderState);
+      if (hoveredIndex > 0) {
+        //If the edging is hovered over another message and connect that message
+        var messageIdOfHover = builderState[hoveredIndex].id
+        if (messageIdOfHover != edgingMessageId) {
+          updateMessage({
+            next: messageIdOfHover
+          }, edgingMessageId).then((response) => { 
+            setBuilderState(
+              builderState.map((item, index) => {
+                if (item.id == edgingMessageId) {
+                  item.next = messageIdOfHover
+                }
+                return item;
+              })
+            );
+          }).catch((err) => {
+            toast.error("Something went wrong");
+          })
+        }
+      } else {
+        setShowToolOption(true);
+      }
     }
   };
 
@@ -207,14 +202,28 @@ const FlowBuilder = (props) => {
        setBuilderState([...builderState, response.data]);
 
     }).catch((err) => {
-      toast.error(err.response)
+      toast.error("Something went wrong")
     })
   }
 
   const handleDeleteMessage = (item, index) => {
+    //Delete the message
     builderState.splice(index, 1);
-    deleteMessage(item.id)
-      .catch((err) => {
+    //Delete the edging where this message belongs to
+    const messageIndexHavingNextOfDeleteMessage = getMessageIndexWhichHasNextOfGivenMessageId(builderState, item.id);
+    setBuilderState(
+      builderState.map((item, index) => {
+        if (index == messageIndexHavingNextOfDeleteMessage) {
+          item.next = ""
+        }
+        return item;
+      })
+    );
+    deleteMessage(item.id).then(() => {
+      setShowToolOption(false);
+      setEdgingMessageId(null);
+      setIsSetting(false);
+    }).catch((err) => {
         toast.error("Something went wrong");
       })
   }
@@ -244,6 +253,32 @@ const FlowBuilder = (props) => {
     })    
   }
 
+  const handleToolOptionNewMessageAction = () => {
+    setIsSetting(false);
+    setShowToolOption(false);
+
+    let number = builderState.length + 1;
+    createAndConnectMessage({
+      name: 'Send Message #' + number,
+      position_x: mousePosition.x,
+      position_y: mousePosition.y,
+      flow: props.match.params.id
+    }, edgingMessageId).then((response) => {
+      setBuilderState(
+        builderState.map((item) => {
+          if (item.id == edgingMessageId) {
+            item.next = response.data.id;
+          }
+          return item;
+        })
+      );
+      setBuilderState([...builderState, response.data]);
+
+    }).catch((err) => {
+      toast.error("Something went wrong")
+    })
+  }
+
   React.useEffect(() => {
     getMessages(props.match.params.id)
       .then((response) => {
@@ -254,6 +289,96 @@ const FlowBuilder = (props) => {
       })
   }, []);
 
+  const getToolOption = () => {
+    return (
+      <Group  x={mousePosition.x} y={mousePosition.y} zIndex={200}
+        onMouseOver={() => { document.body.style.cursor = 'pointer' }}
+        onMouseOut={() => { document.body.style.cursor = 'default' }}
+      >
+        <Group onClick={handleToolOptionNewMessageAction}>
+          <Rect
+            width={200}
+            height={50}
+            fill="#FDFDFD"
+            strokeWidth={2}
+            shadowColor="gray"
+            shadowOpacity={0.7}
+            shadowBlur={2}
+            onMouseDown={(e) => {
+              e.target.setAttr('fill', ' #eef1f4');
+            }}
+          />
+          <Text
+            x={15}
+            y={15}
+            text="+ New Message"
+            fontFamily={'Roboto'}
+            fontSize={20}
+            fill={'#5850eb'}
+          />
+        </Group>
+        <Group y={50} onClick={() => {
+          setShowToolOption(false);
+          console.log('connect flow')
+        }}>
+          <Rect
+            width={200}
+            height={50}
+            fill="#FDFDFD"
+            strokeWidth={2}
+            shadowColor="gray"
+            shadowOpacity={0.7}
+            shadowBlur={2}
+            onMouseDown={(e) => {
+              e.target.setAttr('fill', ' #eef1f4');
+            }}
+          />
+          <Text
+            x={15}
+            y={15}
+            text="+ Connect Flow"
+            fontFamily={'Roboto'}
+            fontSize={20}
+            fill={'#5850eb'}
+          />
+        </Group>
+        <Group y={100}  onClick={() => {
+          setShowToolOption(false);
+          setIsSetting(false);
+          setBuilderState(
+            builderState.map((item) => {
+              if (item.id == edgingMessageId) {
+                item.next = ""
+              }
+              return item;
+            })
+          );
+        }}>
+          <Rect
+            width={200}
+            height={50}
+            fill="#FDFDFD"
+            strokeWidth={2}
+            shadowColor="gray"
+            shadowOpacity={0.7}
+            shadowBlur={2}
+            onMouseDown={(e) => {
+              e.target.setAttr('fill', ' #eef1f4');
+            }}
+          />
+          <Text
+            x={15}
+            y={15}
+            text="- Cancel"
+            fontFamily={'Roboto'}
+            fontSize={20}
+            fill={'#5850eb'}
+          />
+        </Group>
+      </Group>
+    );
+  }
+  
 
   return (
     <FlowBuilderWrapper>
@@ -263,7 +388,6 @@ const FlowBuilder = (props) => {
           onClick={handleAddMessage}
         />
       </div>
-
       {isToolbarActive && <Toolbar id={id} hideToolbar={hideToolbar} />}
       <Stage
         width={getStageWidth()}
@@ -313,14 +437,16 @@ const FlowBuilder = (props) => {
               fill={'gray'}
             />
           </Group>
+          {showToolOption && getToolOption()}
           {builderState &&
             typeof builderState == 'object' &&
             builderState.map((item, index) => {
+              var messageHeight = calculateHeightOfMessageBox(item.children);
               return (
                 <React.Fragment key={item.id}>
                   {item.next ? (
                     <Edge
-                      height={item.height}
+                      height={messageHeight}
                       node1={item.position}
                       node2={getNextNode(item.next)}
                     />
@@ -347,7 +473,7 @@ const FlowBuilder = (props) => {
                     >
                     <Rect
                       cornerRadius={16}
-                      height={calculateHeightOfMessageBox(item.children)}
+                      height={messageHeight}
                       width={340}
                       fill="#FDFDFD"
                       strokeWidth={5}
@@ -360,7 +486,7 @@ const FlowBuilder = (props) => {
                       <Rect
                         width={50} height={30} x={330} y={10} /> 
                       <URLImage
-                         onMouseOver={() => { document.body.style.cursor = 'pointer' }}
+                        onMouseOver={() => { document.body.style.cursor = 'pointer' }}
                         onMouseOut={() => { document.body.style.cursor = 'default' }}
                         onClick={() => {handleDeleteMessage(item, index)}}
                         image={TrashIcon} x={345} y={10} height={25} width={25} />
@@ -377,8 +503,13 @@ const FlowBuilder = (props) => {
                     />
                     <Group
                       x={340}
-                      y={item.height - 20}
-                      onClick={(e) => connectEdge(index)}>
+                      y={messageHeight - 20}
+                      onMouseOver={() => { document.body.style.cursor = 'pointer' }}
+                      onMouseOut={() => { document.body.style.cursor = 'default' }}
+                      onClick={(e) => {
+                        e.cancelBubble = true;
+                        connectEdge(item.id)
+                      }}>
                       <Circle radius={9} fill="#8392AB" strokeWidth={1} />
                       <Text
                         x={-80}
@@ -443,8 +574,12 @@ const getSelectedNode = (state) => {
   return state.findIndex((obj) => obj.isSelected == true);
 };
 
+const getMessageIndexWhichHasNextOfGivenMessageId = (state, messageId) => {
+  return state.findIndex((obj) => obj.next == messageId);
+}
+
 const getHoveredNode = (state) => {
-  return state.findIndex((obj) => obj.isHovered == true);
+  return state.findIndex((obj) => obj.isHover == true);
 };
 
 export default withRouter(FlowBuilder);

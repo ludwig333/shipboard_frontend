@@ -14,6 +14,7 @@ const urls = {
   flows: `${baseUrl}/flows`,
   
   messages: `${baseUrl}/messages`,
+  message: `${baseUrl}/message`,
 
   texts: `${baseUrl}/texts`,
 
