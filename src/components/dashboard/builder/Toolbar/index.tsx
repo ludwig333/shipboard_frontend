@@ -4,21 +4,24 @@ import { ToolbarWrapper, ToolbarMenu, ToolbarButtonGroup } from './styles';
 import { VerticalGap } from '../../../common/typography';
 import { ToolbarButton } from '../../../common/buttons';
 import { BuilderContext } from '../../../../services/Builder/BuilderProvider';
-import { v4 as uuidv4 } from 'uuid';
+import { GiCancel } from 'react-icons/gi';
 import FormImage from '../Form/Image/index';
 import FormText from '../Form/Text/index';
 import FormCard from '../Form/Card/index';
-import { updateMessage } from '../../../../apis/messages';
+import { connectFlowToMessage, updateMessage } from '../../../../apis/messages';
 import { toast } from 'react-toastify';
 import { saveText } from '../../../../apis/texts';
 import { saveImage } from '../../../../apis/images';
 import { addCardGroup } from '../../../../apis/cards';
+import { useModal } from '../../../../services/Modal/ModalProvider';
+import ConnectFlowModal from '../Modals/ConnectFlow';
 
 
-const Toolbar = ({ id, hideToolbar }) => {
+const Toolbar = ({ id, hideToolbar, bot, flow }) => {
   const [builderState, setBuilderState] = useContext(BuilderContext);
   const [isChangingTitle, setIsChangingTitle] = useState(false);
   const { register, handleSubmit } = useForm({ mode: 'onChange' });
+  const { showModal, hideModal } = useModal();
 
   // const titleRef = useRef<HTMLInputElement>(null);
 
@@ -41,18 +44,49 @@ const Toolbar = ({ id, hideToolbar }) => {
       toast.error('Something went wrong')
     })    
   };
+  const openConnectFlowModal = () => {
+    showModal(() => (
+      <ConnectFlowModal flow={flow} bot={bot} hideModal={hideModal} handleSelect={handleSelect}/>
+    ));
+  }
 
-  // //UseEffects
-  // useEffect(() => {
-  //   if (titleRef.current) {
-  //     register(titleRef.current);
-  //     titleRef.current.focus();
-  //   }
-  // }, [isChangingTitle]);
+  const handleSelect = (flowId, flowName) => {
+    connectFlowToMessage({
+      flow: flowId
+    }, id).catch((err) => {
+      toast.error("Something went wrong")
+    })
+    setBuilderState(
+      builderState.map((item, index) => {
+        if (item.id == id) {
+          item.children.push({
+            name: flowName
+          })
+        }
+        return item;
+      })
+    );
+    hideModal();
+  }
 
-  return (
-    <ToolbarWrapper>
-      {builderState[objIndex] &&
+  const removeConnetedFlow = () => {
+    connectFlowToMessage({}, id).catch((err) => {
+      toast.error("Something went wrong")
+    })
+    setBuilderState(
+      builderState.map((item) => {
+        if (item.id == id) {
+          item.children.splice(0, 1);
+        }
+        return item;
+      })
+    );
+  }
+  
+
+  const getContents = () => {
+    if (builderState[objIndex].type === "default") {
+      return (
         <ToolbarMenu>
           <div className={isChangingTitle ? 'header active' : 'header'}>
             <form onBlur={handleSubmit(onChangeTitle)}>
@@ -85,6 +119,44 @@ const Toolbar = ({ id, hideToolbar }) => {
           <VerticalGap size="3" />
         <ToolbarButtons id={id} index={objIndex} />
         </ToolbarMenu>
+      );
+    } else if (builderState[objIndex].type === "flow") {
+      return (
+        <ToolbarMenu>
+          <div className='flow-header'>
+            <h4>Connect Flow </h4>
+          </div>
+          {builderState[objIndex].children.length > 0 ? (
+            builderState[objIndex].children.map((child) => {
+              return (
+                <React.Fragment key={child.id}>
+                  <VerticalGap size="3" />
+                  <div className="flow-content">
+                    {child.name}
+                    <button className="action-btn">
+                      <GiCancel onClick={removeConnetedFlow} />
+                  </button>
+                  </div>
+                </React.Fragment>
+              );
+            })
+          ) : (
+              <React.Fragment>
+                <VerticalGap size="3" />
+                <ToolbarButton height="4rem" width="25rem" onClick={openConnectFlowModal}>
+                  Select Flow
+                </ToolbarButton>
+              </React.Fragment>
+            )}
+        </ToolbarMenu>
+      );
+    }
+  }
+
+  return (
+    <ToolbarWrapper>
+      {builderState[objIndex] &&
+        getContents()
       }
     </ToolbarWrapper>
   );
@@ -190,9 +262,9 @@ const ToolbarButtons = ({ id, index }) => {
           onClick={addImage}>
           + Image
         </ToolbarButton>
-        <ToolbarButton height="4rem" width="25rem">
+        {/* <ToolbarButton height="4rem" width="25rem">
           Next Button
-        </ToolbarButton>
+        </ToolbarButton> */}
       </ToolbarButtonGroup>
     </React.Fragment>
   );

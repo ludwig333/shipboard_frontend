@@ -8,6 +8,10 @@ export const getFlows = async (bot, pageNumber = 1) => {
   return makeRequest(urls.flows + '?bot=' + bot + '&page=' + pageNumber, 'GET', null, { Authorization: 'Bearer ' + getItem('token') }).then((response) => response.data)
 }
 
+export const getFlow = async (flow) => {
+  return makeRequest(urls.flows + '/' + flow , 'GET', null, { Authorization: 'Bearer ' + getItem('token') }).then((response) => response.data)
+}
+
 export const saveFlow = async (data: FlowDataType) => {
   return makeRequest(urls.flows, 'POST', data, { Authorization: 'Bearer ' + getItem('token') }).then((response) => response.data)
 }

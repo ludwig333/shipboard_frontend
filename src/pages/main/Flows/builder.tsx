@@ -17,10 +17,12 @@ import {
 import { BiMessageSquareAdd } from 'react-icons/bi';
 import { saveMessage, getMessages, updateMessage, deleteMessage, createAndConnectMessage } from '../../../apis/messages';
 import { toast } from 'react-toastify';
+import { getFlow } from '../../../apis/flows';
 
 const FlowBuilder = (props) => {
   const [isToolbarActive, setIsToolbarActive] = useState(null);
   const [builderState, setBuilderState, sidebar] = useBuilder();
+  const [flow, setFlow] = useState(null);
   const [id, setId] = useState(null);
   const [mousePosition, setMousePosition] = useState({
     x: 0,
@@ -195,6 +197,7 @@ const FlowBuilder = (props) => {
     let number = builderState.length + 1;
     saveMessage({
       name: 'Send Message #' + number,
+      type: 'default',
       position_x: 1200,
       position_y: 60,
       flow: props.match.params.id
@@ -207,7 +210,8 @@ const FlowBuilder = (props) => {
   }
 
   const handleDeleteMessage = (item, index) => {
-    //Delete the message
+    if (index > 0) {
+      //Delete the message
     builderState.splice(index, 1);
     //Delete the edging where this message belongs to
     const messageIndexHavingNextOfDeleteMessage = getMessageIndexWhichHasNextOfGivenMessageId(builderState, item.id);
@@ -226,6 +230,9 @@ const FlowBuilder = (props) => {
     }).catch((err) => {
         toast.error("Something went wrong");
       })
+    } else {
+      toast.info("You cannot delete the start message")
+    }
   }
 
   const handleDragMessage = (e, item, index) =>  {
@@ -260,6 +267,7 @@ const FlowBuilder = (props) => {
     let number = builderState.length + 1;
     createAndConnectMessage({
       name: 'Send Message #' + number,
+      type: 'default',
       position_x: mousePosition.x,
       position_y: mousePosition.y,
       flow: props.match.params.id
@@ -279,14 +287,47 @@ const FlowBuilder = (props) => {
     })
   }
 
+  const handleToolOptionConnectFlow = () => {
+    setIsSetting(false);
+    setShowToolOption(false);
+
+    let number = builderState.length + 1;
+    createAndConnectMessage({
+      name: 'Connect Flow #' + number,
+      type: 'flow',
+      position_x: mousePosition.x,
+      position_y: mousePosition.y,
+      flow: props.match.params.id
+    }, edgingMessageId).then((response) => {
+      setBuilderState(
+        builderState.map((item) => {
+          if (item.id == edgingMessageId) {
+            item.next = response.data.id;
+          }
+          return item;
+        })
+      );
+      setBuilderState([...builderState, response.data]);
+
+    }).catch((err) => {
+      toast.error("Something went wrong")
+    })
+  }
+  
   React.useEffect(() => {
     getMessages(props.match.params.id)
       .then((response) => {
         setBuilderState(response.data)
       })
       .catch((err) => {
-        console.log(err);
+        toast.error("Something went wrong")
       })
+    getFlow(props.match.params.id)
+      .then((response) => {  
+        setFlow(response.data);
+    }).catch((err) => {
+      toast.error("Something went wrong")
+    })
   }, []);
 
   const getToolOption = () => {
@@ -317,10 +358,7 @@ const FlowBuilder = (props) => {
             fill={'#5850eb'}
           />
         </Group>
-        <Group y={50} onClick={() => {
-          setShowToolOption(false);
-          console.log('connect flow')
-        }}>
+        <Group y={50} onClick={handleToolOptionConnectFlow}>
           <Rect
             width={200}
             height={50}
@@ -378,17 +416,243 @@ const FlowBuilder = (props) => {
       </Group>
     );
   }
+  const getDefaultMessage = (item, index, messageHeight) => {
+    return (
+      <Group
+        x={item.position?.x}
+        y={item.position?.y}
+        draggable
+        onClick={(e) => {
+          showToolbar(item.id);
+          setSelectedTrue(index);
+        }}
+        onMouseEnter={(e) => {
+          setHoverTrue(index);
+        }}
+        onMouseLeave={(e) => {
+          setHoverFalse(index);
+        }}
+        hitOnDragEnabled={true}
+        onDragMove={(e) => {
+          handleDragMessage(e, item, index)
+        }}
+        onDragEnd={() => { updateMessagePosition(item) }}
+      >
+        {index === 0 &&
+          <Group x={10} y={-40}>
+            <Rect cornerRadius={7} stroke={"green"} strokeWidth={2} fill="#FDFDFD" width={60} height={30} />
+            <Text
+              x={13}
+              y={8}
+              text={"Start"}
+              fontFamily={'Roboto'}
+              fontSize={15}
+              fill={'green'}
+            />
+          </Group>
+        }
+        <Rect
+          cornerRadius={16}
+          height={messageHeight}
+          width={340}
+          fill="#FDFDFD"
+          strokeWidth={1}
+          stroke={ "#5850EB"}
+          shadowColor={getShadowColor(item)}
+          shadowOpacity={1}
+          shadowBlur={7}
+        />
+        {item.isHover &&
+          <>
+            <Rect
+              width={50} height={30} x={330} y={10} />
+            <URLImage
+              onMouseOver={() => { document.body.style.cursor = 'pointer' }}
+              onMouseOut={() => { document.body.style.cursor = 'default' }}
+              onClick={() => { handleDeleteMessage(item, index) }}
+              image={TrashIcon} x={345} y={10} height={25} width={25} />
+          </>
+        }
+        <Circle x={30} y={30} radius={15} fill="#5850EB" />
+        <Text
+          x={55}
+          y={22}
+          text={item.name}
+          fontFamily={'Roboto'}
+          fontSize={20}
+          fill={'gray'}
+        />
+        <Group
+          x={340}
+          y={messageHeight - 20}
+          onMouseOver={() => { document.body.style.cursor = 'pointer' }}
+          onMouseOut={() => { document.body.style.cursor = 'default' }}
+          onClick={(e) => {
+            e.cancelBubble = true;
+            connectEdge(item.id)
+          }}>
+          <Circle radius={9} fill="#8392AB" strokeWidth={1} />
+          <Text
+            x={-80}
+            y={-8}
+            text="Next Step"
+            fontFamily={'Roboto'}
+            fontSize={15}
+            fontWeight={300}
+            fill={'gray'}
+          />
+        </Group>
+        {typeof item.children == 'object' ? (
+          <>
+            {item.children.length > 0 ? (
+              handleRenderingChildrens(item)
+            ) : (
+                <React.Fragment key={item}>
+                  <Group>
+                    <Rect
+                      x={20}
+                      y={75}
+                      height={60}
+                      width={300}
+                      fill="#EEF1F4"
+                      cornerRadius={16}
+                    />
+                    <Text
+                      text="No Content"
+                      x={110}
+                      y={95}
+                      fontFamily={'Roboto'}
+                      fontSize={20}
+                      fontWeight={300}
+                      fill={'blue'}
+                    />
+                  </Group>
+                </React.Fragment>
+              )}
+          </>
+        ) : null}
+      </Group>
+    );
+  }
+  const getFlowMessage = (item, index) => {
+    return (
+      <Group
+      x={item.position?.x}
+      y={item.position?.y}
+      draggable
+      onClick={(e) => {
+        showToolbar(item.id);
+        setSelectedTrue(index);
+      }}
+      onMouseEnter={(e) => {
+        setHoverTrue(index);
+      }}
+      onMouseLeave={(e) => {
+        setHoverFalse(index);
+      }}
+      hitOnDragEnabled={true}
+      onDragMove={(e) => {
+        handleDragMessage(e, item, index)
+      }}
+      onDragEnd={() => { updateMessagePosition(item) }}
+    >
+      <Rect
+        cornerRadius={16}
+        height={200}
+        width={340}
+        fill="#FDFDFD"
+        stroke={ "#f9bf3b"}
+        strokeWidth={1}
+        shadowColor={getShadowColor(item)}
+        shadowOpacity={1}
+        shadowBlur={7}
+      />
+      {item.isHover &&
+        <>
+          <Rect
+            width={50} height={30} x={330} y={10} />
+          <URLImage
+            onMouseOver={() => { document.body.style.cursor = 'pointer' }}
+            onMouseOut={() => { document.body.style.cursor = 'default' }}
+            onClick={() => { handleDeleteMessage(item, index) }}
+            image={TrashIcon} x={345} y={10} height={25} width={25} />
+        </>
+      }
+      <Circle x={30} y={30} radius={15} fill="#f9bf3b" />
+      <Text
+        x={55}
+        y={22}
+        text={item.name}
+        fontFamily={'Roboto'}
+        fontSize={20}
+        fill={'gray'}
+        />
+        {item.children.length > 0 ? (
+          <Group>
+          <Rect
+            x={20}
+            y={75}
+            height={60}
+            width={300}
+            stroke="green"
+            strokeWidth={1}
+            fill="#EEF1F4"
+            cornerRadius={16}
+          />
+          <Text
+            text={item.children[0].name}
+            x={40}
+            y={95}
+            fontFamily={'Roboto'}
+            fontSize={20}
+            fontWeight={300}
+            fill={"#f9bf3b"}
+          />
+        </Group>
+        ) : (
+            <React.Fragment key={item}>
+              <Group>
+                <Rect
+                  x={20}
+                  y={75}
+                  height={60}
+                  width={300}
+                  fill="#EEF1F4"
+                  cornerRadius={16}
+                />
+                <Text
+                  text="Select Flow"
+                  x={110}
+                  y={95}
+                  fontFamily={'Roboto'}
+                  fontSize={20}
+                  fontWeight={300}
+                  fill={"#f9bf3b"}
+                />
+              </Group>
+            </React.Fragment>
+          )}
+    </Group>
+    );
+  }
+  const getMessageBox = (item, index, messageHeight) => {
+    if (item.type == "default") {
+      return getDefaultMessage(item, index, messageHeight);
+    } else if (item.type == "flow") {
+      return getFlowMessage(item, index);
+    }
+  }
   
 
   return (
     <FlowBuilderWrapper>
-      <div className="header">Flows of { props.match.params.id}</div>
+      {flow && <div className="header">{flow.name}</div>}
       <div className="stage-action">
         <BiMessageSquareAdd
           onClick={handleAddMessage}
         />
       </div>
-      {isToolbarActive && <Toolbar id={id} hideToolbar={hideToolbar} />}
+      {isToolbarActive && <Toolbar id={id} hideToolbar={hideToolbar} bot={flow.bot} flow={flow.id} />}
       <Stage
         width={getStageWidth()}
         height={window.innerHeight - 70}
@@ -406,37 +670,6 @@ const FlowBuilder = (props) => {
             height={window.innerHeight * 3}
             fill=""
           />
-          <Group draggable x={200} y={200}>
-            <Rect
-              cornerRadius={16}
-              width={300}
-              height={100}
-              fill="#FDFDFD"
-              strokeWidth={2}
-              shadowColor="gray"
-              shadowOpacity={0.7}
-              shadowBlur={2}
-            />
-            <Circle x={30} y={30} radius={15} fill="green" />
-            <Text
-              x={55}
-              y={22}
-              text="Starting Step"
-              fontFamily={'Roboto'}
-              fontSize={20}
-              fill={'gray'}
-            />
-            <Circle x={280} y={80} radius={9} fill="#8392AB" strokeWidth={1} />
-            <Text
-              x={195}
-              y={72}
-              text="Next Step"
-              fontFamily={'Roboto'}
-              fontSize={15}
-              fontWeight={300}
-              fill={'gray'}
-            />
-          </Group>
           {showToolOption && getToolOption()}
           {builderState &&
             typeof builderState == 'object' &&
@@ -444,114 +677,15 @@ const FlowBuilder = (props) => {
               var messageHeight = calculateHeightOfMessageBox(item.children);
               return (
                 <React.Fragment key={item.id}>
-                  {item.next ? (
+                  {(item.type==="default" && item.next) ? (
                     <Edge
                       height={messageHeight}
                       node1={item.position}
                       node2={getNextNode(item.next)}
                     />
                   ) : null}
-                  <Group
-                    x={item.position?.x}
-                    y={item.position?.y}
-                    draggable
-                    onClick={(e) => {
-                      showToolbar(item.id);
-                      setSelectedTrue(index);
-                    }}
-                    onMouseEnter={(e) => {
-                      setHoverTrue(index);
-                    }}
-                    onMouseLeave={(e) => {
-                      setHoverFalse(index);
-                    }}
-                    hitOnDragEnabled={true}
-                    onDragMove={(e) => {
-                      handleDragMessage(e, item, index)
-                    }}
-                    onDragEnd={() => { updateMessagePosition(item) }}
-                    >
-                    <Rect
-                      cornerRadius={16}
-                      height={messageHeight}
-                      width={340}
-                      fill="#FDFDFD"
-                      strokeWidth={5}
-                      shadowColor={getShadowColor(item)}
-                      shadowOpacity={1}
-                      shadowBlur={10}
-                    />
-                    {item.isHover &&
-                      <>
-                      <Rect
-                        width={50} height={30} x={330} y={10} /> 
-                      <URLImage
-                        onMouseOver={() => { document.body.style.cursor = 'pointer' }}
-                        onMouseOut={() => { document.body.style.cursor = 'default' }}
-                        onClick={() => {handleDeleteMessage(item, index)}}
-                        image={TrashIcon} x={345} y={10} height={25} width={25} />
-                      </>
-                    }
-                    <Circle x={30} y={30} radius={15} fill="#5850EB" />
-                    <Text
-                      x={55}
-                      y={22}
-                      text={item.name}
-                      fontFamily={'Roboto'}
-                      fontSize={20}
-                      fill={'gray'}
-                    />
-                    <Group
-                      x={340}
-                      y={messageHeight - 20}
-                      onMouseOver={() => { document.body.style.cursor = 'pointer' }}
-                      onMouseOut={() => { document.body.style.cursor = 'default' }}
-                      onClick={(e) => {
-                        e.cancelBubble = true;
-                        connectEdge(item.id)
-                      }}>
-                      <Circle radius={9} fill="#8392AB" strokeWidth={1} />
-                      <Text
-                        x={-80}
-                        y={-8}
-                        text="Next Step"
-                        fontFamily={'Roboto'}
-                        fontSize={15}
-                        fontWeight={300}
-                        fill={'gray'}
-                      />
-                    </Group>
-                    {typeof item.children == 'object' ? (
-                      <>
-                        {item.children.length > 0 ? (
-                          handleRenderingChildrens(item)
-                        ) : (
-                          <React.Fragment key={item}>
-                            <Group>
-                              <Rect
-                                x={20}
-                                y={75}
-                                height={60}
-                                width={300}
-                                fill="#EEF1F4"
-                                cornerRadius={16}
-                              />
-                              <Text
-                                text="No Content"
-                                x={110}
-                                y={95}
-                                fontFamily={'Roboto'}
-                                fontSize={20}
-                                fontWeight={300}
-                                fill={'blue'}
-                              />
-                            </Group>
-                          </React.Fragment>
-                        )}
-                      </>
-                    ) : null}
-                  </Group>
-                </React.Fragment>
+                  {getMessageBox(item, index, messageHeight)}
+                  </React.Fragment>
               );
             })}
         </Layer>
@@ -559,14 +693,22 @@ const FlowBuilder = (props) => {
     </FlowBuilderWrapper>
   );
 };
-
 const getShadowColor = (item) => {
   if (item.isSelected) {
-    return '#1e824c';
+    if (item.type == "default") {
+      return '#1e824c';
+    } else if (item.type == "flow") {
+      return "#f9ae23";
+    }
+   
   } else if (item.isHover) {
-    return '#1f3a93';
+    if (item.type == "default") {
+      return '#8078FF';
+    } else if (item.type == "flow") {
+      return "#f9bf3b";
+    }
   } else {
-    return 'black';
+    return 'gray';
   }
 };
 

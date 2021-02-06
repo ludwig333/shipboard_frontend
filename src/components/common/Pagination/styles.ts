@@ -4,6 +4,9 @@ export const PaginationWrapper = styled.div`
   display: flex;
   justify-content: center;
   width: 25rem;
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
 `;
 
 export const PaginationItem = styled.a<{ isActive?: number }>`

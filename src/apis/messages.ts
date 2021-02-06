@@ -16,8 +16,10 @@ export const createAndConnectMessage = async (data, id: string) => {
 }
 
 export const updateMessage = async (data, id: string) => {
-  console.log(data);
   return makeRequest(urls.messages + '/' + id, 'PUT', data, { Authorization: 'Bearer ' + getItem('token') });
+}
+export const connectFlowToMessage = async (data, id: string) => {
+  return makeRequest(urls.message + '/connect-flow/' + id, 'POST', data, { Authorization: 'Bearer ' + getItem('token') });
 }
 
 export const deleteMessage = async (id: string) => {

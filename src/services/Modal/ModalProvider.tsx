@@ -100,6 +100,7 @@ export const ModalWrapper = styled.div`
     overflow-y: scroll;
     overflow-x: hidden;
     padding: 4rem 0;
+    z-index: 10;
     h1 {
       padding-bottom: 1rem;
     }

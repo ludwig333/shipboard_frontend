@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const ToolbarWrapper = styled.div`
   display: flex;
   position: relative;
-  z-index: 2;
+  z-index: 1;
   float: left;
   
 `;
@@ -21,7 +21,9 @@ export const ToolbarMenu = styled.div`
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.25);
   overflow-y: scroll;
   overflow-x: hidden;
-
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   .header {
     display: flex;
@@ -31,7 +33,6 @@ export const ToolbarMenu = styled.div`
     width: 100%;
     padding: 1rem;
     background: #e1e5ea;
-    margin-left: -2rem;
   }
 
   .heading-input {
@@ -51,6 +52,67 @@ export const ToolbarMenu = styled.div`
       outline: none;
     }
   }
+
+  .flow-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 5rem;
+    width: 100%;
+    padding: 1rem;
+    background:	#FFE763;
+    font-size: 1.6rem;
+    font-weight: 500;
+    font-family: Roboto, 'sans-serif';
+    border: none;
+  }
+
+  .flow-content {
+    position: relative;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height: 6rem;
+    border-radius: 7px;
+    width: 100%;
+    max-width: 24rem;
+    padding: 2rem;
+    border: 1px solid green;
+    background: #f2f5f7;
+    font-size: 1.6rem;
+    font-weight: 500;
+    font-family: Roboto, 'sans-serif';
+    cursor: pointer;
+
+    &:hover { 
+      background: #FFE763;
+    .action-btn {
+      visibility: visible;
+    }
+  }
+  }
+
+  .action-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 3rem;
+    width: 3rem;
+    visibility: hidden;
+    background-color: transparent;
+    border: none;
+    outline: none;
+
+    svg {
+      height: 2rem;
+      width: 2rem;
+      color: #8392ab;
+
+      &:hover {
+        color: red;
+        cursor: pointer;
+      }
+    }
 
   .no-content-text {
     display: flex;

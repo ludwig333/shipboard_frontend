@@ -7,13 +7,12 @@ export const FlowBuilderWrapper = styled.div`
     align-items: center;
     height: 5rem;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
-    margin-right: -2rem;
   }
   .stage-action {
     position: absolute;
     top: 6rem;
     right: 2rem;
-    z-index: 200;
+    z-index: 2;
     svg {
       height: 4rem;
       width: 4rem;

@@ -1,9 +1,7 @@
 import styled from 'styled-components';
 
 export const GridWrapper = styled.div`
-
-  max-width: 144rem;  
-  margin: 0 4rem;
+  max-width: 144rem; 
   a {
       text-decoration: none;
       font-family: "Roboto", sans-serif;
@@ -18,11 +16,12 @@ export const GridWrapper = styled.div`
   .grid-row {
   display: flex;
   flex-flow: row wrap;
-  justify-content: flex-start;
+  justify-content: center;
 }
 
 .grid-item {
-  height: 25rem;
+  height: 20rem;
+  min-width: 20rem;
   flex-basis: 20%;
   width: 25rem;
   position: relative;
@@ -49,6 +48,14 @@ export const GridWrapper = styled.div`
   }
 }
 
+.fixed-width {
+  width: 15rem;
+}
+
+.small-height {
+  height: 5rem;
+}
+
 .grid-item-container {
   height: 100%;
   width: 100%;
@@ -58,7 +65,7 @@ export const GridWrapper = styled.div`
 
   .image {
     background-color: #E1E5EA;
-    height: 20rem;
+    height: 15rem;
   }
 
   .tag {
