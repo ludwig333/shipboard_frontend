@@ -11,6 +11,7 @@ import BotCreateModal from '../../../components/dashboard/Bots/CreateModal';
 import BotEditModal from '../../../components/dashboard/Bots/EditModal';
 import BotDeleteModal from '../../../components/dashboard/Bots/DeleteModal';
 import { toast } from 'react-toastify';
+import ConfigureBot from '../../../components/dashboard/Bots/Configure/Messenger';
 
 type BotType = {
   id: string;
@@ -131,7 +132,6 @@ const Bots = () => {
                         }}>
                         Edit
                       </p>
-                      <p>Configure</p>
                       <p
                         onClick={(e) => {
                           e.preventDefault()

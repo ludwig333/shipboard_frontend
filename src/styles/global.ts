@@ -39,6 +39,14 @@ body {
     overflow-x: hidden;
 
 }
+
+.form-label {
+    color:black;
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin-right: 1rem;
+}
+
 .form-error {
     font-size: 1rem;
     color: red;

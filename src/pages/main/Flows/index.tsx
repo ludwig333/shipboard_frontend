@@ -12,8 +12,13 @@ import FlowEditModal from '../../../components/dashboard/Flows/EditModal';
 import FlowDeleteModal from '../../../components/dashboard/Flows/DeleteModal';
 import Pagination from '../../../components/common/Pagination/index';
 import flowCover from '../../../assets/images/flow-cover.png';
-
-
+import { PlatformWrapper } from './styles';
+import messengerLogo from '../../../assets/images/platforms/messenger.png';
+import telegramLogo from '../../../assets/images/platforms/telegram.png';
+import slackLogo from '../../../assets/images/platforms/slack.png';
+import MessengerConfigure from '../../../components/dashboard/Bots/Configure/Messenger';
+import TelegramConfigure from '../../../components/dashboard/Bots/Configure/Telegram';
+import SlackConfigure from '../../../components/dashboard/Bots/Configure/Slack';
 
 type FlowType = {
   id: string;
@@ -44,12 +49,9 @@ const Flows = (props) => {
         setIsLoading(false);
       });
   };
-
-  useEffect(() => {
-    getFlowsData(botId, pageNumber);
-  }, [pageNumber, lastPage]);
-
-
+  /**
+   * Flow Operations Starts
+   */
   const handleCreateOpen = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
@@ -97,13 +99,61 @@ const Flows = (props) => {
     );
     flows.splice(flowId, 1);
   }
+  /**
+   * Flow Operations Ends
+   */
+
+  /**
+   * Configure Operations Starts
+   */
+
+  const openMessengerConfigure = () => {
+    showModal(() => (
+      <MessengerConfigure hideModal={hideModal} />
+    ));
+  }
+
+  const openTelegramConfigure = () => {
+    showModal(() => (
+      <TelegramConfigure hideModal={hideModal} />
+    ));
+  }
+
+  const openSlackConfigure = () => {
+    showModal(() => (
+      <SlackConfigure hideModal={hideModal} />
+    ));
+  }
+  /**
+   * Configure Operations Ends
+   */
   
+  
+  useEffect(() => {
+    getFlowsData(botId, pageNumber);
+  }, [pageNumber, lastPage]);
+
+
   return (
     <React.Fragment>
     <div className="page-header">
-      <h1 className="main-heading">Flows</h1>
+      <h1 className="main-heading">Bot Details</h1>
         <PrimaryButton onClick={handleCreateOpen}>Add Flow</PrimaryButton>
-    </div>
+      </div>
+      <PlatformWrapper>
+        <div className="platform_btn" onClick={openMessengerConfigure}>
+          <img src={messengerLogo} alt="Messenger Logo" />
+          <p>Messenger</p>
+        </div>
+        <div className="platform_btn" onClick={openTelegramConfigure}>
+          <img src={telegramLogo} alt="Telegram Logo" />
+          <p>Telegram</p>
+        </div>
+        <div className="platform_btn" onClick={openSlackConfigure}>
+          <img src={slackLogo} alt="Slack Logo" />
+          <p>Slack</p>
+        </div>
+      </PlatformWrapper>
       <GridWrapper>
         <div className="grid-row">
           {flows && flows.map((data: FlowType) => {
