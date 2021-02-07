@@ -109,19 +109,19 @@ const Flows = (props) => {
 
   const openMessengerConfigure = () => {
     showModal(() => (
-      <MessengerConfigure hideModal={hideModal} />
+      <MessengerConfigure hideModal={hideModal} botId={botId} />
     ));
   }
 
   const openTelegramConfigure = () => {
     showModal(() => (
-      <TelegramConfigure hideModal={hideModal} />
+      <TelegramConfigure hideModal={hideModal} botId={botId} />
     ));
   }
 
   const openSlackConfigure = () => {
     showModal(() => (
-      <SlackConfigure hideModal={hideModal} />
+      <SlackConfigure hideModal={hideModal} botId={botId}/>
     ));
   }
   /**

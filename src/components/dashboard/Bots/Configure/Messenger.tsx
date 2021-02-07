@@ -1,13 +1,61 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { FormHeader } from '../../../common/typography';
 import { ConfigureWrapper } from './styles';
 import { useForm } from 'react-hook-form';
-import { InputField } from '../../../common/form';
+import { InputField, SelectField } from '../../../common/form';
 import { FormButton } from '../../../common/buttons';
 import messengerLogo from '../../../../assets/images/platforms/messenger.png';
+import { updataPlatformConfiguration } from '../../../../apis/bots';
+import { toast } from 'react-toastify';
 
-const MessengerConfigure = ({ hideModal }) => {
+const MessengerConfigure = ({ botId, hideModal }) => {
   const { register, handleSubmit, errors, setError } = useForm();  
+  const [isLoading, setIsLoading] = useState(false);
+
+  const updateConfiguration = (data) => {
+    setIsLoading(true);
+    updataPlatformConfiguration({
+      platform: "messenger",
+      verification_code: data.verification_code,
+      access_token: data.access_token,
+      connect_status: data.connect_status,
+      app_secret: data.app_secret
+    }, botId).then((response) => {
+      hideModal();
+      toast.success(response.message);
+    }).catch((err) => {
+      if (err.response.status === 422) {
+        if (err.response.data.errors.access_token) {
+          setError('access_token', {
+            type: 'server',
+            message: err.response.data.errors.access_token[0]
+          })
+        } 
+        if (err.response.data.errors.app_secret) {
+          setError('app_secret', {
+            type: 'server',
+            message: err.response.data.errors.app_secret[0]
+          })
+        } 
+        if (err.response.data.errors.verification_code) {
+          setError('verification_code', {
+            type: 'server',
+            message: err.response.data.errors.verification_code[0]
+          })
+        } 
+        if (err.response.data.errors.connect_status) {
+          setError('connect_status', {
+            type: 'server',
+            message: err.response.data.errors.connect_status[0]
+          })
+        } 
+      } else {
+        toast.error('Something went wrong')
+      }
+    }).finally(() => { 
+      setIsLoading(false);
+    })
+  }
 
   return (
     <ConfigureWrapper>
@@ -18,7 +66,7 @@ const MessengerConfigure = ({ hideModal }) => {
           <FormHeader>Configure Messenger</FormHeader>
         </div>
         <div className="modal-content">
-          <form className="configure-form">
+          <form className="configure-form" onSubmit={handleSubmit(updateConfiguration)}>
             <div className="form-group">
               <label>
                 <span className="form-label">Access Token </span>
@@ -27,7 +75,8 @@ const MessengerConfigure = ({ hideModal }) => {
               </label>
               <InputField
                 isError={!!errors.access_token}
-                name="name"
+                name="access_token"
+                id="access_token"
                 placeholder="Enter Access Token"
                 ref={register({required: true})}
               />
@@ -40,6 +89,7 @@ const MessengerConfigure = ({ hideModal }) => {
               <InputField
                 isError={!!errors.app_secret}
                 name="app_secret"
+                id="app_secret"
                 placeholder="Enter App Secret"
                 ref={register}
               />
@@ -52,7 +102,8 @@ const MessengerConfigure = ({ hideModal }) => {
               </label>
               <InputField
                 isError={!!errors.verification_code}
-                name="name"
+                name="verification_code"
+                id="verification_code"
                 placeholder="Enter Access Token"
                 ref={register({required: true})}
               />
@@ -61,10 +112,29 @@ const MessengerConfigure = ({ hideModal }) => {
               <label>
                 <span className="form-label">Callback URL</span>
               </label>
-              <p>https://staging.bot.manaweb.ca/facebook/84cb0c9b-c95b-40c3-9484-de05a8479bd8</p>
+              <InputField
+                disabled
+                readOnly
+                id="callback_url"
+                defaultValue="https://staging.bot.manaweb.ca/slack/84cb0c9b-c95b-40c3-9484-de05a8479bd8"
+              />
+            </div>
+            <div className="form-group last-input">
+              <label>
+                <span className="form-label">Status</span>
+                {errors.connect_status && errors.connect_status.type === 'required' && (<span className="form-error">This field is required</span>)}
+              </label>
+              <SelectField
+                isError={!!errors.connect_status}
+                name="connect_status"
+                id="connect_status"
+                ref={register({ required: true })}>
+                <option value="1">Active</option>
+                <option value="0">Inactive</option>
+              </SelectField>
             </div>
             <FormButton type="submit">
-               Save
+              {isLoading ? 'Loading...' : 'Save'}
             </FormButton>
           </form>
         </div>

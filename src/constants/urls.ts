@@ -9,7 +9,7 @@ const urls = {
   logOut: `${baseUrl}/logout`,
   
   bots: `${baseUrl}/bots`,
-  configureBots: `${baseUrl}/configure`,
+  botConfiguration: `${baseUrl}/configure-bot`,
 
   flows: `${baseUrl}/flows`,
   
