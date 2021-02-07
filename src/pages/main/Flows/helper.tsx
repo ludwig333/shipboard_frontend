@@ -2,9 +2,9 @@ import React from 'react';
 import { Rect, Image, Text, Group, Shape, Circle } from 'react-konva';
 import useImage from 'use-image';
 
-export const Edge = ({ height, node1, node2 }) => {
+export const Edge = ({ height, node1, node2, width = 0 }) => {
   node1 = {
-    x: node1.x + 350,
+    x: node1.x + 350 - width,
     y: node1.y + height - 20
   }
   node2 = {

@@ -20,6 +20,7 @@ import { BiMessageSquareAdd } from 'react-icons/bi';
 import { saveMessage, getMessages, updateMessage, deleteMessage, createAndConnectMessage } from '../../../apis/messages';
 import { toast } from 'react-toastify';
 import { getFlow } from '../../../apis/flows';
+import { createAndConnectWithButton, updateButton } from '../../../apis/buttons';
 
 const FlowBuilder = (props) => {
   const [isToolbarActive, setIsToolbarActive] = useState(null);
@@ -31,10 +32,11 @@ const FlowBuilder = (props) => {
     y: 0,
   });
   const [isEdging, setIsSetting] = useState(false);
-  const [isSecondClick, setIsSecondClick] = useState(false);
   const [showToolOption, setShowToolOption] = useState(false);
   const [edgingMessageId, setEdgingMessageId] = useState(null);
   const [edgingButtonId, setEdgingButtonId] = useState(null);
+  const [edgingButtonMessageId, setEdgingButtonMessageId] = useState(null);
+  const [edgingButtonChildId, setEdgingButtonChildId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const [state, setState] = useState({
@@ -82,7 +84,8 @@ const handleRenderingChildrens = (message) => {
   });
 };
   
-const getChildren = (message, child, lastPosition) => {
+  const getChildren = (message, child, lastPosition) => {
+    // var messageHeight = calculateHeightOfMessageBox(message.children);
   if (child.type === 'text') {
     var textButtons = child.buttons;
     var boxHeight = (child.height * 1.05) + (textButtons.length * 40) + 10;
@@ -109,15 +112,17 @@ const getChildren = (message, child, lastPosition) => {
         />
         {child.buttons.map((button, index) => {
           var y = (child.height * 1.05) + (40 * index) + 10;
+          var node2 = getNextNode(button.next);
           return (
-            <Group>
+            <Group key={button.id}>
               { button.next &&
-                    <Edge
-                      height={0}
-                      node1={{ x: message.position.x , y: message.position.y }}
-                      node2={getNextNode(button.next)}
-                    />
-                  }
+                  <Edge
+                    height={boxHeight}
+                    node1={{ x: -60, y: - boxHeight + 30 + (y)}}
+                    node2={{ x: node2.x - message.position.x -20, y: node2.y - message.position.y - 80}}
+                    width={20}
+                  />
+              }
               <Rect
                 x={25}
                 y={y}
@@ -230,6 +235,9 @@ const getChildren = (message, child, lastPosition) => {
   };
 
   const connectEdge = (messageId) => {
+    setEdgingButtonId(null);
+    setEdgingMessageId(null);
+
     if (!showToolOption) {
       setIsSetting(true);
       setEdgingMessageId(messageId);
@@ -245,9 +253,14 @@ const getChildren = (message, child, lastPosition) => {
   };
 
   const connectButtonEdge = (messageId, childId, buttonId) => {
+    setEdgingButtonId(null);
+    setEdgingMessageId(null);
     if (!showToolOption) {
       setIsSetting(true);
       setEdgingButtonId(buttonId);
+      setEdgingButtonMessageId(messageId);
+      setEdgingButtonChildId(childId);
+
       setBuilderState(
         builderState.map((item) => {
           if (item.id == messageId) {
@@ -257,8 +270,10 @@ const getChildren = (message, child, lastPosition) => {
                   if (button.id == buttonId) {
                     button.next = "dummy"
                   }
+                  return button;
                 })
               }
+              return child;
             })
           }
           return item;
@@ -268,7 +283,7 @@ const getChildren = (message, child, lastPosition) => {
   }
 
   const handleMousePosition = (event) => {
-    if (isEdging && !showToolOption) {
+    if (!showToolOption) {
       var point = event.target.getStage().getPointerPosition();
       setMousePosition({
         x: point.x,
@@ -284,21 +299,50 @@ const getChildren = (message, child, lastPosition) => {
         //If the edging is hovered over another message and connect that message
         var messageIdOfHover = builderState[hoveredIndex].id
         if (messageIdOfHover != edgingMessageId) {
-          updateMessage({
-            next: messageIdOfHover
-          }, edgingMessageId).then((response) => { 
-            setBuilderState(
-              builderState.map((item, index) => {
-                if (item.id == edgingMessageId) {
-                  item.next = messageIdOfHover
-                }
-                return item;
-              })
-            );
-          }).catch((err) => {
-            toast.error("Something went wrong");
-          })
-        }
+          if (edgingMessageId) {
+            updateMessage({
+              next: messageIdOfHover
+            }, edgingMessageId).then((response) => { 
+              setBuilderState(
+                builderState.map((item, index) => {
+                  if (item.id == edgingMessageId) {
+                    item.next = messageIdOfHover
+                  }
+                  return item;
+                })
+              );
+            }).catch((err) => {
+              toast.error("Something went wrong");
+            }).finally(() => {
+              setEdgingMessageId(null);
+            })
+           } else if (edgingButtonId) {
+            updateButton({
+              next: messageIdOfHover
+            }, edgingButtonId).then((response) => {
+              setBuilderState(
+                builderState.map((item, index) => {
+                  if (item.id == edgingButtonMessageId) {
+                    item.children.map((child) => {
+                      if (child.id == edgingButtonChildId) {
+                        child.buttons.map((button) => {
+                          if (button.id == edgingButtonId) {
+                            button.next = messageIdOfHover
+                          }
+                        })
+                      }
+                    })
+                  }  
+                  return item;
+                })
+              );
+            }).catch((err) => {
+              toast.error("Something went wrong")
+            }).finally(() => {
+              setEdgingButtonId(null);
+            })
+          }
+        } 
       } else {
         setShowToolOption(true);
       }
@@ -338,6 +382,7 @@ const getChildren = (message, child, lastPosition) => {
     deleteMessage(item.id).then(() => {
       setShowToolOption(false);
       setEdgingMessageId(null);
+      setEdgingButtonId(null);
       setIsSetting(false);
     }).catch((err) => {
         toast.error("Something went wrong");
@@ -375,57 +420,161 @@ const getChildren = (message, child, lastPosition) => {
   const handleToolOptionNewMessageAction = () => {
     setIsSetting(false);
     setShowToolOption(false);
-
     let number = builderState.length + 1;
-    createAndConnectMessage({
+    var newMessage = {
       name: 'Send Message #' + number,
       type: 'default',
       position_x: mousePosition.x,
       position_y: mousePosition.y,
       flow: props.match.params.id
-    }, edgingMessageId).then((response) => {
-      setBuilderState(
-        builderState.map((item) => {
-          if (item.id == edgingMessageId) {
-            item.next = response.data.id;
-          }
-          return item;
-        })
-      );
-      setBuilderState([...builderState, response.data]);
+    }
 
-    }).catch((err) => {
-      toast.error("Something went wrong")
-    })
+    if (edgingMessageId) {
+      createAndConnectMessage(newMessage, edgingMessageId)
+        .then((response) => {
+          setBuilderState(
+            builderState.map((item) => {
+              if (item.id == edgingMessageId) {
+                item.next = response.data.id;
+              }
+              return item;
+            })
+          );
+          setBuilderState([...builderState, response.data]);
+        }).catch((err) => {
+          toast.error("Something went wrong")
+        }).finally(() => {
+          setEdgingMessageId(null);
+        })
+    } else if (edgingButtonId) {
+      createAndConnectWithButton(newMessage, edgingButtonId)
+        .then((response) => {
+          setBuilderState(
+            builderState.map((item) => {
+              if (item.id == edgingButtonMessageId) {
+                item.children.map((child) => {
+                  if (child.id == edgingButtonChildId) {
+                    child.buttons.map((button) => {
+                      if (button.id == edgingButtonId) {
+                        button.next = response.data.id
+                      }
+                      return button;
+                    })
+                  }
+                  return child;
+                })
+              }
+              return item;
+            })
+          );
+          setBuilderState([...builderState, response.data]);
+        }).catch((err) => {
+          toast.error("Something went wrong")
+        }).finally(() => {
+          setEdgingButtonId(null);
+          setEdgingButtonMessageId(null);
+          setEdgingButtonChildId(null);
+        })
+    }
   }
 
   const handleToolOptionConnectFlow = () => {
     setIsSetting(false);
     setShowToolOption(false);
-
     let number = builderState.length + 1;
-    createAndConnectMessage({
+    var newFlow = {
       name: 'Connect Flow #' + number,
       type: 'flow',
       position_x: mousePosition.x,
       position_y: mousePosition.y,
       flow: props.match.params.id
-    }, edgingMessageId).then((response) => {
+    }
+    if (edgingMessageId) {
+      createAndConnectMessage(newFlow, edgingMessageId).then((response) => {
+        setBuilderState(
+          builderState.map((item) => {
+            if (item.id == edgingMessageId) {
+              item.next = response.data.id;
+            }
+            return item;
+          })
+        );
+        setBuilderState([...builderState, response.data]);
+       
+      }).catch((err) => {
+        toast.error("Something went wrong")
+      }).finally(() => {
+        setEdgingMessageId(null);
+      });
+    } else if (edgingButtonId) {
+      createAndConnectWithButton(newFlow, edgingButtonId)
+        .then((response) => {
+          setBuilderState(
+            builderState.map((item) => {
+              if (item.id == edgingButtonMessageId) {
+                item.children.map((child) => {
+                  if (child.id == edgingButtonChildId) {
+                    child.buttons.map((button) => {
+                      if (button.id == edgingButtonId) {
+                        button.next = response.data.id
+                      }
+                      return button;
+                    })
+                  }
+                  return child;
+                })
+              }
+              return item;
+            })
+          );
+          setBuilderState([...builderState, response.data]);
+        }).catch((err) => {
+          toast.error("Something went wrong")
+        }).finally(() => {
+          setEdgingButtonId(null);
+          setEdgingButtonMessageId(null);
+          setEdgingButtonChildId(null);
+        })
+    }
+  }
+
+  const handleToolOptionCancel = () => {
+    setShowToolOption(false);
+    if (isEdging) setIsSetting(false);
+    if (edgingMessageId) {
       setBuilderState(
         builderState.map((item) => {
           if (item.id == edgingMessageId) {
-            item.next = response.data.id;
+            item.next = ""
           }
           return item;
         })
       );
-      setBuilderState([...builderState, response.data]);
-
-    }).catch((err) => {
-      toast.error("Something went wrong")
-    })
-  }
-  
+      if (edgingMessageId) setEdgingMessageId(null);
+    } else if (edgingButtonId) {
+        setBuilderState(
+          builderState.map((item) => {
+            if (item.id == edgingButtonMessageId) {
+              item.children.map((child) => {
+                if (child.id == edgingButtonChildId) {
+                  child.buttons.map((button) => {
+                    if (button.id == edgingButtonId) {
+                      button.next = null
+                    }
+                    return button;
+                  })
+                }
+                return child;
+              })
+            }
+            return item;
+          })
+        );
+        if(edgingButtonId) setEdgingButtonId(null);
+        if(edgingButtonChildId) setEdgingButtonChildId(null);
+        if(edgingButtonMessageId) setEdgingButtonMessageId(null);
+      }          
+    }
   React.useEffect(() => {
     setIsLoading(true);
     getMessages(props.match.params.id)
@@ -495,18 +644,7 @@ const getChildren = (message, child, lastPosition) => {
             fill={'#5850eb'}
           />
         </Group>
-        <Group y={100}  onClick={() => {
-          setShowToolOption(false);
-          setIsSetting(false);
-          setBuilderState(
-            builderState.map((item) => {
-              if (item.id == edgingMessageId) {
-                item.next = ""
-              }
-              return item;
-            })
-          );
-        }}>
+        <Group y={100}  onClick={handleToolOptionCancel}>
           <Rect
             width={200}
             height={50}

@@ -14,3 +14,10 @@ export const updateButton = async (data, id: string) => {
 export const deleteButton = async (id : string) => {
   return makeRequest(urls.button + '/' + id, 'DELETE', null, { Authorization: 'Bearer ' + getItem('token') });
 }
+
+export const createAndConnectWithButton = async (data, id: string) => {
+  return makeRequest(urls.button + '/create-and-connect/' + id, 'POST', data, { Authorization: 'Bearer ' + getItem('token') }).then((response) => response.data);
+}
+export const connectButtonToFlow = async (data, id: string) => {
+  return makeRequest(urls.message + '/connect-flow/' + id, 'POST', data, { Authorization: 'Bearer ' + getItem('token') });
+}
