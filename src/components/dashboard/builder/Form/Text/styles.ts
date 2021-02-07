@@ -5,10 +5,12 @@ export const AddTextWrapper = styled.div`
   height: auto;
   border-radius: 7px 7px 7px 7px;
   box-shadow: 0px 4px 12px #95bbdf;
+  position: relative;
 
   .action-btn {
     position: absolute;
-    right: 0;
+    top: 0;
+    right: -2.6rem;
     height: 3rem;
     width: 3rem;
     visibility: hidden;
@@ -59,5 +61,12 @@ export const AddTextWrapper = styled.div`
     outline: none;
     padding: .5rem;
     width: 100%;
+  }
+
+  .card-base {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
 `;

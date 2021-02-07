@@ -11,6 +11,7 @@ import FlowCreateModal from '../../../components/dashboard/Flows/CreateModal';
 import FlowEditModal from '../../../components/dashboard/Flows/EditModal';
 import FlowDeleteModal from '../../../components/dashboard/Flows/DeleteModal';
 import Pagination from '../../../components/common/Pagination/index';
+import flowCover from '../../../assets/images/flow-cover.png';
 
 
 
@@ -113,7 +114,7 @@ const Flows = (props) => {
                     <div className="grid-item-wrapper">
                       <div className="grid-item-container">
                         <div className="image">
-                          Image
+                          <img src={flowCover} alt="Flow Cover" />
                         </div>
                         <div className="tag">
                           <p>{data.name}</p>
@@ -123,13 +124,15 @@ const Flows = (props) => {
                             </label>
                             <div className="dropdown-content">
                               <p
-                                onClick={() => {
+                                onClick={(e) => {
+                                  e.preventDefault();
                                   handleEditOpen(data);
                                 }}>
                                 Edit
                               </p>
                               <p
-                                onClick={() => {
+                                onClick={(e) => {
+                                  e.preventDefault();
                                   handleDeleteConfirmation(data);
                                 }}>
                                 Delete

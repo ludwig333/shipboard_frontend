@@ -174,7 +174,8 @@ const ToolbarButtons = ({ id, index }) => {
     saveText({
       text: 'Change text',
       message: id,
-      position: positionIndex
+      position: positionIndex,
+      height: 17
     }).then((response) => {
       setBuilderState(
         builderState.map((item, ind) => {

@@ -66,6 +66,11 @@ export const GridWrapper = styled.div`
   .image {
     background-color: #E1E5EA;
     height: 15rem;
+
+    img {
+      max-width: 100%;
+      height: auto;
+    }
   }
 
   .tag {

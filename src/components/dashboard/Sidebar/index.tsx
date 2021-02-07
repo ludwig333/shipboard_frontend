@@ -60,7 +60,7 @@ const Sidebar: React.FC<SidebarProps> = ({ handleSidebarState }) => {
           <img src={avatar} alt="Avatar" />
           <div className="user-info">
             <h2 ref={nameRef} id="username"></h2>
-            <p>Profile Setting</p>
+            {/* <p>Profile Setting</p> */}
           </div>
         </UserInfoWrapper>
         <div className="menu_list">
@@ -85,12 +85,12 @@ const Sidebar: React.FC<SidebarProps> = ({ handleSidebarState }) => {
             </Link>
           </div>
           <div className="menu_list-bottom">
-            <Link to="/settings">
+            {/* <Link to="/settings">
               <MenuItem isOpen={isOpen}>
                 <IoSettingsSharp className="menu-icon" />
                 <p>Settings</p>
               </MenuItem>
-            </Link>
+            </Link> */}
             <MenuItem isOpen={isOpen} onClick={handleLogOut}>
               <IoLogOut className="menu-icon" />
               <p>Logout</p>

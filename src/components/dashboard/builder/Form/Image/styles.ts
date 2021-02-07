@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 export const ImageWrapper = styled.div`
+  position:relative;
   width: 25rem;
   display: flex;
   border-radius: 7px 7px 7px 7px;
@@ -17,7 +18,7 @@ export const ImageWrapper = styled.div`
   }
   .action-btn {
     position: absolute;
-    right: 0;
+    right: -2.5rem;
     height: 3rem;
     width: 3rem;
     visibility: hidden;

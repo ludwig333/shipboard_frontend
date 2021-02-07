@@ -125,14 +125,16 @@ const Bots = () => {
                     </label>
                     <div className="dropdown-content">
                       <p
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.preventDefault();
                           handleEditOpen(data);
                         }}>
                         Edit
                       </p>
                       <p>Configure</p>
                       <p
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.preventDefault()
                           handleDeleteConfirmation(data);
                         }}>
                         Delete

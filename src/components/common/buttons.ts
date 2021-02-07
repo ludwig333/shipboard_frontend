@@ -48,6 +48,7 @@ export const ToolbarButton = styled.button < { height?: string, width?: string, 
   height: ${props => props.height ? props.height : '2rem'};
   width: ${props => props.width ? props.width : '2rem'};
   border: none;
+  outline: none;
   padding: 0;
   background: #ffffff;
   color: #8392AB;
@@ -66,6 +67,26 @@ export const ToolbarButton = styled.button < { height?: string, width?: string, 
 
 export const AddTextButton = styled(ToolbarButton)`
   margin: 0rem;
-  margin-top: -.5rem;
   width: 100%;
 `;
+
+export const ContentButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 3rem;
+  width:  90%;
+  border: none;
+  padding: 0;
+  background: #E1E5EA;
+  color: black;
+  border: none;
+  outline: none;
+  font-family: Roboto, sans-serif;
+  font-weight: 400;
+  font-size: 1.4rem;
+  margin: .4rem;
+  cursor: pointer;
+  border-radius: 7px;
+`;
+

@@ -4,6 +4,7 @@ import { getFlows } from '../../../../apis/flows';
 import { GridWrapper } from '../../../common/grid';
 import { ConnectFlowWrapper } from './styles';
 import Pagination from '../../../common/Pagination/index';
+import flowCover from '../../../../assets/images/flow-cover.png';
 
 type FlowType = {
   id: string;
@@ -51,7 +52,7 @@ const ConnectFlowModal = ({bot, flow, hideModal, handleSelect}) => {
                 <div className="grid-item-wrapper">
                 <div className="grid-item-container">
                   <div className="image">
-                    Image
+                  <img src={flowCover} alt="Flow Cover" />
                   </div>
                   <div className="tag">
                     <p>{data.name}</p>

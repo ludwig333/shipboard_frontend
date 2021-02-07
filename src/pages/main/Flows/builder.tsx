@@ -3,9 +3,9 @@ import {withRouter} from 'react-router-dom'
 import { FlowBuilderWrapper } from './styles';
 import { Stage, Layer, Rect, Image, Text, Group, Circle } from 'react-konva';
 import Toolbar from '../../../components/dashboard/builder/Toolbar/index';
-import { v4 as uuidv4 } from 'uuid';
 import {
-  handleRenderingChildrens,
+  handleRenderingCards,
+  getImage,
   calculateHeightOfMessageBox,
   handleWheel,
   Edge,
@@ -32,6 +32,8 @@ const FlowBuilder = (props) => {
   const [isSecondClick, setIsSecondClick] = useState(false);
   const [showToolOption, setShowToolOption] = useState(false);
   const [edgingMessageId, setEdgingMessageId] = useState(null);
+  const [edgingButtonId, setEdgingButtonId] = useState(null);
+
 
   const [state, setState] = useState({
     layerScale: 1,
@@ -61,17 +63,103 @@ const FlowBuilder = (props) => {
     setIsToolbarActive(true);
   };
 
-  const calculateCardHeight = (state) => {
-    var height;
-    state.foreach((item) => {
-      if (item.type == 'card') {
-        height += item.cards[0].height;
-      } else {
-        height += item.height;
-      }
-    });
-    return height;
-  };
+ 
+const handleRenderingChildrens = (message) => {
+  var lastPosition = 70;
+  return message.children.map(function (child) {
+    var yposition = lastPosition;
+    if (child.type === 'card') {
+      lastPosition = lastPosition + child.cards[0].height;
+    } else if (child.type === 'text') {
+      const buttons = child.buttons.length;
+      lastPosition = lastPosition + child.height + (buttons * 40) + 40;
+    } else if (child.type === 'image') {
+      lastPosition = lastPosition + child.height + 20;
+    }
+    return getChildren(message, child, yposition);
+  });
+};
+  
+const getChildren = (message, child, lastPosition) => {
+  if (child.type === 'text') {
+    var textButtons = child.buttons;
+    var boxHeight = (child.height * 1.05) + (textButtons.length * 40) + 10;
+    return (
+      <Group x={20} y={lastPosition}>
+        <Rect
+          fill="#F0F4F7"
+          cornerRadius={5}
+          height={boxHeight}
+          width={300}
+          stroke="lightGrey"
+          strokeWidth={1}
+          shadowColor="#95bbdf"
+          shadowOpacity={0.5}
+          shadowBlur={7}
+        />
+        <Text
+          x={15}
+          y={7}
+          text={child.value}
+          fontSize={15}
+          lineHeight={1.2}
+          width={280}
+        />
+        {child.buttons.map((button, index) => {
+          var y = (child.height * 1.05) + (40 * index) + 10;
+          return (
+            <Group>
+              { button.next &&
+                    <Edge
+                      height={0}
+                      node1={{ x: message.position.x , y: message.position.y }}
+                      node2={getNextNode(button.next)}
+                    />
+                  }
+              <Rect
+                x={25}
+                y={y}
+                fill="#FFFFFF"
+                cornerRadius={5}
+                height={30}
+                width={250}
+                shadowOpacity={0.5}
+                shadowBlur={7}
+                align={"center"}
+              />
+              <Text
+                x={10}
+                y={y + 3}
+                text={button.name}
+                fontSize={15}
+                width={280}
+                lineHeight={1.5}
+                align={"center"}
+              />
+              <Circle x={260} y={y + 14} radius={9} fill="#8392AB" strokeWidth={1}
+                onMouseOver={() => { document.body.style.cursor = 'pointer' }}
+                onMouseOut={() => { document.body.style.cursor = 'default' }}
+                onClick={(e) => {
+                  e.cancelBubble = true;
+                  connectButtonEdge(message.id, child.id, button.id)
+                }}
+             />
+            </Group>
+          );
+         })}
+      </Group>
+    );
+  } else if (child.type === 'image') {
+    return getImage(child, lastPosition);
+  } else if (child.type === 'card') {
+    return (
+      <Group x={20} y={lastPosition}>
+        {handleRenderingCards(child)}
+      </Group>
+    );
+  }
+};
+
 
   const getStageWidth = () => {
     return sidebar ? window.innerWidth - 280 : window.innerWidth - 90;
@@ -154,6 +242,29 @@ const FlowBuilder = (props) => {
       );
     }
   };
+
+  const connectButtonEdge = (messageId, childId, buttonId) => {
+    if (!showToolOption) {
+      setIsSetting(true);
+      setEdgingButtonId(buttonId);
+      setBuilderState(
+        builderState.map((item) => {
+          if (item.id == messageId) {
+            item.children.map((child) => {
+              if (child.id == childId) {
+                child.buttons.map((button) => {
+                  if (button.id == buttonId) {
+                    button.next = "dummy"
+                  }
+                })
+              }
+            })
+          }
+          return item;
+        })
+      );
+    }
+  }
 
   const handleMousePosition = (event) => {
     if (isEdging && !showToolOption) {
@@ -606,7 +717,8 @@ const FlowBuilder = (props) => {
             fontFamily={'Roboto'}
             fontSize={20}
             fontWeight={300}
-            fill={"#f9bf3b"}
+              fill={"#f9bf3b"}
+              align={"center"}
           />
         </Group>
         ) : (
@@ -628,6 +740,7 @@ const FlowBuilder = (props) => {
                   fontSize={20}
                   fontWeight={300}
                   fill={"#f9bf3b"}
+                  align={"center"}
                 />
               </Group>
             </React.Fragment>
@@ -708,7 +821,7 @@ const getShadowColor = (item) => {
       return "#f9bf3b";
     }
   } else {
-    return 'gray';
+    return '#95bbdf';
   }
 };
 

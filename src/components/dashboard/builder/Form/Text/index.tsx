@@ -2,11 +2,14 @@ import React, { useEffect, useState, useRef, useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { BuilderContext } from '../../../../../services/Builder/BuilderProvider';
 import { AddTextWrapper } from './styles';
-import { AddTextButton } from '../../../../common/buttons';
+import { AddTextButton, ContentButton } from '../../../../common/buttons';
 import { BiTrash } from 'react-icons/bi';
 import Textarea from 'react-expanding-textarea';
 import { updateText, deleteText } from '../../../../../apis/texts';
 import { toast } from 'react-toastify';
+import { saveButton } from '../../../../../apis/buttons';
+import { v4 as uuidv4 } from 'uuid';
+
 
 const FormText = ({ messageId, childId }) => {
   const [builderState, setBuilderState] = useContext(BuilderContext);
@@ -23,7 +26,8 @@ const FormText = ({ messageId, childId }) => {
   const onTextChange = (data) => {
     var height = textAreaRef.current.scrollHeight;
     updateText({
-      text: data.text
+      text: data.text,
+      height: height
     }, childId).then((response) => {
       setBuilderState(
         builderState.map((item, index) => {
@@ -62,6 +66,30 @@ const FormText = ({ messageId, childId }) => {
     })
   };
 
+  const handleAddButton = () => {
+    const buttonNumber = builderState[messageId].children[childIndex].buttons.length + 1;
+    saveButton({
+      name: 'Button #' + buttonNumber,
+      parent_type: 'text',
+      parent: childId
+    }).then((response) => {
+      setBuilderState(
+        builderState.map((item, index) => {
+          if (index == messageId) {
+            item.children.map((child) => {
+              if (child.id == childId) {
+                child.buttons.push(response.data);
+              }
+            });
+          }
+          return item;
+        })
+      );
+    }).catch((err) => {
+      toast.error("Something went wrong")
+    })      
+  }
+
   useEffect(() => {
     if (textAreaRef.current) {
       register(textAreaRef.current, {required: true, minLength: 3});
@@ -87,10 +115,18 @@ const FormText = ({ messageId, childId }) => {
           />
         </form>
       </div>
-
-      {/* <AddTextButton height="4rem" width="100%">
+      <div className="card-base">
+        {builderState[messageId].children[childIndex].buttons && builderState[messageId].children[childIndex].buttons.map((button) => {
+          return (
+            <React.Fragment key={button.id}>
+              <ContentButton>{button.name}</ContentButton>
+            </React.Fragment>
+          );
+        })}
+      <AddTextButton height="4rem" width="100%" onClick={handleAddButton}>
         Add Button
-      </AddTextButton> */}
+      </AddTextButton>
+      </div>
     </AddTextWrapper>
   );
 };

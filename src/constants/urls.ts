@@ -22,7 +22,9 @@ const urls = {
   image: `${baseUrl}/image`,
 
   cardGroups: `${baseUrl}/card-groups`,
-  card: `${baseUrl}/card`
+  card: `${baseUrl}/card`,
+
+  button: `${baseUrl}/button`,
 };
 
 export default urls;

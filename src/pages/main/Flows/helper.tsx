@@ -1,5 +1,5 @@
 import React from 'react';
-import {Rect, Image, Text, Group, Shape } from 'react-konva';
+import { Rect, Image, Text, Group, Shape, Circle } from 'react-konva';
 import useImage from 'use-image';
 
 export const Edge = ({ height, node1, node2 }) => {
@@ -28,79 +28,28 @@ export const Edge = ({ height, node1, node2 }) => {
   );
 };
 
-export const handleRenderingChildrens = (item) => {
-  var lastPosition = 70;
-  return item.children.map(function (child) {
-    var yposition = lastPosition;
-    if (child.type === 'card') {
-      lastPosition = lastPosition + child.cards[0].height;
-    } else if(child.type === 'text'){
-      lastPosition = lastPosition + child.height + 50;
-    } else if (child.type === 'image') {
-      lastPosition = lastPosition + child.height + 20;
-    }
-    return getChildren(child, yposition);
-  });
-};
-
 export const calculateHeightOfMessageBox = (message) => {
-  var height = 70;
+  var height = 110;
 
   if (typeof message == 'object') {
     if (message.length > 0) {
       message.forEach((item) => {
         if (item.type === 'card') {
           var activeCard = getActiveCard(item.cards);
-          height = height + item.cards[activeCard].height + 20;
+          height +=item.cards[activeCard].height + 20;
+        } else if (item.type === 'text') { 
+          const buttons = item.buttons.length;
+          height += (item.height * 1.05) + (buttons * 40) + 20;
         } else {
-          height = height + item.height + 20;
+          height += item.height + 20;
         }
       });
     } else {
-      height += 130;
+      height += 90;
     }
   }
   return height;
 };
-
-export const getChildren = (children, lastPosition) => {
-  if (children.type === 'text') {
-    return (
-      <>
-        <Rect
-          x={20}
-          y={lastPosition}
-          fill="#F0F4F7"
-          cornerRadius={5}
-          height={children.height + 30}
-          width={300}
-          stroke="lightGrey"
-          strokeWidth={1}
-          shadowColor="#95bbdf"
-          shadowOpacity={0.5}
-          shadowBlur={7}
-        />
-        <Text
-          x={30}
-          y={lastPosition + 20}
-          text={children.value}
-          fontSize={15}
-          width={280}
-          lineHeight={1.5}
-        />
-      </>
-    );
-  } else if (children.type === 'image') {
-    return getImage(children, lastPosition);
-  } else if (children.type === 'card') {
-    return (
-      <Group x={20} y={lastPosition}>
-        {handleRenderingCards(children)}
-      </Group>
-    );
-  }
-};
-
 export const getImage = (children, lastPosition) => {
   if (children.imagePreviewUrl) {
     return (
