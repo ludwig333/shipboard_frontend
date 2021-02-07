@@ -40,6 +40,12 @@ body {
 
 }
 
+.loader-wrapper {
+    position: absolute;
+    bottom: 50%;
+    right: 50%;
+}
+
 .form-label {
     color:black;
     font-size: 1.4rem;

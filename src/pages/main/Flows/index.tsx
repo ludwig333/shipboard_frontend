@@ -19,6 +19,8 @@ import slackLogo from '../../../assets/images/platforms/slack.png';
 import MessengerConfigure from '../../../components/dashboard/Bots/Configure/Messenger';
 import TelegramConfigure from '../../../components/dashboard/Bots/Configure/Telegram';
 import SlackConfigure from '../../../components/dashboard/Bots/Configure/Slack';
+import PuffLoader from "react-spinners/PuffLoader";
+
 
 type FlowType = {
   id: string;
@@ -133,81 +135,87 @@ const Flows = (props) => {
     getFlowsData(botId, pageNumber);
   }, [pageNumber, lastPage]);
 
-
-  return (
-    <React.Fragment>
-    <div className="page-header">
-      <h1 className="main-heading">Bot Details</h1>
-        <PrimaryButton onClick={handleCreateOpen}>Add Flow</PrimaryButton>
+  if (isLoading) {
+    return (
+      <div className="loader-wrapper">
+          <PuffLoader color={' #5850EC'}  size={75} />
       </div>
-      <PlatformWrapper>
-        <div className="platform_btn" onClick={openMessengerConfigure}>
-          <img src={messengerLogo} alt="Messenger Logo" />
-          <p>Messenger</p>
-        </div>
-        <div className="platform_btn" onClick={openTelegramConfigure}>
-          <img src={telegramLogo} alt="Telegram Logo" />
-          <p>Telegram</p>
-        </div>
-        <div className="platform_btn" onClick={openSlackConfigure}>
-          <img src={slackLogo} alt="Slack Logo" />
-          <p>Slack</p>
-        </div>
-      </PlatformWrapper>
-      <GridWrapper>
-        <div className="grid-row">
-          {flows && flows.map((data: FlowType) => {
-            return (
-              <React.Fragment key={data.id}>
-                <Link to={'flow/' + data.id}>
-                  <div className="grid-item">
-                    <div className="grid-item-wrapper">
-                      <div className="grid-item-container">
-                        <div className="image">
-                          <img src={flowCover} alt="Flow Cover" />
-                        </div>
-                        <div className="tag">
-                          <p>{data.name}</p>
-                          <DropdownWrapper>
-                            <label className="dropbtn">
-                              <HiDotsVertical />
-                            </label>
-                            <div className="dropdown-content">
-                              <p
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  handleEditOpen(data);
-                                }}>
-                                Edit
-                              </p>
-                              <p
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  handleDeleteConfirmation(data);
-                                }}>
-                                Delete
-                              </p>
+    );
+  } else {
+    return (
+      <React.Fragment>
+        <div className="page-header">
+          <h1 className="main-heading">Bot Details</h1>
+            <PrimaryButton onClick={handleCreateOpen}>Add Flow</PrimaryButton>
+          </div>
+          <PlatformWrapper>
+            <div className="platform_btn" onClick={openMessengerConfigure}>
+              <img src={messengerLogo} alt="Messenger Logo" />
+              <p>Messenger</p>
+            </div>
+            <div className="platform_btn" onClick={openTelegramConfigure}>
+              <img src={telegramLogo} alt="Telegram Logo" />
+              <p>Telegram</p>
+            </div>
+            <div className="platform_btn" onClick={openSlackConfigure}>
+              <img src={slackLogo} alt="Slack Logo" />
+              <p>Slack</p>
+            </div>
+          </PlatformWrapper>
+          <GridWrapper>
+            <div className="grid-row">
+              {flows && flows.map((data: FlowType) => {
+                return (
+                  <React.Fragment key={data.id}>
+                    <Link to={'flow/' + data.id}>
+                      <div className="grid-item">
+                        <div className="grid-item-wrapper">
+                          <div className="grid-item-container">
+                            <div className="image">
+                              <img src={flowCover} alt="Flow Cover" />
                             </div>
-                          </DropdownWrapper>
-                        </div>           
+                            <div className="tag">
+                              <p>{data.name}</p>
+                              <DropdownWrapper>
+                                <label className="dropbtn">
+                                  <HiDotsVertical />
+                                </label>
+                                <div className="dropdown-content">
+                                  <p
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      handleEditOpen(data);
+                                    }}>
+                                    Edit
+                                  </p>
+                                  <p
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      handleDeleteConfirmation(data);
+                                    }}>
+                                    Delete
+                                  </p>
+                                </div>
+                              </DropdownWrapper>
+                            </div>           
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-                </Link>
-              </React.Fragment>
-            );
-          })}
-      </div>
-    </GridWrapper>
-
-    <Pagination
-      activePage={pageNumber}
-      total={lastPage}
-      onChange={handlePageChange}
-    />
-  </React.Fragment>
-
-   );
+                    </Link>
+                  </React.Fragment>
+                );
+              })}
+          </div>
+        </GridWrapper>
+    
+        <Pagination
+          activePage={pageNumber}
+          total={lastPage}
+          onChange={handlePageChange}
+        />
+      </React.Fragment>
+    );
+  }
 };
 
 export default withRouter(Flows);

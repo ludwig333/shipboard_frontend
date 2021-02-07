@@ -12,6 +12,8 @@ import BotEditModal from '../../../components/dashboard/Bots/EditModal';
 import BotDeleteModal from '../../../components/dashboard/Bots/DeleteModal';
 import { toast } from 'react-toastify';
 import ConfigureBot from '../../../components/dashboard/Bots/Configure/Messenger';
+import PuffLoader from "react-spinners/PuffLoader";
+
 
 type BotType = {
   id: string;
@@ -95,68 +97,75 @@ const Bots = () => {
     bots.splice(botId, 1);
   }
   
-
-  return (
-    <React.Fragment>
-      <div className="page-header">
-      <h1 className="main-heading">Bots</h1>
-        <PrimaryButton onClick={handleCreateOpen}>Add Bots</PrimaryButton>
+  if (isLoading) {
+    return (
+      <div className="loader-wrapper">
+        <PuffLoader color={' #5850EC'} size={75} />
       </div>
-      <div className="container">
-      <TableWrapper>
-        <li className="table-header">
-          <div className="col col-1 flex-basis-50">Name</div>
-          <div className="col col-2 flex-basis-20">Channels</div>
-          <div className="col col-3 flex-basis-20">Modified</div>
-          <div className="col col-4 flex-basis-10">Action</div>
-        </li>
-        {bots &&
-          bots.map((data: BotType) => {
-            return (
-              <React.Fragment key={data.id}>
-                <Link to={"bot/" + data.id} className="table-row table-row-data" >
-                <li className="table-row">
-                  <div className="col col-1 flex-basis-50" data-label="name">{data.name}</div>
-                  <div className="col col-2 flex-basis-20" data-label="channels">-</div>
-                  <div className="col col-3 flex-basis-20" data-label="last_modified">{data.last_modified}</div>
-                  <div className="col col-4 flex-basis-10" data-label="action">
-                  <DropdownWrapper>
-                    <label className="dropbtn">
-                      <HiDotsVertical />
-                    </label>
-                    <div className="dropdown-content">
-                      <p
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleEditOpen(data);
-                        }}>
-                        Edit
-                      </p>
-                      <p
-                        onClick={(e) => {
-                          e.preventDefault()
-                          handleDeleteConfirmation(data);
-                        }}>
-                        Delete
-                      </p>
-                    </div>
-                  </DropdownWrapper>
-                  </div>
-                </li>
-              </Link>
-              </React.Fragment>
-            );
-          })}
-      </TableWrapper>
-     </div>
+    );
+  } else {
+    return (
+      <React.Fragment>
+        <div className="page-header">
+          <h1 className="main-heading">Bots</h1>
+          <PrimaryButton onClick={handleCreateOpen}>Add Bots</PrimaryButton>
+        </div>
+        <div className="container">
+          <TableWrapper>
+            <li className="table-header">
+              <div className="col col-1 flex-basis-50">Name</div>
+              <div className="col col-2 flex-basis-20">Channels</div>
+              <div className="col col-3 flex-basis-20">Modified</div>
+              <div className="col col-4 flex-basis-10">Action</div>
+            </li>
+            {bots &&
+              bots.map((data: BotType) => {
+                return (
+                  <React.Fragment key={data.id}>
+                    <Link to={"bot/" + data.id} className="table-row table-row-data" >
+                      <li className="table-row">
+                        <div className="col col-1 flex-basis-50" data-label="name">{data.name}</div>
+                        <div className="col col-2 flex-basis-20" data-label="channels">-</div>
+                        <div className="col col-3 flex-basis-20" data-label="last_modified">{data.last_modified}</div>
+                        <div className="col col-4 flex-basis-10" data-label="action">
+                          <DropdownWrapper>
+                            <label className="dropbtn">
+                              <HiDotsVertical />
+                            </label>
+                            <div className="dropdown-content">
+                              <p
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  handleEditOpen(data);
+                                }}>
+                                Edit
+                        </p>
+                              <p
+                                onClick={(e) => {
+                                  e.preventDefault()
+                                  handleDeleteConfirmation(data);
+                                }}>
+                                Delete
+                        </p>
+                            </div>
+                          </DropdownWrapper>
+                        </div>
+                      </li>
+                    </Link>
+                  </React.Fragment>
+                );
+              })}
+          </TableWrapper>
+        </div>
 
-      <Pagination
-        activePage={pageNumber}
-        total={lastPage}
-        onChange={handlePageChange}
-      />
-    </React.Fragment>
-  );
+        <Pagination
+          activePage={pageNumber}
+          total={lastPage}
+          onChange={handlePageChange}
+        />
+      </React.Fragment>
+    );
+  }
 };
 
 export default Bots;

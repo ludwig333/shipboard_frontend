@@ -3,6 +3,8 @@ import {withRouter} from 'react-router-dom'
 import { FlowBuilderWrapper } from './styles';
 import { Stage, Layer, Rect, Image, Text, Group, Circle } from 'react-konva';
 import Toolbar from '../../../components/dashboard/builder/Toolbar/index';
+import PuffLoader from "react-spinners/PuffLoader";
+
 import {
   handleRenderingCards,
   getImage,
@@ -33,7 +35,7 @@ const FlowBuilder = (props) => {
   const [showToolOption, setShowToolOption] = useState(false);
   const [edgingMessageId, setEdgingMessageId] = useState(null);
   const [edgingButtonId, setEdgingButtonId] = useState(null);
-
+  const [isLoading, setIsLoading] = useState(true);
 
   const [state, setState] = useState({
     layerScale: 1,
@@ -159,7 +161,6 @@ const getChildren = (message, child, lastPosition) => {
     );
   }
 };
-
 
   const getStageWidth = () => {
     return sidebar ? window.innerWidth - 280 : window.innerWidth - 90;
@@ -426,12 +427,15 @@ const getChildren = (message, child, lastPosition) => {
   }
   
   React.useEffect(() => {
+    setIsLoading(true);
     getMessages(props.match.params.id)
       .then((response) => {
         setBuilderState(response.data)
       })
       .catch((err) => {
         toast.error("Something went wrong")
+      }).finally(() => {
+        setIsLoading(false);
       })
     getFlow(props.match.params.id)
       .then((response) => {  
@@ -756,55 +760,62 @@ const getChildren = (message, child, lastPosition) => {
     }
   }
   
-
-  return (
-    <FlowBuilderWrapper>
-      {flow && <div className="header">{flow.name}</div>}
-      <div className="stage-action">
-        <BiMessageSquareAdd
-          onClick={handleAddMessage}
-        />
+  if (isLoading) {
+    return (
+      <div className="loader-wrapper">
+        <PuffLoader color={' #5850EC'} loading={isLoading} size={75} />
       </div>
-      {isToolbarActive && <Toolbar id={id} hideToolbar={hideToolbar} bot={flow.bot} flow={flow.id} />}
-      <Stage
-        width={getStageWidth()}
-        height={window.innerHeight - 70}
-        scaleX={state.layerScale}
-        scaleY={state.layerScale}
-        onMouseMove={handleMousePosition}
-        x={0}
-        y={0}
-        onClick={handleClickOnCanvas}>
-        <Layer name="layer_1" draggable onWheel={handleWheel}>
-          <Rect
-            x={-window.innerWidth}
-            y={-window.innerHeight}
-            width={window.innerWidth * 3}
-            height={window.innerHeight * 3}
-            fill=""
+    );
+  } else {
+    return (
+      <FlowBuilderWrapper>
+        {flow && <div className="header">{flow.name}</div>}
+        <div className="stage-action">
+          <BiMessageSquareAdd
+            onClick={handleAddMessage}
           />
-          {showToolOption && getToolOption()}
-          {builderState &&
-            typeof builderState == 'object' &&
-            builderState.map((item, index) => {
-              var messageHeight = calculateHeightOfMessageBox(item.children);
-              return (
-                <React.Fragment key={item.id}>
-                  {(item.type==="default" && item.next) ? (
-                    <Edge
-                      height={messageHeight}
-                      node1={item.position}
-                      node2={getNextNode(item.next)}
-                    />
-                  ) : null}
-                  {getMessageBox(item, index, messageHeight)}
+        </div>
+        {isToolbarActive && <Toolbar id={id} hideToolbar={hideToolbar} bot={flow.bot} flow={flow.id} />}
+        <Stage
+          width={getStageWidth()}
+          height={window.innerHeight - 70}
+          scaleX={state.layerScale}
+          scaleY={state.layerScale}
+          onMouseMove={handleMousePosition}
+          x={0}
+          y={0}
+          onClick={handleClickOnCanvas}>
+          <Layer name="layer_1" draggable onWheel={handleWheel}>
+            <Rect
+              x={-window.innerWidth}
+              y={-window.innerHeight}
+              width={window.innerWidth * 3}
+              height={window.innerHeight * 3}
+              fill=""
+            />
+            {showToolOption && getToolOption()}
+            {builderState &&
+              typeof builderState == 'object' &&
+              builderState.map((item, index) => {
+                var messageHeight = calculateHeightOfMessageBox(item.children);
+                return (
+                  <React.Fragment key={item.id}>
+                    {(item.type === "default" && item.next) ? (
+                      <Edge
+                        height={messageHeight}
+                        node1={item.position}
+                        node2={getNextNode(item.next)}
+                      />
+                    ) : null}
+                    {getMessageBox(item, index, messageHeight)}
                   </React.Fragment>
-              );
-            })}
-        </Layer>
-      </Stage>
-    </FlowBuilderWrapper>
-  );
+                );
+              })}
+          </Layer>
+        </Stage>
+      </FlowBuilderWrapper>
+    );
+  }
 };
 const getShadowColor = (item) => {
   if (item.isSelected) {

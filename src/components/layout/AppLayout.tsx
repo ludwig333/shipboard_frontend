@@ -39,6 +39,7 @@ const LayoutWrapper = styled.div`
 const AppContainer = styled.div`
   margin-left: -2rem;
   flex-grow: 1;
+  position: relative;
 
   .page-header {
     display: flex;
