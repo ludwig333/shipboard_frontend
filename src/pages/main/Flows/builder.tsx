@@ -10,6 +10,7 @@ import {
   getImage,
   calculateHeightOfMessageBox,
   handleWheel,
+  onTouchPinch,
   Edge,
   URLImage,
 } from './helper';
@@ -21,6 +22,7 @@ import { saveMessage, getMessages, updateMessage, deleteMessage, createAndConnec
 import { toast } from 'react-toastify';
 import { getFlow } from '../../../apis/flows';
 import { createAndConnectWithButton, updateButton } from '../../../apis/buttons';
+import Konva from 'konva';
 
 const FlowBuilder = (props) => {
   const [isToolbarActive, setIsToolbarActive] = useState(null);
@@ -590,8 +592,9 @@ const handleRenderingChildrens = (message) => {
       .then((response) => {  
         setFlow(response.data);
     }).catch((err) => {
-      toast.error("Something went wrong")
+      toast.error("Something went wrong")   
     })
+    Konva.hitOnDragEnabled = true;
   }, []);
 
   const getToolOption = () => {
@@ -907,7 +910,7 @@ const handleRenderingChildrens = (message) => {
   } else {
     return (
       <FlowBuilderWrapper>
-        {flow && <div className="header">{flow.name}</div>}
+        {flow && <div className="header"><p>{flow.name}</p></div>}
         <div className="stage-action">
           <BiMessageSquareAdd
             onClick={handleAddMessage}
@@ -923,7 +926,7 @@ const handleRenderingChildrens = (message) => {
           x={0}
           y={0}
           onClick={handleClickOnCanvas}>
-          <Layer name="layer_1" draggable onWheel={handleWheel}>
+          <Layer name="layer_1" draggable onTouchMove={onTouchPinch} onWheel={handleWheel}>
             <Rect
               x={-window.innerWidth}
               y={-window.innerHeight}

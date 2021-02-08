@@ -7,6 +7,14 @@ export const FlowBuilderWrapper = styled.div`
     align-items: center;
     height: 5rem;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+
+    p {
+      font-family: Roboto, sans-serif;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 1.6rem;
+      margin-left: 5rem;
+    }
   }
   .stage-action {
     position: absolute;
