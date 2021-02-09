@@ -36,7 +36,6 @@ export const calculateHeightOfMessageBox = (message) => {
       message.forEach((item) => {
         if (item.type === 'card') {
           var activeCard = getActiveCard(item.cards);
-          console.log('active card height', item.cards[activeCard].height)
           height +=(item.cards[activeCard].height * 1.01) + 20;
         } else if (item.type === 'text') { 
           const buttons = item.buttons.length;

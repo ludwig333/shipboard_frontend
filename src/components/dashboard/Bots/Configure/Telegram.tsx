@@ -8,21 +8,21 @@ import telegramLogo from '../../../../assets/images/platforms/telegram.png';
 import { updataPlatformConfiguration } from '../../../../apis/bots';
 import { toast } from 'react-toastify';
 
-const TelegramConfigure = ({ botId, hideModal }) => {
+const TelegramConfigure = ({ botId, hideModal, configuration, changeConfiguration }) => {
   const { register, handleSubmit, errors, setError } = useForm();  
   const [isLoading, setIsLoading] = useState(false);
 
   const updateConfiguration = (data) => {
     setIsLoading(true);
-
-    updataPlatformConfiguration({
+    var config = {
       platform: 'telegram',
       username: data.username,
       access_token: data.access_token,
       connect_status: data.connect_status
-    }, botId).then((response) => {
+    }
+    updataPlatformConfiguration(config, botId).then((response) => {
+      changeConfiguration(config);
       hideModal();
-      toast.success(response.message);
     }).catch((err) => {
       if (err.response.status === 422) {
         if (err.response.data.errors.username) {
@@ -73,7 +73,8 @@ const TelegramConfigure = ({ botId, hideModal }) => {
                 id="username"
                 name="username"
                 placeholder="Enter Username"
-                ref={register({required: true, minLength: 3})}
+                ref={register({ required: true, minLength: 3 })}
+                defaultValue={ configuration ? configuration.username : null}
               />
             </div>
             <div className="form-group">
@@ -87,7 +88,8 @@ const TelegramConfigure = ({ botId, hideModal }) => {
                 name="access_token"
                 id="access_token"
                 placeholder="Enter Access Key"
-                ref={register({required: true})}
+                ref={register({ required: true })}
+                defaultValue={ configuration ? configuration.access_token : null}
               />
             </div>
             <div className="form-group last-input">
@@ -98,7 +100,9 @@ const TelegramConfigure = ({ botId, hideModal }) => {
               <SelectField
                 isError={!!errors.connect_status}
                 name="connect_status"
-                ref={register({ required: true })}>
+                ref={register({ required: true })}
+                defaultValue={ configuration ? configuration.connect_status : null}
+              >
                 <option value="1">Active</option>
                 <option value="0">Inactive</option>
               </SelectField>

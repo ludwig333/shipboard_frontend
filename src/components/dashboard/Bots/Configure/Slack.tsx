@@ -8,20 +8,20 @@ import slackLogo from '../../../../assets/images/platforms/slack.png';
 import { updataPlatformConfiguration } from '../../../../apis/bots';
 import { toast } from 'react-toastify';
 
-const SlackConfigure = ({ botId, hideModal }) => {
+const SlackConfigure = ({ botId, hideModal, configuration, changeConfiguration}) => {
   const { register, handleSubmit, errors, setError } = useForm();  
   const [isLoading, setIsLoading] = useState(false);
 
   const updateConfiguration = (data) => {
     setIsLoading(true);
-
-    updataPlatformConfiguration({
+    var config = {
       platform: "slack",
       access_token: data.access_token,
       connect_status: data.connect_status
-    }, botId).then((response) => {
+    }
+    updataPlatformConfiguration(config, botId).then((response) => {
+      changeConfiguration(config);
       hideModal();
-      toast.success(response.message);
     }).catch((err) => {
       if (err.response.status === 422) {
         if (err.response.data.errors.access_token) {
@@ -77,9 +77,10 @@ const SlackConfigure = ({ botId, hideModal }) => {
               </label>
               <InputField
                 isError={!!errors.access_token}
-                name="name"
+                name="access_token"
                 placeholder="Enter Access Token"
-                ref={register({required: true})}
+                ref={register({ required: true })}
+                defaultValue={ configuration ? configuration.access_token : null}
               />
             </div>
             <div className="form-group">
@@ -91,7 +92,7 @@ const SlackConfigure = ({ botId, hideModal }) => {
                 disabled
                 readOnly
                 id="subscription_url"
-                defaultValue="https://staging.bot.manaweb.ca/slack/84cb0c9b-c95b-40c3-9484-de05a8479bd8"
+                defaultValue={"https://bot.manaweb.ca/slack/" + botId}
               />
             </div>
             <div className="form-group last-input">
@@ -102,7 +103,9 @@ const SlackConfigure = ({ botId, hideModal }) => {
               <SelectField
                 isError={!!errors.connect_status}
                 name="connect_status"
-                ref={register({ required: true })}>
+                ref={register({ required: true })}
+                defaultValue={ configuration ? configuration.connect_status : null}
+              >
                 <option value="1">Active</option>
                 <option value="0">Inactive</option>
               </SelectField>

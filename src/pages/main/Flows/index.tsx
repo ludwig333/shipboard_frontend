@@ -20,6 +20,8 @@ import MessengerConfigure from '../../../components/dashboard/Bots/Configure/Mes
 import TelegramConfigure from '../../../components/dashboard/Bots/Configure/Telegram';
 import SlackConfigure from '../../../components/dashboard/Bots/Configure/Slack';
 import PuffLoader from "react-spinners/PuffLoader";
+import { getPlatformConfigurations } from '../../../apis/bots';
+import { toast } from 'react-toastify';
 
 
 type FlowType = {
@@ -34,6 +36,9 @@ const Flows = (props) => {
   const [pageNumber, setPageNumber] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [lastPage, setLastPage] = useState(1);
+  const [messengerConfigurations, setMessengerConfigurations] = useState(null);
+  const [telegramConfigurations, setTelegramConfigurations] = useState(null);
+  const [slackConfigurations, setSlackConfigurations] = useState(null);
 
   const botId = props.match.params.id;
 
@@ -109,21 +114,33 @@ const Flows = (props) => {
    * Configure Operations Starts
    */
 
+  const handleMessengerConfigurationUpdate = (config) => {
+    setMessengerConfigurations(config);
+  }
+
+  const handleTelegramConfigurationUpdate = (config) => {
+    setTelegramConfigurations(config);
+  }
+
+  const handleSlackConfigurationUpdate = (config) => {
+    setSlackConfigurations(config);
+  }
+
   const openMessengerConfigure = () => {
     showModal(() => (
-      <MessengerConfigure hideModal={hideModal} botId={botId} />
+      <MessengerConfigure hideModal={hideModal} botId={botId} configuration={ messengerConfigurations } changeConfiguration={handleMessengerConfigurationUpdate} />
     ));
   }
 
   const openTelegramConfigure = () => {
     showModal(() => (
-      <TelegramConfigure hideModal={hideModal} botId={botId} />
+      <TelegramConfigure hideModal={hideModal} botId={botId} configuration={ telegramConfigurations } changeConfiguration={handleTelegramConfigurationUpdate}/>
     ));
   }
 
   const openSlackConfigure = () => {
     showModal(() => (
-      <SlackConfigure hideModal={hideModal} botId={botId}/>
+      <SlackConfigure hideModal={hideModal} botId={botId} configuration={ slackConfigurations} changeConfiguration={handleSlackConfigurationUpdate}/>
     ));
   }
   /**
@@ -134,6 +151,22 @@ const Flows = (props) => {
   useEffect(() => {
     getFlowsData(botId, pageNumber);
   }, [pageNumber, lastPage]);
+
+  useEffect(() => {
+    getPlatformConfigurations(botId)
+      .then((response) => {
+        
+        var indexOfMessengerConfig = response.data.findIndex(config => config.platform === 'messenger');
+        setMessengerConfigurations(response.data[indexOfMessengerConfig]);
+
+        var indexOfTelegramConfig = response.data.findIndex(config => config.platform === 'telegram');
+        setTelegramConfigurations(response.data[indexOfTelegramConfig]);
+
+        var indexOfSlackConfig = response.data.findIndex(config => config.platform === 'slack');
+        setSlackConfigurations(response.data[indexOfSlackConfig]);
+      })
+      .catch((err) => toast.error("Something went wrong"));    
+  }, [])
 
   if (isLoading) {
     return (

@@ -368,11 +368,13 @@ const handleRenderingChildrens = (message) => {
   }
 
   const handleDeleteMessage = (item, index) => {
+    setIsToolbarActive(false);
     if (index > 0) {
       //Delete the message
     builderState.splice(index, 1);
     //Delete the edging where this message belongs to
-    const messageIndexHavingNextOfDeleteMessage = getMessageIndexWhichHasNextOfGivenMessageId(builderState, item.id);
+      const messageIndexHavingNextOfDeleteMessage = getMessageIndexWhichHasNextOfGivenMessageId(builderState, item.id);
+      //Remove the edging to the button when message deleted
     setBuilderState(
       builderState.map((item, index) => {
         if (index == messageIndexHavingNextOfDeleteMessage) {
@@ -984,6 +986,7 @@ const getSelectedNode = (state) => {
 const getMessageIndexWhichHasNextOfGivenMessageId = (state, messageId) => {
   return state.findIndex((obj) => obj.next == messageId);
 }
+
 
 const getHoveredNode = (state) => {
   return state.findIndex((obj) => obj.isHover == true);

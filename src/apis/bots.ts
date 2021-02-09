@@ -20,6 +20,9 @@ export const deleteBot = async (id : string) => {
   return makeRequest(urls.bots + '/' + id, 'DELETE', null, { Authorization: 'Bearer ' + getItem('token') });
 }
 
+export const getPlatformConfigurations = async (id: string) => {
+  return makeRequest(urls.botConfiguration + '/' + id, 'GET', null, { Authorization: 'Bearer ' + getItem('token') }).then((response) => response.data);
+}
 
 export const updataPlatformConfiguration = async (data, id: string) => {
   return makeRequest(urls.botConfiguration + '/' + id, 'POST', data, { Authorization: 'Bearer ' + getItem('token') }).then((response) => response.data);
