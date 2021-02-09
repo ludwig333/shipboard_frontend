@@ -171,6 +171,7 @@ const FormCard = ({ messageId, childId }) => {
     var height = cardRef.current.scrollHeight;
     updateCard({
       heading: data.heading,
+      height: height
     }, id).then((response) => {
       setBuilderState(
         builderState.map((item, index) => {
@@ -200,6 +201,7 @@ const FormCard = ({ messageId, childId }) => {
 
     updateCard({
       body: data.body,
+      height: height
     }, id).then((response) => {
       setBuilderState(
         builderState.map((item, index) => {

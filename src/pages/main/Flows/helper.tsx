@@ -36,7 +36,8 @@ export const calculateHeightOfMessageBox = (message) => {
       message.forEach((item) => {
         if (item.type === 'card') {
           var activeCard = getActiveCard(item.cards);
-          height +=item.cards[activeCard].height + 20;
+          console.log('active card height', item.cards[activeCard].height)
+          height +=(item.cards[activeCard].height * 1.01) + 20;
         } else if (item.type === 'text') { 
           const buttons = item.buttons.length;
           height += (item.height * 1.05) + (buttons * 40) + 20;
@@ -99,7 +100,7 @@ export const handleRenderingCards = (children) => {
         y={0}
         cornerRadius={5}
         fill="#F2F5F7"
-        height={children.cards[activeCard].height - 30}
+        height={(children.cards[activeCard].height * 1.05) - 40}
         width={300}
         stroke="lightGrey"
         strokeWidth={1}
@@ -126,7 +127,7 @@ export const handleRenderingCards = (children) => {
         fontFamily={'Roboto'}
         fontSize={15}
         fill={'black'}
-        lineHeight={1.5}
+        lineHeight={1.2}
       />
     </React.Fragment>
   );

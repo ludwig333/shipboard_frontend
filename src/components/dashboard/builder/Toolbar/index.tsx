@@ -226,7 +226,8 @@ const ToolbarButtons = ({ id, index }) => {
 
     addCardGroup({
       message: id,
-      position: positionIndex
+      position: positionIndex,
+      height: 150
     }).then((response) => {
       console.log(response.data);
       setBuilderState(
