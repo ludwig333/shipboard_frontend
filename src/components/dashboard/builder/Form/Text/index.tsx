@@ -11,12 +11,13 @@ import { saveButton } from '../../../../../apis/buttons';
 import { v4 as uuidv4 } from 'uuid';
 
 
-const FormText = ({ messageId, childId }) => {
+const FormText = ({ messageId, childId , showBtnEditor, setEditorContent}) => {
   const [builderState, setBuilderState] = useContext(BuilderContext);
   const { register, handleSubmit } = useForm({ mode: 'onChange' });
   const [isChangingBody, setIsChangingBody] = useState(false);
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   //Find index of specific object using findIndex method.
   const childIndex = builderState[messageId].children.findIndex(
@@ -116,10 +117,21 @@ const FormText = ({ messageId, childId }) => {
         </form>
       </div>
       <div className="card-base">
-        {builderState[messageId].children[childIndex].buttons && builderState[messageId].children[childIndex].buttons.map((button) => {
+        {builderState[messageId].children[childIndex].buttons && builderState[messageId].children[childIndex].buttons.map((button, index) => {
           return (
             <React.Fragment key={button.id}>
-              <ContentButton>{button.name}</ContentButton>
+              <ContentButton
+                ref={buttonRef}
+                onClick={(event) => {
+                setEditorContent({
+                  position: buttonRef.current.scrollTop,
+                  name: button.name,
+                  id: button.id,
+                  messageId: builderState[messageId].id,
+                  childId: childId
+                });
+                showBtnEditor();
+            }}>{button.name}</ContentButton>
             </React.Fragment>
           );
         })}

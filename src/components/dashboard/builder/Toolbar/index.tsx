@@ -1,6 +1,6 @@
 import React, { useContext, useState, useRef, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { ToolbarWrapper, ToolbarMenu, ToolbarButtonGroup } from './styles';
+import { ToolbarWrapper, ToolbarMenu, ToolbarButtonGroup, BtnEditorWrapper } from './styles';
 import { VerticalGap } from '../../../common/typography';
 import { ToolbarButton } from '../../../common/buttons';
 import { BuilderContext } from '../../../../services/Builder/BuilderProvider';
@@ -15,13 +15,22 @@ import { saveImage } from '../../../../apis/images';
 import { addCardGroup } from '../../../../apis/cards';
 import { useModal } from '../../../../services/Modal/ModalProvider';
 import ConnectFlowModal from '../Modals/ConnectFlow';
+import BtnEditor from './BtnEditor';
 
 
 const Toolbar = ({ id, hideToolbar, bot, flow }) => {
   const [builderState, setBuilderState] = useContext(BuilderContext);
   const [isChangingTitle, setIsChangingTitle] = useState(false);
-  const { register, handleSubmit } = useForm({ mode: 'onChange' });
+  const { register, handleSubmit, setValue } = useForm({ mode: 'onChange' });
   const { showModal, hideModal } = useModal();
+  const [isBtnEditorOpen, setIsBtnEditorOpen] = useState(false);
+  const [editorContent, setEditorContent] = useState({
+    position: null,
+    name: null,
+    id: null,
+    messageId: null,
+    childId: null
+  });
 
   // const titleRef = useRef<HTMLInputElement>(null);
 
@@ -83,6 +92,9 @@ const Toolbar = ({ id, hideToolbar, bot, flow }) => {
     );
   }
   
+  React.useEffect(() => {
+    setValue("title", builderState[objIndex].name, {shouldValidate: true})
+  }, [builderState[objIndex].name])
 
   const getContents = () => {
     if (builderState[objIndex].type === "default") {
@@ -96,7 +108,6 @@ const Toolbar = ({ id, hideToolbar, bot, flow }) => {
                 ref={register({required: true, minLength: 3})}
                 id="title"
                 name="title"
-                defaultValue={builderState[objIndex].name}
                 onBlur={() => setIsChangingTitle(false)}
               />
             </form>
@@ -106,7 +117,7 @@ const Toolbar = ({ id, hideToolbar, bot, flow }) => {
               return (
                 <React.Fragment key={child.id}>
                   <VerticalGap size="3" />
-                  {getChildren(child, objIndex)}
+                  {getChildren(child, objIndex, showBtnEditor, handleEditorContent)}
                 </React.Fragment>
               );
             })
@@ -153,12 +164,28 @@ const Toolbar = ({ id, hideToolbar, bot, flow }) => {
     }
   }
 
+  const closeBtnEditor = () => {
+    setIsBtnEditorOpen(false);
+  }
+
+  const showBtnEditor = () => {
+    setIsBtnEditorOpen(true);
+  }
+
+  const handleEditorContent = ({ position, name, id, messageId, childId}) => {
+    setEditorContent({position, name, id, messageId, childId});
+  }
+
+
   return (
-    <ToolbarWrapper>
+    <React.Fragment>
+      <ToolbarWrapper>
       {builderState[objIndex] &&
         getContents()
       }
-    </ToolbarWrapper>
+      </ToolbarWrapper>
+      {isBtnEditorOpen && <BtnEditor handleClose={closeBtnEditor} editorContent={editorContent} />}
+    </React.Fragment>
   );
 };
 
@@ -271,12 +298,12 @@ const ToolbarButtons = ({ id, index }) => {
   );
 };
 
-const getChildren = (children, messageId) => {
+const getChildren = (children, messageIndex, showBtnEditor, handleEditorContent) => {
   if (children.type === 'text') {
-    return <FormText messageId={messageId} childId={children.id} />;
+    return <FormText messageId={messageIndex} childId={children.id} showBtnEditor={showBtnEditor} setEditorContent={handleEditorContent}/>;
   } else if (children.type === 'image') {
-    return <FormImage messageId={messageId} childId={children.id} />;
+    return <FormImage messageId={messageIndex} childId={children.id} />;
   } else if (children.type === 'card') {
-    return <FormCard messageId={messageId} childId={children.id} />;
+    return <FormCard messageId={messageIndex} childId={children.id} />;
   }
 };

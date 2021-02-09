@@ -86,10 +86,10 @@ export const ToolbarMenu = styled.div`
 
     &:hover { 
       background: #FFE763;
-    .action-btn {
-      visibility: visible;
+      .action-btn {
+        visibility: visible;
+      }
     }
-  }
   }
 
   .action-btn {
@@ -113,6 +113,7 @@ export const ToolbarMenu = styled.div`
         cursor: pointer;
       }
     }
+  }
 
   .no-content-text {
     display: flex;
@@ -134,4 +135,76 @@ export const ToolbarButtonGroup = styled.div`
   flex-wrap: wrap;
   margin-top: auto;
   margin-bottom: 1rem;
+`;
+
+export const BtnEditorWrapper = styled.div<{position?: string}>`
+  background: #FDFDFD;
+  width: 22rem;
+  height: 15rem;
+  position: absolute;
+  top: ${props => props.position ? props.position : 10}rem;
+  left: 30rem;
+  z-index: 3;
+  border-radius: 7px 7px 7px 7px;
+  box-shadow: 0px 4px 12px #95bbdf;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  .title {
+    font-size: 1.4rem;
+    font-family:  Roboto, sans-serif;
+    font-weight: 400;
+    background: #E1E5EA;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 3rem;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1.5rem;
+
+    input {
+      border-radius: 7px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+      box-sizing: border-box;
+      height: 3rem;
+      min-width: 18rem;
+      outline: none;
+      font-size: 1.4rem;
+      font-family:  Roboto, sans-serif;
+      font-weight: 400;
+      padding: .8rem;
+    }
+  }
+  .bottom {
+      width: 80%;
+      margin-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+  }
+
+  .btn {
+    padding:.7rem;
+    font-size: 1.2rem;
+    border:none;
+    outline: none;
+    cursor: pointer;
+
+    &-done {
+      background: #5850EB;
+      color: white;
+    }
+
+    &-delete {
+      background:red;
+      color:white;
+    }
+  }
+
 `;
