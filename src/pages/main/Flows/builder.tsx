@@ -370,19 +370,30 @@ const handleRenderingChildrens = (message) => {
   const handleDeleteMessage = (item, index) => {
     setIsToolbarActive(false);
     if (index > 0) {
+      
       //Delete the message
     builderState.splice(index, 1);
     //Delete the edging where this message belongs to
-      const messageIndexHavingNextOfDeleteMessage = getMessageIndexWhichHasNextOfGivenMessageId(builderState, item.id);
+      // const messageIndexHavingNextOfDeleteMessage = getMessageIndexWhichHasNextOfGivenMessageId(builderState, item.id);
       //Remove the edging to the button when message deleted
     setBuilderState(
-      builderState.map((item, index) => {
-        if (index == messageIndexHavingNextOfDeleteMessage) {
-          item.next = ""
+      builderState.map((message) => {
+        if (message.next == item.id) {
+          message.next = null
         }
-        return item;
+        message.children.map((child) => {
+          if (child.type == 'text') {
+            child.buttons.map((button) => {
+              if (button.next == item.id) {
+                 button.next = null
+               }
+             })
+           }
+        })
+        return message;
       })
     );
+      
     deleteMessage(item.id).then(() => {
       setShowToolOption(false);
       setEdgingMessageId(null);
