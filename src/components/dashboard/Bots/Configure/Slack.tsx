@@ -92,7 +92,7 @@ const SlackConfigure = ({ botId, hideModal, configuration, changeConfiguration})
                 disabled
                 readOnly
                 id="subscription_url"
-                defaultValue={"https://bot.manaweb.ca/slack/" + botId}
+                defaultValue={configuration ? configuration.callback_url : null}
               />
             </div>
             <div className="form-group last-input">

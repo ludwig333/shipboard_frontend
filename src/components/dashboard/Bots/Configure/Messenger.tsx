@@ -120,7 +120,7 @@ const MessengerConfigure = ({ botId, hideModal, configuration, changeConfigurati
                 disabled
                 readOnly
                 id="callback_url"
-                defaultValue={"https://bot.manaweb.ca/messenger/" + botId}
+                defaultValue={configuration ? configuration.callback_url : null}
               />
             </div>
             <div className="form-group last-input">
