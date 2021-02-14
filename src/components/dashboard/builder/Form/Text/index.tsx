@@ -128,16 +128,19 @@ const FormText = ({ messageId, childId , showBtnEditor, setEditorContent}) => {
                   name: button.name,
                   id: button.id,
                   messageId: builderState[messageId].id,
-                  childId: childId
+                  childId: childId,
+                  type: 'text',
+                  url: button.url,
+                  next: button.next
                 });
                 showBtnEditor();
             }}>{button.name}</ContentButton>
             </React.Fragment>
           );
         })}
-      <AddTextButton height="4rem" width="100%" onClick={handleAddButton}>
-        Add Button
-      </AddTextButton>
+        <AddTextButton height="4rem" width="100%" onClick={handleAddButton}>
+          Add Button
+        </AddTextButton>
       </div>
     </AddTextWrapper>
   );

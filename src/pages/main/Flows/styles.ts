@@ -7,6 +7,7 @@ export const FlowBuilderWrapper = styled.div`
     align-items: center;
     height: 5rem;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+    justify-content: space-between;
 
     p {
       font-family: Roboto, sans-serif;

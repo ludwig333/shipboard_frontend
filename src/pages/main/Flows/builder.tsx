@@ -20,7 +20,7 @@ import {
 import { BiMessageSquareAdd } from 'react-icons/bi';
 import { saveMessage, getMessages, updateMessage, deleteMessage, createAndConnectMessage } from '../../../apis/messages';
 import { toast } from 'react-toastify';
-import { getFlow } from '../../../apis/flows';
+import { getFlow, publishFlow } from '../../../apis/flows';
 import { createAndConnectWithButton, updateButton } from '../../../apis/buttons';
 import Konva from 'konva';
 
@@ -590,6 +590,11 @@ const handleRenderingChildrens = (message) => {
         if(edgingButtonMessageId) setEdgingButtonMessageId(null);
       }          
     }
+
+  const handlePublishFlow = () => {
+    publishFlow(flow.id)
+      .catch((err) => toast.error("Something went wrong."))
+  }
   React.useEffect(() => {
     setIsLoading(true);
     getMessages(props.match.params.id)
@@ -751,7 +756,7 @@ const handleRenderingChildrens = (message) => {
           fontSize={20}
           fill={'gray'}
         />
-        <Group
+        {/* <Group
           x={340}
           y={messageHeight - 20}
           onMouseOver={() => { document.body.style.cursor = 'pointer' }}
@@ -770,7 +775,7 @@ const handleRenderingChildrens = (message) => {
             fontWeight={300}
             fill={'gray'}
           />
-        </Group>
+        </Group> */}
         {typeof item.children == 'object' ? (
           <>
             {item.children.length > 0 ? (
@@ -923,7 +928,10 @@ const handleRenderingChildrens = (message) => {
   } else {
     return (
       <FlowBuilderWrapper>
-        {flow && <div className="header"><p>{flow.name}</p></div>}
+        {flow && <div className="header">
+          <p>{flow.name}</p>
+          <button onClick={handlePublishFlow}>Publish</button>
+        </div>}
         <div className="stage-action">
           <BiMessageSquareAdd
             onClick={handleAddMessage}

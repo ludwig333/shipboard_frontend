@@ -23,3 +23,7 @@ export const updateFlow = async (data: {name: string}, id: string) => {
 export const deleteFlow = async (id: string) => {
   return makeRequest(urls.flows + '/' + id, 'DELETE', null, { Authorization: 'Bearer ' + getItem('token') });
 }
+
+export const publishFlow = async (id: string) => {
+    return makeRequest(urls.flow + '/publish/' + id, 'POST', null, { Authorization: 'Bearer ' + getItem('token') });
+}

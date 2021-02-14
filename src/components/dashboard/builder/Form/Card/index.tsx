@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { CardSlider, CardWrapper } from './styles';
 import { BuilderContext } from '../../../../../services/Builder/BuilderProvider';
-import { AddTextButton } from '../../../../common/buttons';
+import { AddTextButton, ContentButton } from '../../../../common/buttons';
 import { ImageWrapper } from '../Image/styles';
 import { v4 as uuidv4 } from 'uuid';
 import Textarea from 'react-expanding-textarea';
@@ -15,8 +15,9 @@ import {
 } from 'react-icons/bi';
 import { addCard, deleteCardGroup, updateCard, uploadImage } from '../../../../../apis/cards';
 import { toast } from 'react-toastify';
+import { saveButton } from '../../../../../apis/buttons';
 
-const FormCard = ({ messageId, childId }) => {
+const FormCard = ({ messageId, childId, showBtnEditor, setEditorContent }) => {
   const [builderState, setBuilderState] = useContext(BuilderContext);
   const { register, handleSubmit } = useForm({ mode: 'onChange' });
   const [isChangingHeading, setIsChangingHeading] = useState(false);
@@ -25,6 +26,7 @@ const FormCard = ({ messageId, childId }) => {
   const headingRef = useRef<HTMLInputElement>(null);
   const paragraphRef = useRef<HTMLTextAreaElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   //Find index of specific object using findIndex method.
   const childIndex = builderState[messageId].children.findIndex(
@@ -67,10 +69,9 @@ const FormCard = ({ messageId, childId }) => {
                 if (ind == childIndex) {
                   //First set active card to inactive
                   child.cards.map((card, inx) => {
-                    console.log(activeCardIndex);
-                  if (inx == activeCardIndex) {
-                    card.active = false
-                  }
+                    if (inx == activeCardIndex) {
+                      card.active = false
+                    }
                     return card;
                 })
                 //Then push a new card with active true;
@@ -225,6 +226,37 @@ const FormCard = ({ messageId, childId }) => {
     })
   };
 
+  const handleAddButton = () => {
+    const cards = builderState[messageId].children[childIndex].cards;
+    const activeCardIndex = getActiveCardIndex(cards);
+    const activeCard = builderState[messageId].children[childIndex].cards[activeCardIndex];
+    const buttonNumber = activeCard.buttons.length + 1;
+    saveButton({
+      name: 'Button #' + buttonNumber,
+      parent_type: 'card',
+      parent: activeCard.id
+    }).then((response) => {
+      setBuilderState(
+        builderState.map((item, index) => {
+          if (index == messageId) {
+            item.children.map((child) => {
+              if (child.id == childId) {
+                child.cards.map((card, inx) => {
+                  if (card.active == true) {
+                    card.buttons.push(response.data);
+                  }
+                })
+              }
+            });
+          }
+          return item;
+        })
+      );
+    }).catch((err) => {
+      toast.error("Something went wrong")
+    })      
+  }
+
   const handleDelete = () => {
     deleteCardGroup(childId).then((response) => {
       setBuilderState(
@@ -328,6 +360,31 @@ const FormCard = ({ messageId, childId }) => {
                     />
                   </form>
                 </div>
+                <div className="card-base">
+                {card.buttons && card.buttons.map((button, index) => {
+                    return (
+                      <React.Fragment key={button.id}>
+                        <ContentButton
+                          ref={buttonRef}
+                          onClick={(event) => {
+                          setEditorContent({
+                            position: buttonRef.current.scrollTop,
+                            name: button.name,
+                            id: button.id,
+                            messageId: builderState[messageId].id,
+                            childId: childId,
+                            activeCardId: card.id,
+                            type: 'card'
+                          });
+                          showBtnEditor();
+                      }}>{button.name}</ContentButton>
+                      </React.Fragment>
+                    );
+                  })}
+                </div>
+                <AddTextButton height="4rem" width="100%" onClick={handleAddButton}>
+                  Add Button
+                </AddTextButton>
               </div>
             </CardWrapper>
           );

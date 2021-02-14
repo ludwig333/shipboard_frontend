@@ -139,8 +139,8 @@ export const ToolbarButtonGroup = styled.div`
 
 export const BtnEditorWrapper = styled.div<{position?: string}>`
   background: #FDFDFD;
-  width: 22rem;
-  height: 15rem;
+  width: 25rem;
+  height: auto;
   position: absolute;
   top: ${props => props.position ? props.position : 10}rem;
   left: 30rem;
@@ -150,6 +150,7 @@ export const BtnEditorWrapper = styled.div<{position?: string}>`
   display: flex;
   align-items: center;
   flex-direction: column;
+  padding-bottom: 2rem;
 
   .title {
     font-size: 1.4rem;
@@ -167,6 +168,7 @@ export const BtnEditorWrapper = styled.div<{position?: string}>`
     display: flex;
     flex-direction: column;
     margin-top: 1.5rem;
+    width: 85%;
 
     input {
       border-radius: 7px;
@@ -204,6 +206,43 @@ export const BtnEditorWrapper = styled.div<{position?: string}>`
     &-delete {
       background:red;
       color:white;
+    }
+  }
+
+  .btn-div {
+    position:relative;
+    background: #EEF1F4;
+    height: 5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content:space-evenly;
+    align-items:center;
+    padding: .5rem;
+    border-radius: 12px 12px 12px 12px;
+    border: 1px dashed #5850eb;
+    cursor: pointer;
+
+    &:hover{
+      background: #95bbdf
+    }
+
+    .btn-label {
+      display: flex;
+      flex-direction: column;
+      justify-content:center;
+      align-items: center;
+    }
+
+    .remove-btn {
+      position:absolute;
+      top: 1rem;
+      right: -3rem;
+      padding: .5rem;
+      display: flex;
+      justify-content:center;
+      align-items:center;
+      background: #EEF1F4;
+      margin-right: 2rem;
     }
   }
 

@@ -12,6 +12,7 @@ const urls = {
   botConfiguration: `${baseUrl}/configure-bot`,
 
   flows: `${baseUrl}/flows`,
+  flow: `${baseUrl}/flow`,
   
   messages: `${baseUrl}/messages`,
   message: `${baseUrl}/message`,

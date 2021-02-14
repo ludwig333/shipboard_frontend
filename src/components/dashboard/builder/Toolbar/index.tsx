@@ -24,12 +24,26 @@ const Toolbar = ({ id, hideToolbar, bot, flow }) => {
   const { register, handleSubmit, setValue } = useForm({ mode: 'onChange' });
   const { showModal, hideModal } = useModal();
   const [isBtnEditorOpen, setIsBtnEditorOpen] = useState(false);
-  const [editorContent, setEditorContent] = useState({
+  const [editorContent, setEditorContent] = useState<{
+    position: string,
+    name: string,
+    id: string,
+    messageId: string,
+    childId: string,
+    activeCardId?: any,
+    url?: string,
+    next?: string,
+    type: string
+  }>({
     position: null,
     name: null,
     id: null,
     messageId: null,
-    childId: null
+    childId: null,
+    activeCardId: null,
+    url: null,
+    next: null,
+    type: null
   });
 
   // const titleRef = useRef<HTMLInputElement>(null);
@@ -172,8 +186,8 @@ const Toolbar = ({ id, hideToolbar, bot, flow }) => {
     setIsBtnEditorOpen(true);
   }
 
-  const handleEditorContent = ({ position, name, id, messageId, childId}) => {
-    setEditorContent({position, name, id, messageId, childId});
+  const handleEditorContent = ({ position, name, id, messageId, childId ,type, activeCardId, url, next}) => {
+    setEditorContent({position, name, id, messageId, childId, type, activeCardId, url, next});
   }
 
 
@@ -184,7 +198,7 @@ const Toolbar = ({ id, hideToolbar, bot, flow }) => {
         getContents()
       }
       </ToolbarWrapper>
-      {isBtnEditorOpen && <BtnEditor handleClose={closeBtnEditor} editorContent={editorContent} />}
+      {isBtnEditorOpen && <BtnEditor flow={flow} handleClose={closeBtnEditor} editorContent={editorContent} />}
     </React.Fragment>
   );
 };
@@ -227,7 +241,7 @@ const ToolbarButtons = ({ id, index }) => {
     addCardGroup({
       message: id,
       position: positionIndex,
-      height: 150
+      height: 275
     }).then((response) => {
       console.log(response.data);
       setBuilderState(
@@ -305,6 +319,6 @@ const getChildren = (children, messageIndex, showBtnEditor, handleEditorContent)
   } else if (children.type === 'image') {
     return <FormImage messageId={messageIndex} childId={children.id} />;
   } else if (children.type === 'card') {
-    return <FormCard messageId={messageIndex} childId={children.id} />;
+    return <FormCard messageId={messageIndex} childId={children.id} showBtnEditor={showBtnEditor} setEditorContent={handleEditorContent}/>;
   }
 };

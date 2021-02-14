@@ -149,4 +149,11 @@ export const CardWrapper = styled.div`
       }
     }
   }
+
+  .card-base {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
 `;
