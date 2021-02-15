@@ -23,6 +23,7 @@ import { toast } from 'react-toastify';
 import { getFlow, publishFlow } from '../../../apis/flows';
 import { createAndConnectWithButton, updateButton } from '../../../apis/buttons';
 import Konva from 'konva';
+import { PrimaryButton } from '../../../components/common/buttons';
 
 const FlowBuilder = (props) => {
   const [isToolbarActive, setIsToolbarActive] = useState(null);
@@ -40,6 +41,7 @@ const FlowBuilder = (props) => {
   const [edgingButtonMessageId, setEdgingButtonMessageId] = useState(null);
   const [edgingButtonChildId, setEdgingButtonChildId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isPublishing, setIsPublishing] = useState(false);
 
   const [state, setState] = useState({
     layerScale: 1,
@@ -731,8 +733,12 @@ const handleRenderingChildrens = (message) => {
     }
 
   const handlePublishFlow = () => {
+    setIsPublishing(true);
     publishFlow(flow.id)
       .catch((err) => toast.error("Something went wrong."))
+      .finally(() => {
+        setIsPublishing(false);
+      })
   }
   React.useEffect(() => {
     setIsLoading(true);
@@ -1069,7 +1075,7 @@ const handleRenderingChildrens = (message) => {
       <FlowBuilderWrapper>
         {flow && <div className="header">
           <p>{flow.name}</p>
-          <button onClick={handlePublishFlow}>Publish</button>
+          <PrimaryButton onClick={handlePublishFlow}>Publish</PrimaryButton>
         </div>}
         <div className="stage-action">
           <BiMessageSquareAdd
