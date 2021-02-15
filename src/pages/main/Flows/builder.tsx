@@ -153,7 +153,7 @@ const handleRenderingChildrens = (message) => {
                 onMouseOut={() => { document.body.style.cursor = 'default' }}
                 onClick={(e) => {
                   e.cancelBubble = true;
-                  connectButtonEdge(message.id, child.id, button.id)
+                  connectButtonEdge(message.id, child.id, button.id, 'text')
                 }}
              />
             </Group>
@@ -251,7 +251,7 @@ const handleRenderingChildrens = (message) => {
                   onMouseOut={() => { document.body.style.cursor = 'default' }}
                   onClick={(e) => {
                     e.cancelBubble = true;
-                    connectButtonEdge(message.id, children.cards[activeCard].id, button.id)
+                    connectButtonEdge(message.id, children.cards[activeCard].id, button.id, 'card')
                   }}
                />
               </Group>
@@ -379,7 +379,7 @@ const handleRenderingChildrens = (message) => {
     }
   };
 
-  const connectButtonEdge = (messageId, childId, buttonId) => {
+  const connectButtonEdge = (messageId, childId, buttonId, type) => {
     setEdgingButtonId(null);
     setEdgingMessageId(null);
     if (!showToolOption) {
@@ -393,12 +393,26 @@ const handleRenderingChildrens = (message) => {
           if (item.id == messageId) {
             item.children.map((child) => {
               if (child.id == childId) {
-                child.buttons.map((button) => {
-                  if (button.id == buttonId) {
-                    button.next = "dummy"
-                  }
-                  return button;
-                })
+                if (type == 'text') {
+                  child.buttons.map((button) => {
+                    if (button.id == buttonId) {
+                      button.next = "dummy"
+                    }
+                    return button;
+                  })
+                } else if (type == 'card') {
+                  var activeCardIndex = getActiveCard(child);
+                  child.cards.map((card, ind) => {
+                    if (ind == activeCardIndex) {
+                      card.buttons.map((button) => {
+                        if (button.id == buttonId) {
+                          button.next = "dummy"
+                        }
+                        return button;
+                      })
+                    }
+                  })
+                }
               }
               return child;
             })
