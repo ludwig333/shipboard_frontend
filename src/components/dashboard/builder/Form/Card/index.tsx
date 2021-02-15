@@ -22,6 +22,7 @@ const FormCard = ({ messageId, childId, showBtnEditor, setEditorContent }) => {
   const { register, handleSubmit } = useForm({ mode: 'onChange' });
   const [isChangingHeading, setIsChangingHeading] = useState(false);
   const [isChangingBody, setIsChangingBody] = useState(false);
+  const [activeCardIndex, setActiveCardIndex] = useState(0);
 
   const headingRef = useRef<HTMLInputElement>(null);
   const paragraphRef = useRef<HTMLTextAreaElement>(null);
@@ -38,6 +39,7 @@ const FormCard = ({ messageId, childId, showBtnEditor, setEditorContent }) => {
     const cards = builderState[messageId].children[childIndex].cards;
     const length = cards.length - 1;
     const activeCardIndex = getActiveCardIndex(cards);
+    setActiveCardIndex(activeCardIndex + 1);
 
     if (activeCardIndex == length) {
       makeCardActive(activeCardIndex + 1, activeCardIndex, length + 2, true);
@@ -49,6 +51,7 @@ const FormCard = ({ messageId, childId, showBtnEditor, setEditorContent }) => {
   const handlePreviousButton = () => {
     const cards = builderState[messageId].children[childIndex].cards;
     const activeCardIndex = getActiveCardIndex(cards);
+    setActiveCardIndex(activeCardIndex - 1);
     if (activeCardIndex != 0) {
       makeCardActive(activeCardIndex - 1, activeCardIndex);
     }
@@ -83,7 +86,6 @@ const FormCard = ({ messageId, childId, showBtnEditor, setEditorContent }) => {
           })
         );
       }).catch((err) => {
-        console.log(err);
         toast.error("Something went wrong");
       });
     } else {
@@ -137,7 +139,7 @@ const FormCard = ({ messageId, childId, showBtnEditor, setEditorContent }) => {
     formData.append('name', data.image[0].name);
 
     reader.onloadend = () => {
-      var height = cardRef.current.scrollHeight;
+      var paragraphHeight = paragraphRef.current.scrollHeight;
       uploadImage(formData, id).then((response) => {
         setBuilderState(
           builderState.map((item, index) => {
@@ -148,7 +150,7 @@ const FormCard = ({ messageId, childId, showBtnEditor, setEditorContent }) => {
                     if (s == cardIndex) {
                       card.selectedImage = data.image[0];
                       card.imagePreviewUrl = reader.result;
-                      card.height = height;
+                      card.height = paragraphHeight + 200;
                     }
                     return card;
                   });
@@ -169,10 +171,11 @@ const FormCard = ({ messageId, childId, showBtnEditor, setEditorContent }) => {
 
   const onHeadingChange = (data, id) => {
     let cardIndex = getCardIndex(id);
-    var height = cardRef.current.scrollHeight;
+    var paragraphHeight = paragraphRef.current.scrollHeight;
+
     updateCard({
       heading: data.heading,
-      height: height
+      height: paragraphHeight + 200
     }, id).then((response) => {
       setBuilderState(
         builderState.map((item, index) => {
@@ -182,7 +185,7 @@ const FormCard = ({ messageId, childId, showBtnEditor, setEditorContent }) => {
                 child.cards.map((card, s) => {
                   if (s == cardIndex) {
                     card.heading = data.heading;
-                    card.height = height;
+                    card.height = paragraphHeight + 200;
                   }
                 });
               }
@@ -198,11 +201,12 @@ const FormCard = ({ messageId, childId, showBtnEditor, setEditorContent }) => {
 
   const onParagraphChange = (data, id) => {
     let cardIndex = getCardIndex(id);
-    var height = cardRef.current.scrollHeight;
+
+    var paragraphHeight = paragraphRef.current.scrollHeight;
 
     updateCard({
       body: data.body,
-      height: height
+      height: paragraphHeight + 200
     }, id).then((response) => {
       setBuilderState(
         builderState.map((item, index) => {
@@ -212,7 +216,7 @@ const FormCard = ({ messageId, childId, showBtnEditor, setEditorContent }) => {
                 child.cards.map((card, s) => {
                   if (s == cardIndex) {
                     card.body = data.body;
-                    card.height = height;
+                    card.height = paragraphHeight + 200;
                   }
                 });
               }
@@ -272,6 +276,12 @@ const FormCard = ({ messageId, childId, showBtnEditor, setEditorContent }) => {
       toast.error("Something went wrong");
     })
   };
+
+  useEffect(() => {
+    if (paragraphRef.current) {
+      register(paragraphRef.current,  {required: true, minLength: 3})
+    }
+  }, [activeCardIndex]);
 
   return (
     <CardSlider>
@@ -352,7 +362,7 @@ const FormCard = ({ messageId, childId, showBtnEditor, setEditorContent }) => {
                       defaultValue={card.body}
                       id="body"
                       name="body"
-                      ref={register({required: true, minLength: 3})}
+                      ref={paragraphRef}
                       onClick={() => {
                         setIsChangingHeading(false);
                         setIsChangingBody(true);

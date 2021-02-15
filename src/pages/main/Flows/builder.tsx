@@ -6,13 +6,13 @@ import Toolbar from '../../../components/dashboard/builder/Toolbar/index';
 import PuffLoader from "react-spinners/PuffLoader";
 
 import {
-  handleRenderingCards,
   getImage,
   calculateHeightOfMessageBox,
   handleWheel,
   onTouchPinch,
   Edge,
   URLImage,
+  getActiveCard
 } from './helper';
 import {
   useBuilder,
@@ -75,7 +75,10 @@ const handleRenderingChildrens = (message) => {
   return message.children.map(function (child) {
     var yposition = lastPosition;
     if (child.type === 'card') {
-      lastPosition = lastPosition + child.cards[0].height;
+      var activeCard = getActiveCard(child.cards);
+      // lastPosition = lastPosition + child.cards[0].height;
+      const buttons = child.cards[activeCard].buttons.length;
+      lastPosition = lastPosition + child.cards[activeCard].height + (buttons * 40) + 40;
     } else if (child.type === 'text') {
       const buttons = child.buttons.length;
       lastPosition = lastPosition + child.height + (buttons * 40) + 40;
@@ -163,11 +166,133 @@ const handleRenderingChildrens = (message) => {
   } else if (child.type === 'card') {
     return (
       <Group x={20} y={lastPosition}>
-        {handleRenderingCards(child)}
+        {handleRenderingCards(message, child)}
       </Group>
     );
   }
-};
+  };
+  
+   const handleRenderingCards = (message, children) => {
+     var activeCard = getActiveCard(children.cards);
+     var cardButtons = children.cards[activeCard].buttons;
+    var boxHeight = (children.cards[activeCard].height) + (cardButtons.length * 40) + 20;
+
+    return (
+      <React.Fragment>
+        <Rect
+          x={0}
+          y={0}
+          cornerRadius={5}
+          fill="#F2F5F7"
+          height={boxHeight}
+          width={300}
+          stroke="lightGrey"
+          strokeWidth={1}
+          shadowColor="#95bbdf"
+          shadowOpacity={0.5}
+          shadowBlur={7}
+        />
+        {getCardImage(children.cards[activeCard])}
+        <Text
+          x={10}
+          width={260}
+          y={185}
+          text={children.cards[activeCard].heading}
+          fontFamily={'Roboto'}
+          fontSize={16}
+          fontStyle={'bold'}
+          fill={'black'}
+        />
+        <Text
+          x={10}
+          y={210}
+          width={280}
+          text={children.cards[activeCard].body}
+          fontFamily={'Roboto'}
+          fontSize={15}
+          fill={'black'}
+          lineHeight={1.2}
+        />
+        {children.cards[activeCard].buttons.map((button, index) => {
+            var y = (children.cards[activeCard].height) + (40 * index) + 20;
+            var node2 = getNextNode(button.next);
+            return (
+              <Group key={button.id}>
+                { button.next &&
+                    <Edge
+                      height={boxHeight}
+                      node1={{ x: -60, y: - boxHeight + 30 + (y)}}
+                      node2={{ x: node2.x - message.position.x -20, y: node2.y - message.position.y - 80}}
+                      width={20}
+                    />
+                }
+                <Rect
+                  x={25}
+                  y={y}
+                  fill="#FFFFFF"
+                  cornerRadius={5}
+                  height={30}
+                  width={250}
+                  shadowOpacity={0.5}
+                  shadowBlur={7}
+                  align={"center"}
+                />
+                <Text
+                  x={10}
+                  y={y + 3}
+                  text={button.name}
+                  fontSize={15}
+                  width={280}
+                  lineHeight={1.5}
+                  align={"center"}
+                />
+                <Circle x={260} y={y + 14} radius={9} fill="#8392AB" strokeWidth={1}
+                  onMouseOver={() => { document.body.style.cursor = 'pointer' }}
+                  onMouseOut={() => { document.body.style.cursor = 'default' }}
+                  onClick={(e) => {
+                    e.cancelBubble = true;
+                    connectButtonEdge(message.id, children.cards[activeCard].id, button.id)
+                  }}
+               />
+              </Group>
+            );
+           })}
+      </React.Fragment>
+    );
+  };
+  const getCardImage = (children) => {
+    if (children.imagePreviewUrl) {
+      return (
+        <URLImage
+          x={0}
+          y={0}
+          image={children.imagePreviewUrl}
+          height={160}
+          width={300}
+        />
+      );
+    } else {
+      return (
+        <Group>
+          <Rect
+            x={20}
+            y={20}
+            fill="#E1E5EA"
+            stroke="#8392AB"
+            cornerRadius={5}
+            height={150}
+            width={260}
+            dash={[10, 5]}
+            strokeWidth={1}
+            shadowColor="#95bbdf"
+            shadowOpacity={0.5}
+            shadowBlur={7}
+          />
+          <Text x={100} y={85} text={'Upload Image'} fontSize={16} />
+        </Group>
+      );
+    }
+  };
 
   const getStageWidth = () => {
     return sidebar ? window.innerWidth - 280 : window.innerWidth - 90;
