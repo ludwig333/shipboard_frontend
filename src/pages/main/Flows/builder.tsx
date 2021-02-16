@@ -218,7 +218,7 @@ const handleRenderingChildrens = (message) => {
         />
         {children.cards[activeCard].buttons.map((button, index) => {
             var y = (children.cards[activeCard].height) + (40 * index) + 20;
-            var node2 = getNextNode(button.next);
+          var node2 = getNextNode(button.next);
             return (
               <Group key={button.id}>
                 { button.next &&
@@ -255,7 +255,7 @@ const handleRenderingChildrens = (message) => {
                   onMouseOut={() => { document.body.style.cursor = 'default' }}
                   onClick={(e) => {
                     e.cancelBubble = true;
-                    connectButtonEdge(message.id, children.cards[activeCard].id, button.id, 'card')
+                    connectButtonEdge(message.id, children.id, button.id, 'card')
                   }}
                />
               </Group>
@@ -395,31 +395,33 @@ const handleRenderingChildrens = (message) => {
       setBuilderState(
         builderState.map((item) => {
           if (item.id == messageId) {
-            item.children.map((child) => {
-              if (child.id == childId) {
-                if (type == 'text') {
+            if (type == 'text') {
+              item.children.map((child) => {
+                if (child.id == childId) {
                   child.buttons.map((button) => {
                     if (button.id == buttonId) {
                       button.next = "dummy"
                     }
                     return button;
                   })
-                } else if (type == 'card') {
-                  var activeCardIndex = getActiveCard(child);
-                  child.cards.map((card, ind) => {
-                    if (ind == activeCardIndex) {
+                }
+              })
+            } else if (type == 'card') {
+              item.children.map((child) => {
+                if (child.id == childId) {
+                  var activeCardIndex = getActiveCard(child.cards);
+                  child.cards.map((card, inx) => {
+                    if (inx == activeCardIndex) {
                       card.buttons.map((button) => {
                         if (button.id == buttonId) {
-                          button.next = "dummy"
-                        }
-                        return button;
-                      })
-                    }
+                          button.next = "dummy";
+                         }
+                       })
+                     }
                   })
                 }
-              }
-              return child;
-            })
+              })
+            }
           }
           return item;
         })
@@ -714,12 +716,25 @@ const handleRenderingChildrens = (message) => {
           builderState.map((item) => {
             if (item.id == edgingButtonMessageId) {
               item.children.map((child) => {
-                if (child.id == edgingButtonChildId) {
-                  child.buttons.map((button) => {
-                    if (button.id == edgingButtonId) {
-                      button.next = null
+                if (child.type == 'text') {
+                  if (child.id == edgingButtonChildId) {
+                    child.buttons.map((button) => {
+                      if (button.id == edgingButtonId) {
+                        button.next = null
+                      }
+                      return button;
+                    })
+                  }
+                } else if (child.type == 'card') {
+                  var activeCardIndex = getActiveCard(child.cards);
+                  child.cards.map((card, index) => {
+                    if (index == activeCardIndex) {
+                      card.buttons.map((button) => {
+                        if (button.id == edgingButtonId) {
+                          button.next = null
+                        }
+                      });
                     }
-                    return button;
                   })
                 }
                 return child;
