@@ -42,6 +42,7 @@ const FlowBuilder = (props) => {
   const [edgingButtonChildId, setEdgingButtonChildId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isPublishing, setIsPublishing] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
 
   const [state, setState] = useState({
     layerScale: 1,
@@ -430,7 +431,7 @@ const handleRenderingChildrens = (message) => {
   }
 
   const handleMousePosition = (event) => {
-    if (!showToolOption) {
+    if (!showToolOption && !isCreating) {
       var point = event.target.getStage().getPointerPosition();
       setMousePosition({
         x: point.x,
@@ -520,7 +521,7 @@ const handleRenderingChildrens = (message) => {
     builderState.splice(index, 1);
     //Delete the edging where this message belongs to
       // const messageIndexHavingNextOfDeleteMessage = getMessageIndexWhichHasNextOfGivenMessageId(builderState, item.id);
-      //Remove the edging to the button when message deleted
+      //Remove the edging to the button when message deleted.
     setBuilderState(
       builderState.map((message) => {
         if (message.next == item.id) {
@@ -590,6 +591,7 @@ const handleRenderingChildrens = (message) => {
     }
 
     if (edgingMessageId) {
+      setIsCreating(true);
       createAndConnectMessage(newMessage, edgingMessageId)
         .then((response) => {
           setBuilderState(
@@ -604,9 +606,11 @@ const handleRenderingChildrens = (message) => {
         }).catch((err) => {
           toast.error("Something went wrong")
         }).finally(() => {
+          setIsCreating(false);
           setEdgingMessageId(null);
         })
     } else if (edgingButtonId) {
+      setIsCreating(true);
       createAndConnectWithButton(newMessage, edgingButtonId)
         .then((response) => {
           setBuilderState(
@@ -614,12 +618,25 @@ const handleRenderingChildrens = (message) => {
               if (item.id == edgingButtonMessageId) {
                 item.children.map((child) => {
                   if (child.id == edgingButtonChildId) {
-                    child.buttons.map((button) => {
-                      if (button.id == edgingButtonId) {
-                        button.next = response.data.id
-                      }
-                      return button;
-                    })
+                    if(child.type == 'text') {
+                      child.buttons.map((button) => {
+                        if (button.id == edgingButtonId) {
+                          button.next = response.data.id
+                        }
+                        return button;
+                      })
+                    } else if (child.type == 'card') {
+                      var activeCardIndex = getActiveCard(child.cards);
+                      child.cards.map((card, inx) => {
+                        if (inx == activeCardIndex) {
+                          card.buttons.map((button) => {
+                            if (button.id == edgingButtonId) {
+                                button.next = response.data.id
+                              }
+                            })
+                          }
+                      })
+                    }
                   }
                   return child;
                 })
@@ -631,6 +648,7 @@ const handleRenderingChildrens = (message) => {
         }).catch((err) => {
           toast.error("Something went wrong")
         }).finally(() => {
+          setIsCreating(false);
           setEdgingButtonId(null);
           setEdgingButtonMessageId(null);
           setEdgingButtonChildId(null);
@@ -650,6 +668,7 @@ const handleRenderingChildrens = (message) => {
       flow: props.match.params.id
     }
     if (edgingMessageId) {
+      setIsCreating(true);
       createAndConnectMessage(newFlow, edgingMessageId).then((response) => {
         setBuilderState(
           builderState.map((item) => {
@@ -664,9 +683,11 @@ const handleRenderingChildrens = (message) => {
       }).catch((err) => {
         toast.error("Something went wrong")
       }).finally(() => {
+        setIsCreating(false);
         setEdgingMessageId(null);
       });
     } else if (edgingButtonId) {
+      setIsCreating(true);
       createAndConnectWithButton(newFlow, edgingButtonId)
         .then((response) => {
           setBuilderState(
@@ -674,12 +695,25 @@ const handleRenderingChildrens = (message) => {
               if (item.id == edgingButtonMessageId) {
                 item.children.map((child) => {
                   if (child.id == edgingButtonChildId) {
-                    child.buttons.map((button) => {
-                      if (button.id == edgingButtonId) {
-                        button.next = response.data.id
-                      }
-                      return button;
-                    })
+                    if(child.type == 'text') {
+                      child.buttons.map((button) => {
+                        if (button.id == edgingButtonId) {
+                          button.next = response.data.id
+                        }
+                        return button;
+                      })
+                    } else if (child.type == 'card') {
+                      var activeCardIndex = getActiveCard(child.cards);
+                      child.cards.map((card, inx) => {
+                        if (inx == activeCardIndex) {
+                          card.buttons.map((button) => {
+                            if (button.id == edgingButtonId) {
+                                button.next = response.data.id
+                              }
+                            })
+                          }
+                      })
+                    }
                   }
                   return child;
                 })
@@ -691,6 +725,7 @@ const handleRenderingChildrens = (message) => {
         }).catch((err) => {
           toast.error("Something went wrong")
         }).finally(() => {
+          setIsCreating(false);
           setEdgingButtonId(null);
           setEdgingButtonMessageId(null);
           setEdgingButtonChildId(null);
