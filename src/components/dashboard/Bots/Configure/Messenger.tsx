@@ -120,7 +120,7 @@ const MessengerConfigure = ({ botId, hideModal, configuration, changeConfigurati
                 disabled
                 readOnly
                 id="callback_url"
-                defaultValue={configuration.callback_url ? configuration.callback_url : urls.messenger + '/' + botId}
+                defaultValue={ urls.messenger + '/' + botId}
               />
             </div>
             <div className="form-group last-input">
