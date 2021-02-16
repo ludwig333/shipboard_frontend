@@ -7,11 +7,11 @@ import { FormButton } from '../../../common/buttons';
 import messengerLogo from '../../../../assets/images/platforms/messenger.png';
 import { updataPlatformConfiguration } from '../../../../apis/bots';
 import { toast } from 'react-toastify';
+import urls from '../../../../constants/urls';
 
 const MessengerConfigure = ({ botId, hideModal, configuration, changeConfiguration }) => {
   const { register, handleSubmit, errors, setError } = useForm();  
   const [isLoading, setIsLoading] = useState(false);
-
   const updateConfiguration = (data) => {
     setIsLoading(true);
     var config = {
@@ -83,7 +83,7 @@ const MessengerConfigure = ({ botId, hideModal, configuration, changeConfigurati
                 defaultValue={configuration ? configuration.access_token : null}
               />
             </div>
-            <div className="form-group">
+            {/* <div className="form-group">
               <label>
                 <span className="form-label">App Secret </span>
                 {errors.app_secret && errors.app_secret.type === 'server' && (<span className="form-error">{ errors.name.message}</span>)}
@@ -96,7 +96,7 @@ const MessengerConfigure = ({ botId, hideModal, configuration, changeConfigurati
                 ref={register}
                 defaultValue={configuration ? configuration.app_secret : null}
               />
-            </div>
+            </div> */}
             <div className="form-group">
               <label>
                 <span className="form-label">Verification Code </span>
@@ -109,7 +109,7 @@ const MessengerConfigure = ({ botId, hideModal, configuration, changeConfigurati
                 id="verification_code"
                 placeholder="Enter Access Token"
                 ref={register({ required: true })}
-                defaultValue={configuration ? configuration.verification_code : null}
+                defaultValue={(configuration && configuration.verification_code) ? configuration.verification_code : null}
               />
             </div>
             <div className="form-group">
@@ -120,7 +120,7 @@ const MessengerConfigure = ({ botId, hideModal, configuration, changeConfigurati
                 disabled
                 readOnly
                 id="callback_url"
-                defaultValue={configuration ? configuration.callback_url : null}
+                defaultValue={configuration.callback_url ? configuration.callback_url : urls.messenger + '/' + botId}
               />
             </div>
             <div className="form-group last-input">

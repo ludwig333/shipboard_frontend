@@ -123,10 +123,11 @@ const handleRenderingChildrens = (message) => {
           return (
             <Group key={button.id}>
               { button.next &&
-                  <Edge
+                <Edge
+                    state={state}
                     height={boxHeight}
                     node1={{ x: -60, y: - boxHeight + 30 + (y)}}
-                    node2={{ x: node2.x - message.position.x -20, y: node2.y - message.position.y - 80}}
+                    node2={{ x: node2.x - message.position.x -20, y: node2.y - message.position.y - lastPosition}}
                     width={20}
                   />
               }
@@ -168,13 +169,13 @@ const handleRenderingChildrens = (message) => {
   } else if (child.type === 'card') {
     return (
       <Group x={20} y={lastPosition}>
-        {handleRenderingCards(message, child)}
+        {handleRenderingCards(message, child, lastPosition)}
       </Group>
     );
   }
   };
   
-   const handleRenderingCards = (message, children) => {
+   const handleRenderingCards = (message, children, lastPosition) => {
      var activeCard = getActiveCard(children.cards);
      var cardButtons = children.cards[activeCard].buttons;
     var boxHeight = (children.cards[activeCard].height) + (cardButtons.length * 40) + 20;
@@ -221,10 +222,11 @@ const handleRenderingChildrens = (message) => {
             return (
               <Group key={button.id}>
                 { button.next &&
-                    <Edge
+                  <Edge
+                      state={state}
                       height={boxHeight}
                       node1={{ x: -60, y: - boxHeight + 30 + (y)}}
-                      node2={{ x: node2.x - message.position.x -20, y: node2.y - message.position.y - 80}}
+                      node2={{ x: node2.x - message.position.x -20, y: node2.y - message.position.y - lastPosition}}
                       width={20}
                     />
                 }
@@ -901,7 +903,7 @@ const handleRenderingChildrens = (message) => {
           fontSize={20}
           fill={'gray'}
         />
-        {/* <Group
+        <Group
           x={340}
           y={messageHeight - 20}
           onMouseOver={() => { document.body.style.cursor = 'pointer' }}
@@ -920,7 +922,7 @@ const handleRenderingChildrens = (message) => {
             fontWeight={300}
             fill={'gray'}
           />
-        </Group> */}
+        </Group>
         {typeof item.children == 'object' ? (
           <>
             {item.children.length > 0 ? (
@@ -1109,6 +1111,7 @@ const handleRenderingChildrens = (message) => {
                   <React.Fragment key={item.id}>
                     {(item.type === "default" && item.next) ? (
                       <Edge
+                        state={state}
                         height={messageHeight}
                         node1={item.position}
                         node2={getNextNode(item.next)}

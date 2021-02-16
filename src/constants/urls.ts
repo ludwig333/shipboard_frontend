@@ -26,6 +26,9 @@ const urls = {
   card: `${baseUrl}/card`,
 
   button: `${baseUrl}/button`,
+
+  messenger: `${baseUrl}/messenger`,
+  slack: `${baseUrl}/slack`,
 };
 
 export default urls;

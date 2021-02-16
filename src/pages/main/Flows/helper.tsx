@@ -2,7 +2,7 @@ import React from 'react';
 import { Rect, Image, Text, Group, Shape, Circle } from 'react-konva';
 import useImage from 'use-image';
 
-export const Edge = ({ height, node1, node2, width = 0 }) => {
+export const Edge = ({ height, node1, node2, state,width = 0 }) => {
   node1 = {
     x: node1.x + 350 - width,
     y: node1.y + height - 20
@@ -37,12 +37,12 @@ export const calculateHeightOfMessageBox = (message) => {
         if (item.type === 'card') {
           var activeCard = getActiveCard(item.cards);
           const buttons = item.cards[activeCard].buttons.length;
-          height +=(item.cards[activeCard].height * 1.01) + (buttons * 40) + 20;
+          height +=(item.cards[activeCard].height * 1.01) + (buttons * 40) + 40;
         } else if (item.type === 'text') { 
           const buttons = item.buttons.length;
-          height += (item.height * 1.05) + (buttons * 40) + 20;
+          height += (item.height * 1.05) + (buttons * 40) + 40;
         } else {
-          height += item.height + 20;
+          height += item.height + 40;
         }
       });
     } else {

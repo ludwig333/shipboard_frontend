@@ -155,7 +155,7 @@ const Flows = (props) => {
   useEffect(() => {
     getPlatformConfigurations(botId)
       .then((response) => {
-        
+        console.log(response)
         var indexOfMessengerConfig = response.data.findIndex(config => config.platform === 'messenger');
         setMessengerConfigurations(response.data[indexOfMessengerConfig]);
 
@@ -165,7 +165,7 @@ const Flows = (props) => {
         var indexOfSlackConfig = response.data.findIndex(config => config.platform === 'slack');
         setSlackConfigurations(response.data[indexOfSlackConfig]);
       })
-      .catch((err) => toast.error("Something went wrong"));    
+      .catch((err) => toast.error("Something went wrong"));   
   }, [])
 
   if (isLoading) {
