@@ -175,6 +175,18 @@ export const BtnEditorWrapper = styled.div<{position?: string}>`
     justify-content: center;
     align-items: center;
     height: 3rem;
+    position:relative;
+
+    .close-editor{
+      position:absolute;
+      top: .5rem;
+      right: .5rem;
+      cursor: pointer;
+      svg{
+        width: 2rem;
+        height: 2rem;
+      }
+    }
   }
 
   .content {
@@ -199,6 +211,7 @@ export const BtnEditorWrapper = styled.div<{position?: string}>`
   }
   .bottom {
       width: 80%;
+      margin: auto;
       margin-top: 2rem;
       display: flex;
       justify-content: space-between;
@@ -214,12 +227,20 @@ export const BtnEditorWrapper = styled.div<{position?: string}>`
     &-done {
       background: #5850EB;
       color: white;
+
+      &:active{
+        background: gray;
+      }
     }
 
     &-delete {
       background:red;
       color:white;
     }
+
+    &:active{
+        background: gray;
+      }
   }
 
   .btn-div {

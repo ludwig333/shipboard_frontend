@@ -9,6 +9,8 @@ import Textarea from 'react-expanding-textarea';
 import { saveMessage } from '../../../../apis/messages';
 import { S_IFBLK } from 'constants';
 import { GiButtonFinger } from 'react-icons/gi';
+import { GiCancel } from 'react-icons/gi';
+
 
 
 const BtnEditor = ({ flow, handleClose, editorContent }) => {
@@ -137,51 +139,54 @@ const BtnEditor = ({ flow, handleClose, editorContent }) => {
   const handleNextMessage = (e) => {
     e.preventDefault();
     let number = builderState.length + 1;
-    
-    const newMessage = {
-      name: 'Send Message #' + number,
-      type: 'default',
-      position_x: 1200,
-      position_y: 60,
-      flow: flow
-    };
-    createAndConnectWithButton(newMessage, editorContent.id)
-      .then((response) => {
-        setNextMessageName(response.data.name)
-          setBuilderState(
-            builderState.map((message) => {
-              if (message.id == editorContent.messageId) {
-                message.children.map((child) => {
-                  if (child.id == editorContent.childId) {
-                    if (editorContent.type == 'text') {
-                      child.buttons.forEach((button) => {
-                        if (button.id == editorContent.id) {
-                          button.next = response.data.id
-                          editorContent.next = response.data.id
-                          }
-                        })
-                    } else if (editorContent.type == 'card') {
-                      child.cards.forEach((card) => {
-                          if (card.id == editorContent.activeCardId) {
-                            card.butttons.forEach((button) => {
-                              if (button.id == editorContent.id) {
-                                button.next = response.data.id
-                              }
-                            })
-                          }
-                        })
+    if (!nextMessageName) {
+      const newMessage = {
+        name: 'Send Message #' + number,
+        type: 'default',
+        position_x: 1200,
+        position_y: 60,
+        flow: flow
+      };
+      createAndConnectWithButton(newMessage, editorContent.id)
+        .then((response) => {
+          setNextMessageName(response.data.name)
+            setBuilderState(
+              builderState.map((message) => {
+                if (message.id == editorContent.messageId) {
+                  message.children.map((child) => {
+                    if (child.id == editorContent.childId) {
+                      if (editorContent.type == 'text') {
+                        child.buttons.forEach((button) => {
+                          if (button.id == editorContent.id) {
+                            button.next = response.data.id
+                            editorContent.next = response.data.id
+                            }
+                          })
+                      } else if (editorContent.type == 'card') {
+                        child.cards.forEach((card) => {
+                            if (card.id == editorContent.activeCardId) {
+                              card.butttons.forEach((button) => {
+                                if (button.id == editorContent.id) {
+                                  button.next = response.data.id
+                                }
+                              })
+                            }
+                          })
+                      }
                     }
-                  }
-                })
-              }
-              return message;
-            })
-          );
-        setBuilderState([...builderState, response.data]);
-        handleClose();
-        }).catch((err) => {
-          toast.error("Something went wrong")
-        })
+                  })
+                }
+                return message;
+              })
+            );
+          setBuilderState([...builderState, response.data]);
+          handleClose();
+          }).catch((err) => {
+            toast.error("Something went wrong")
+          }).finally(() => {
+            handleClose();
+          })
+    }
   }
 
   const handleNextUrl = (e) => {
@@ -208,9 +213,10 @@ const BtnEditor = ({ flow, handleClose, editorContent }) => {
     <BtnEditorWrapper position={editorContent.position}>
       <div className="title">
         Edit Button
+        <div className="close-editor" onClick={handleClose}><GiCancel/></div>
       </div>
       <hr />
-      <form className="content" onSubmit={handleSubmit(onSubmit)}>
+      <form className="content">
         <label>Name</label>
         <InputField
           onBlur={handleSubmit(onSubmit)}
@@ -225,14 +231,14 @@ const BtnEditor = ({ flow, handleClose, editorContent }) => {
             <h3>Send Message</h3>
           {nextMessageName && <p>{nextMessageName}</p>}
           </div>
-          {nextMessageName && <div className="remove-btn">X</div>}
+          {/* {nextMessageName && <div className="remove-btn">X</div>} */}
         </div>}
         {!nextMessageName && <div className="btn-div" onClick={handleNextUrl}>
           <div className="btn-label">
           <h3>Open Website</h3>
           {nextUrl && <p>{nextUrl}</p>}
           </div>
-          {nextUrl && <div className="remove-btn">X</div>}
+          {/* {nextUrl && <div className="remove-btn">X</div>} */}
         </div>}
         {showUrlField &&
           <>
@@ -242,6 +248,7 @@ const BtnEditor = ({ flow, handleClose, editorContent }) => {
             name="url"
             id="url"
             defaultValue={nextUrl}
+            onBlur={handleSubmit(onSubmit)}
             />
           </>}
           <div className="bottom">
@@ -250,7 +257,7 @@ const BtnEditor = ({ flow, handleClose, editorContent }) => {
             handleDelete()
           }
           }>Delete</button>
-        <button type="submit" className="btn btn-done">Done</button>
+        <button type="submit" className="btn btn-done" onClick={handleClose}>Done</button>
       </div>
       </form>
      

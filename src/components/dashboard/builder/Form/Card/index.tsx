@@ -378,7 +378,6 @@ const FormCard = ({ messageId, childId, showBtnEditor, setEditorContent }) => {
                           ref={buttonRef}
                           onClick={(event) => {
                           setEditorContent({
-                            position: buttonRef.current.scrollTop,
                             name: button.name,
                             id: button.id,
                             messageId: builderState[messageId].id,
