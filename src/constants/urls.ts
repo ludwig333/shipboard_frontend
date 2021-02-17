@@ -7,6 +7,8 @@ const urls = {
   resetPassword: `${baseUrl}/reset-password`,
   authUser: `${baseUrl}/user`,
   logOut: `${baseUrl}/logout`,
+  overview : `${baseUrl}/overview`,
+
   
   bots: `${baseUrl}/bots`,
   botConfiguration: `${baseUrl}/configure-bot`,

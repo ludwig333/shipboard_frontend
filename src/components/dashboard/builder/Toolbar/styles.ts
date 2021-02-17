@@ -142,7 +142,7 @@ export const BtnEditorWrapper = styled.div<{position?: string}>`
   width: 25rem;
   height: auto;
   position: absolute;
-  top: ${props => props.position ? props.position : 10}rem;
+  top: 50%;
   left: 30rem;
   z-index: 3;
   border-radius: 7px 7px 7px 7px;
@@ -151,6 +151,7 @@ export const BtnEditorWrapper = styled.div<{position?: string}>`
   align-items: center;
   flex-direction: column;
   padding-bottom: 2rem;
+  transform: translate(0, -50%);
 
   .title {
     font-size: 1.4rem;

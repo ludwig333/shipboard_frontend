@@ -66,7 +66,7 @@ const Sidebar: React.FC<SidebarProps> = ({ handleSidebarState }) => {
         <div className="menu_list">
           <div className="menu_list-top">
             <Link to="/app">
-              <MenuItem isActive isOpen={isOpen}>
+              <MenuItem isOpen={isOpen}>
                 <AiOutlineDashboard className="menu-icon" />
                 <p>Dashboard</p>
               </MenuItem>

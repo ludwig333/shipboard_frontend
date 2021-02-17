@@ -1,38 +1,105 @@
-import React from 'react';
-import { Doughnut } from '@reactchartjs/react-chart.js'
+import React, {useState, useEffect} from 'react';
+import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
+import { VerticalGap } from '../../../components/common/typography';
+import { TilesWrapper } from './styles';
+import { getOverview } from '../../../apis/auth';
+import { toast } from 'react-toastify';
 
-const data = {
-  labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-  datasets: [
+
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active) {
+      return (
+          <div className="custom-tooltip" style={{ backgroundColor: '#ffff', padding: '5px', border: '1px solid #cccc' }}>
+              <label>{`${payload[0].name} : ${payload[0].value}%`}</label>
+          </div>
+      );
+  }
+
+  return null;
+};
+
+
+const Dashboard = (props: any) => {
+
+const COLORS = ['#00C6FF', '#0088CC', '#4A154B'];
+
+  const pieData = [
     {
-      label: '# of Votes',
-      data: [12, 19, 3, 5, 2, 3],
-      backgroundColor: [
-        'rgba(255, 99, 132, 0.2)',
-        'rgba(54, 162, 235, 0.2)',
-        'rgba(255, 206, 86, 0.2)',
-        'rgba(75, 192, 192, 0.2)',
-        'rgba(153, 102, 255, 0.2)',
-        'rgba(255, 159, 64, 0.2)',
-      ],
-      borderColor: [
-        'rgba(255, 99, 132, 1)',
-        'rgba(54, 162, 235, 1)',
-        'rgba(255, 206, 86, 1)',
-        'rgba(75, 192, 192, 1)',
-        'rgba(153, 102, 255, 1)',
-        'rgba(255, 159, 64, 1)',
-      ],
-      borderWidth: 1,
+      "name": "Messenger",
+      "value": 68.85
     },
-  ],
-}
+    {
+      "name": "Telegram",
+      "value": 7.91
+    },
+    {
+      "name": "Slack",
+      "value": 6.85
+    },
+  ];
+  
+  const [data, setData] = useState(null);
 
-const Dashboard = (props:any) => {
+  useEffect(() => {
+    getOverview().then((response) => { 
+      setData(response.data[0]);
+      console.log(response.data[0]);
+    }).catch((err) => {
+      toast.error("Something went wrong");
+    })
+  }, []);
   return (
     <React.Fragment>
-      <h1 className="main-heading">Dashboard</h1>
-      {/* <Doughnut data={data} /> */}
+      <div className="page-header">
+        <h1 className="main-heading">Dashboard</h1>
+      </div>
+      <VerticalGap size="7" />
+      {/* <PieChart width={800} height={400}>
+        <Pie
+          data={data} 
+          cx={120} 
+          cy={200} 
+          innerRadius={60}
+          outerRadius={80} 
+          fill="#8884d8"
+          paddingAngle={5}
+        >
+        	{
+          	data.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]}/>)
+          } */}
+        {/* </Pie>
+      </PieChart> */}
+      <TilesWrapper>
+      {data &&  <> <PieChart width={400} height={300}>
+            <Pie data={data.doughnut} color="#000000" dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={80} fill="#8884d8" >
+              {
+                  data.doughnut.map((entry, index) => <Cell key={`cell-${index}`} fill={data.colors[index % data.colors.length]} />)
+              }
+            </Pie>
+          {/* <Tooltip content={<CustomTooltip active={active} payload={payload} label={label} />} /> */}
+            <Legend />
+        </PieChart>
+          
+          <div className="tile">
+          <div>
+            <p>Total Bots</p>
+            <h3>{data.total}</h3>
+          </div>
+         
+          </div>
+          <div className="tile">
+          <div>
+            <p>Active Connections</p>
+            <h3>{data.active}</h3>
+          </div>
+          </div>
+          <div className="tile">
+          <div>
+            <p>Inactive Connections</p>
+            <h3>{data.inactive}</h3>
+          </div>
+          </div></>}
+      </TilesWrapper>
     </React.Fragment>
  
   );

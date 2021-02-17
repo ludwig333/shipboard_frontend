@@ -32,3 +32,7 @@ export const logOut = async () => {
   return makeRequest(urls.logOut, 'POST', null, { Authorization: 'Bearer ' + getItem('token') }
   ).then((response) => response.data)
 }
+
+export const getOverview = async () => {
+  return makeRequest(urls.overview, 'GET', null, { Authorization: 'Bearer ' + getItem('token') }).then((response) => response.data);
+}

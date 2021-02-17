@@ -81,7 +81,7 @@ const BtnEditor = ({ flow, handleClose, editorContent }) => {
           toast.error('Something went wrong')
         }
       }).finally(() => {
-        handleClose();
+        // handleClose();
       })
   }
 
