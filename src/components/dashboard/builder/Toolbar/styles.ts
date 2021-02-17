@@ -25,6 +25,18 @@ export const ToolbarMenu = styled.div`
     display: none;
   }
 
+
+  .close-toolbar{
+    position: absolute;
+    cursor: pointer;
+    top: .5rem;
+    right: .5rem;
+    svg {
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+
   .header {
     display: flex;
     justify-content: center;

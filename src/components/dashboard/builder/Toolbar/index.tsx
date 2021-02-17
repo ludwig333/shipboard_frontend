@@ -126,6 +126,7 @@ const Toolbar = ({ id, hideToolbar, bot, flow }) => {
               />
             </form>
           </div>
+          <div className="close-toolbar" onClick={hideToolbar}><GiCancel/></div>
           {builderState[objIndex].children.length > 0 ? (
             builderState[objIndex].children.map((child) => {
               return (
