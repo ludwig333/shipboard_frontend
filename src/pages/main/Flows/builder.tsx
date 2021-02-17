@@ -125,12 +125,12 @@ const handleRenderingChildrens = (message) => {
             <Group key={button.id}>
               { button.next &&
                 <Edge
-                    state={state}
-                    height={boxHeight}
-                    node1={{ x: -60, y: - boxHeight + 30 + (y)}}
-                    node2={{ x: node2.x - message.position.x -20, y: node2.y - message.position.y - lastPosition}}
-                    width={20}
-                  />
+                  state={state}
+                  height={boxHeight}
+                  node1={{ x: -60, y: - boxHeight + 30 + (y) }}
+                  node2={{ x: node2.x - message.position.x - 20, y: node2.y - message.position.y - lastPosition }}
+                  width={20}
+                />
               }
               <Rect
                 x={25}
@@ -152,15 +152,15 @@ const handleRenderingChildrens = (message) => {
                 lineHeight={1.5}
                 align={"center"}
               />
-              <Circle x={260} y={y + 14} radius={9} fill="#8392AB" strokeWidth={1}
+              {!button.url && <Circle x={260} y={y + 14} radius={9} fill="#8392AB" strokeWidth={1}
                 onMouseOver={() => { document.body.style.cursor = 'pointer' }}
                 onMouseOut={() => { document.body.style.cursor = 'default' }}
                 onClick={(e) => {
                   e.cancelBubble = true;
                   connectButtonEdge(message.id, child.id, button.id, 'text')
                 }}
-             />
-            </Group>
+              />}
+            </Group> 
           );
          })}
       </Group>
@@ -251,14 +251,14 @@ const handleRenderingChildrens = (message) => {
                   lineHeight={1.5}
                   align={"center"}
                 />
-                <Circle x={260} y={y + 14} radius={9} fill="#8392AB" strokeWidth={1}
+                {!button.url && <Circle x={260} y={y + 14} radius={9} fill="#8392AB" strokeWidth={1}
                   onMouseOver={() => { document.body.style.cursor = 'pointer' }}
                   onMouseOut={() => { document.body.style.cursor = 'default' }}
                   onClick={(e) => {
                     e.cancelBubble = true;
                     connectButtonEdge(message.id, children.id, button.id, 'card')
                   }}
-               />
+               />}
               </Group>
             );
            })}
