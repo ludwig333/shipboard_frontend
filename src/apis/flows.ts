@@ -27,3 +27,7 @@ export const deleteFlow = async (id: string) => {
 export const publishFlow = async (id: string) => {
     return makeRequest(urls.flow + '/publish/' + id, 'POST', null, { Authorization: 'Bearer ' + getItem('token') });
 }
+
+export const installBookingTemplate = async (id: string) => {
+  return makeRequest(urls.flow + '/install/booking-template/' + id, 'POST', null, { Authorization: 'Bearer ' + getItem('token') });
+}
