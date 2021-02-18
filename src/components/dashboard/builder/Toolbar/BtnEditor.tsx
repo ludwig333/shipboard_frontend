@@ -165,7 +165,7 @@ const BtnEditor = ({ flow, handleClose, editorContent }) => {
                       } else if (editorContent.type == 'card') {
                         child.cards.forEach((card) => {
                             if (card.id == editorContent.activeCardId) {
-                              card.butttons.forEach((button) => {
+                              card.buttons.forEach((button) => {
                                 if (button.id == editorContent.id) {
                                   button.next = response.data.id
                                 }
@@ -181,7 +181,8 @@ const BtnEditor = ({ flow, handleClose, editorContent }) => {
             );
           setBuilderState([...builderState, response.data]);
           handleClose();
-          }).catch((err) => {
+        }).catch((err) => {
+          console.log(err);
             toast.error("Something went wrong")
           }).finally(() => {
             handleClose();

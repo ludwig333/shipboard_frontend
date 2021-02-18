@@ -531,10 +531,18 @@ const handleRenderingChildrens = (message) => {
           if (child.type == 'text') {
             child.buttons.map((button) => {
               if (button.next == item.id) {
-                 button.next = null
-               }
-             })
-           }
+                button.next = null
+              }
+            })
+          } else if (child.type == 'card') {
+            child.cards.map((card) => {
+              card.buttons.map((button) => {
+                if (button.next == item.id) {
+                  button.next = null;
+                }
+              })
+            })
+          }
         })
         return message;
       })
