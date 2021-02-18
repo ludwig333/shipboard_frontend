@@ -39,6 +39,7 @@ const LoginPage: React.FC = (props: any) => {
     setIsLoading(true);
     login(credential)
       .then((response) => {
+        console.log(response.data);
         authDispatch({
           type: 'LOGIN',
           payload: response.data,

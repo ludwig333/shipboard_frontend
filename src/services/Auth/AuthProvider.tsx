@@ -7,7 +7,7 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 const initialState = {
-  name: "Guest",
+  name: getItem('name'),
   isAuthenticated: !!(getItem("token") && JWTValidator(getItem("token"))) ,
 };
 

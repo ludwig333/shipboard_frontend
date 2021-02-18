@@ -40,6 +40,10 @@ body {
 
 }
 
+a {
+    text-decoration: none;
+}
+
 .loader-wrapper {
     position: absolute;
     bottom: 50%;

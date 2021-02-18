@@ -18,6 +18,7 @@ import ModalProvider from './services/Modal/ModalProvider';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AppLayout from './components/layout/AppLayout';
+import { PublicRoute } from './routes/PublicRoute';
 
 const App: React.FC = () => {
   const authContext = useAuthContext();
@@ -29,8 +30,8 @@ const App: React.FC = () => {
           <ToastContainer />
           <Switch>
             <Route exact path="/" component={LandingPage} />
-            <Route exact path="/register" component={RegisterPage} />
-            <Route exact path="/login" component={LoginPage} />
+            <PublicRoute exact path="/register" component={RegisterPage} />
+            <PublicRoute exact path="/login" component={LoginPage} />
             <Route
               exact
               path="/forgot-password"
@@ -41,7 +42,7 @@ const App: React.FC = () => {
             <ProtectedRoute exact path="/bot/:id" component={Flows} />
             <ProtectedRoute exact path="/bot/flow/:id" component={ FlowBuilder } />
             <ProtectedRoute exact path="/templates" component={Templates} />
-            <ProtectedRoute exact path="/settings" component={Settings} />
+            {/* <ProtectedRoute exact path="/settings" component={Settings} /> */}
             <Route path="*" component={NotFound} />
           </Switch>
         </>

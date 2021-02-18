@@ -3,9 +3,12 @@ import { Link } from 'react-router-dom'
 import { HeaderContainer, HeroWrapper } from './styles';
 import Navbar from '../navbar/index';
 import PrototypingImg from '../../../assets/images/hero-img.png';
-import { PrimaryButton } from '../../common/buttons';
+import { PrimaryButton, StyledButton } from '../../common/buttons';
+import { useAuthContext } from '../../../services/Auth/AuthProvider';
 
 const Header = () => {
+  const authContext = useAuthContext();
+
   return (
     <HeaderContainer>
       <Navbar />
@@ -16,9 +19,16 @@ const Header = () => {
             Signup for free and start building your own chatbot with no code
             platform.
           </p>
-          <Link to="/register">
+          {!authContext.isAuthenticated && <>
+            <Link to="/register">
             <PrimaryButton>Get Started</PrimaryButton>  
           </Link>
+          </>}
+          {authContext.isAuthenticated && <>
+            <Link to="/app">
+            <StyledButton>Dashboard</StyledButton>  
+          </Link>
+          </>}
         </div>
         <div className="hero_image">
           <img src={PrototypingImg} alt="Prototyping Process" />

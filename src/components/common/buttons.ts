@@ -15,6 +15,14 @@ export const StyledButton = styled.button`
   padding:.9rem;
   width: 10rem;
   outline: none;
+  button {
+    text-decoration: none;
+  }
+  &:visited, :focus, :active {
+   button {
+    text-decoration: none;
+   }
+  }
 `;
 
 export const PrimaryButton = styled(StyledButton)`
