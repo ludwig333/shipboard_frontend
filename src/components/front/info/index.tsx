@@ -15,11 +15,11 @@ function Info() {
         </PrimaryHeader>
         <div className="paragraph">
           <Paragraph>
-            Build chatbot as you wanted with our flow builder platform. Test
-            your bot and refined your flow. If all is well then publish it to
-            the platform of your choice and let users get quality service of
-            your business. You also can install the templates from our template
-            collection and customize it as per your requirement
+            Build chatbot as you always wanted with our flow builder platform. Test
+            your bot and refine your flow. Publish your bot to
+            the platform of your choice and let users get quality service from
+            your business. Need help, select a template from our template
+            collection and customize it as per your requirements.
           </Paragraph>
         </div>
       </div>

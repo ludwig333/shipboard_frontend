@@ -16,8 +16,7 @@ const Header = () => {
         <div className="hero_text">
           <h1 className="hero_text-heading">Build Chat, The Easy Way.</h1>
           <p className="hero_text-paragraph">
-            Signup for free and start building your own chatbot with no code
-            platform.
+            Signup for free and start building your own chatbot in our code-free platform.
           </p>
           {!authContext.isAuthenticated && <>
             <Link to="/register">

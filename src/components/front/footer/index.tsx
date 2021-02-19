@@ -15,7 +15,7 @@ const Footer = () => {
           </p>
         </div>
         <div className="cts-section">
-          <p>Easy and fun way to build your chtbot.</p>
+          <p>Easy and fun way to build your chatbot.</p>
           <Link to="/register">
             <StyledButton>Get Started</StyledButton>
           </Link>

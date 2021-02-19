@@ -21,14 +21,14 @@ const Feature = () => {
           <img src={feature1} alt="feature1" />
           <SecondaryHeader>Easy to develop</SecondaryHeader>
           <Paragraph>
-            Create components connected them and make the bot flow in ease
+            Create components, connect them and make the bot flow in ease
           </Paragraph>
         </div>
         <div className="feature">
           <img src={feature5} alt="feature1" />
-          <SecondaryHeader>Multipe Platform</SecondaryHeader>
+          <SecondaryHeader>Multipe Platforms</SecondaryHeader>
           <Paragraph>
-            Create one bot and publish it in different platforms such as
+            Create one bot and publish it in all your platforms such as
             facebook, slack, telegram, etc.
           </Paragraph>
         </div>
@@ -36,7 +36,7 @@ const Feature = () => {
           <img src={feature3} alt="feature1" />
           <SecondaryHeader>Template Variety</SecondaryHeader>
           <Paragraph>
-            Free templates which can be used to setup your bot.
+            Free templates can be used to setup your bot in no time.
           </Paragraph>
         </div>
         <div className="feature">
