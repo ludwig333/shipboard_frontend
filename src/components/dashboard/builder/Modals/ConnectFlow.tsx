@@ -5,6 +5,8 @@ import { GridWrapper } from '../../../common/grid';
 import { ConnectFlowWrapper } from './styles';
 import Pagination from '../../../common/Pagination/index';
 import flowCover from '../../../../assets/images/flow-cover.png';
+import noData from '../../../../assets/images/no-data.svg';
+
 
 type FlowType = {
   id: string;
@@ -64,7 +66,10 @@ const ConnectFlowModal = ({bot, flow, hideModal, handleSelect}) => {
         );
       })
     } else {
-     return  (<p>There are no other flows or they don't have messages</p>);
+     return  (<div className="empty-data">
+     <img className="no-data-image" src={noData} alt="Empty Data"></img>
+     <p>There are no other flows or they don't have messages</p>
+     </div>);
     }
   }
 
@@ -73,7 +78,7 @@ const ConnectFlowModal = ({bot, flow, hideModal, handleSelect}) => {
       <div className="modal-body">
         <button className="modal-exit" onClick={hideModal}></button>
         <div className="modal-title">
-         Connect Modal
+         Connect to Flow
         </div>
         <div className="modal-content">
           <GridWrapper>

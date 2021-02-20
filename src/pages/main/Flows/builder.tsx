@@ -795,6 +795,7 @@ const handleRenderingChildrens = (message) => {
   const handlePublishFlow = () => {
     setIsPublishing(true);
     publishFlow(flow.id)
+      .then(() => toast.success("Flow published successfully"))
       .catch((err) => toast.error("Something went wrong."))
       .finally(() => {
         setIsPublishing(false);

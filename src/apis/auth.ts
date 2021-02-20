@@ -8,7 +8,7 @@ export const login = async (credentials: CredentialData) => {
     .then((response) => response.data);
 };
 
-export const register = async (data: RegistrationData) => {
+export const registerUser = async (data: RegistrationData) => {
   return makeRequest(urls.register, 'POST', data)
     .then((response) => response.data);
 };

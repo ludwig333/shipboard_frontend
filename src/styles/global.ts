@@ -61,6 +61,18 @@ a {
     font-size: 1rem;
     color: red;
 }
+.empty-data {
+    display: flex;
+    flex-direction: column;
+    justify-content:center;
+    align-items: center;
+    height: calc(100vh - 5rem);
+
+    .no-data-image {
+    width: 50rem;
+    height: auto;
+}  
+}
 
 .Toastify__toast-body {
     font-size: 1.6rem;

@@ -5,133 +5,109 @@ import { FormHeader } from '../../components/common/typography';
 import { InputField, FormLink } from '../../components/common/form';
 import { FormButton } from '../../components/common/buttons';
 import { RegistrationData } from '../../../types';
-import { register } from '../../apis/auth';
+import { registerUser } from '../../apis/auth';
 import { useAuthDispatch } from '../../services/Auth/AuthProvider';
+import { useForm } from "react-hook-form";
+import { toast } from 'react-toastify';
 
-const defaultRegistrationData: RegistrationData = {
-  name: '',
-  email: '',
-  password: '',
-  password_confirmation: '',
-};
 
 const RegisterPage: React.FC = (props: any) => {
-  const [registrationData, setRegistrationData] = useState(
-    defaultRegistrationData
-  );
-  const [errorMessage, setErrorMessage] = useState(defaultRegistrationData);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const nameRef = useRef<HTMLInputElement>(null);
-
+   const [isLoading, setIsLoading] = useState(false);
+  const { register, handleSubmit, errors, setError } = useForm();  
   const authDispatch = useAuthDispatch();
 
-  useEffect(() => {
-    nameRef.current && nameRef.current.focus();
-  }, []);
-
-  const handleChange = <P extends keyof RegistrationData>(
-    prop: P,
-    value: RegistrationData[P]
-  ) => {
-    setRegistrationData({ ...registrationData, [prop]: value });
-    setErrorMessage({
-      ...errorMessage,
-      [prop]: '',
-    });
-    setIsLoading(false);
-  };
-
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-
+  const onSubmit = (data) => {
     setIsLoading(true);
 
-    register(registrationData)
-      .then((response) => {
-        authDispatch({
-          type: 'LOGIN',
-          payload: response.data,
-        });
-        props.history.push('/app');
-      })
+    registerUser({
+      name: data.name,
+      email: data.email,
+      password: data.password,
+      password_confirmation: data.password_confirmation
+    }).then((response) => {
+      authDispatch({
+        type: 'LOGIN',
+        payload: response.data,
+      });
+      props.history.push('/app');
+    })
       .catch((err) => {
         if (err.response.status === 422) {
-          setErrorMessage({
-            email: err.response.data.errors.email
-              ? err.response.data.errors.email[0]
-              : '',
-            password: err.response.data.errors.password
-              ? err.response.data.errors.password[0]
-              : '',
-            name: err.response.data.errors.name
-              ? err.response.data.errors.name[0]
-              : '',
-            password_confirmation: err.response.data.errors
-              .password_confirmation
-              ? err.response.data.errors.password_confirmation[0]
-              : '',
-          });
+          if (err.response.data.errors.name) {
+            setError('name', {
+              type: 'server',
+              message: err.response.data.errors.name[0]
+            })
+          }
+          if (err.response.data.errors.email) {
+            setError('email', {
+              type: 'server',
+              message: err.response.data.errors.email[0]
+            })
+          }
+          if (err.response.data.errors.password) {
+            setError('password', {
+              type: 'server',
+              message: err.response.data.errors.password[0]
+            })
+          }
+        } else {
+          toast.error('Something went wrong')
         }
       });
   };
 
   return (
     <AuthLayout>
-      <form className="register-form" onSubmit={handleSubmit}>
+      <form className="register-form" onSubmit={handleSubmit(onSubmit)}>
         <FormHeader>Create new account</FormHeader>
         <InputField
-          isError={!!errorMessage.name}
+          isError={!! errors.name}
           type="text"
           id="name"
+          name="name"
           placeholder="Full Name"
-          ref={nameRef}
-          onChange={(e) => {
-            handleChange('name', e.target.value);
-          }}
+          ref={register({required:true, maxLength: 20, minLength: 3 })}
         />
-        {errorMessage.name && (
-          <span className="form-error">{errorMessage.name}</span>
-        )}
+        {errors.name && errors.name.type === 'required' && (<p className="form-error">This field is required</p>)}
+        {errors.name && errors.name.type === 'minLength' && (<p className="form-error">This field is required min length of 3</p>)}
+        {errors.name && errors.name.type === 'maxLength' && (<p className="form-error">This field is required max length of 20</p>)}
+        {/* {errors.name && errors.name.type === 'pattern' && (<p className="form-error">Invalid name provided</p>)} */}
+        {errors.name && errors.name.type === 'server' && (<p className="form-error">{ errors.name.message}</p>)}
+
         <InputField
-          isError={!!errorMessage.email}
+          isError={!!errors.email}
           type="email"
           id="email"
+          name="email"
           placeholder="Email"
-          onChange={(e) => {
-            handleChange('email', e.target.value);
-          }}
+          ref={register({required:true})}
         />
-        {errorMessage.email && (
-          <span className="form-error">{errorMessage.email}</span>
-        )}
+        {errors.email && errors.email.type === 'required' && (<p className="form-error">This field is required</p>)}
+        {errors.email && errors.email.type === 'server' && (<p className="form-error">{ errors.email.message}</p>)}
+
         <InputField
-          isError={!!errorMessage.password}
+          isError={!!errors.password}
           type="password"
           id="password"
+          name="password"
           placeholder="Password"
-          onChange={(e) => {
-            handleChange('password', e.target.value);
-          }}
+          ref={register({required:true, minLength: 8})}
         />
-        {errorMessage.password && (
-          <span className="form-error">{errorMessage.password}</span>
-        )}
+        {errors.password && errors.password.type === 'required' && (<p className="form-error">This field is required</p>)}
+        {errors.password && errors.password.type === 'minLength' && (<p className="form-error">This field is required min length of 8</p>)}
+        {errors.password && errors.password.type === 'server' && (<p className="form-error">{ errors.password.message}</p>)}
         <InputField
-          isError={!!errorMessage.password_confirmation}
+          isError={!!errors.password_confirmation}
           className="last-input"
           type="password"
+          name="password_confirmation"
           id="password_confirmation"
           placeholder="Password Confirmation"
-          onChange={(e) => {
-            handleChange('password_confirmation', e.target.value);
-          }}
+          ref={register({required: true})}
         />
-        {errorMessage.password_confirmation && (
-          <span className="form-error">
-            {errorMessage.password_confirmation}
-          </span>
-        )}
+        {errors.password_confirmation && errors.password_confirmation.type === 'required' && (<p className="form-error">This field is required</p>)}
+      
         <FormButton type="submit" disabled={isLoading}>
           {isLoading ? 'Loading...' : 'Sign Up'}
         </FormButton>

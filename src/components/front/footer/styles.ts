@@ -19,6 +19,7 @@ export const FooterWrapper = styled.div`
   }
 
   .logo-section {
+    text-align: center;
     flex-grow: 1;
 
     .copyright {
@@ -33,6 +34,10 @@ export const FooterWrapper = styled.div`
   }
 
   .cts-section {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center; 
     flex-grow: 1;
     text-align: center;
 

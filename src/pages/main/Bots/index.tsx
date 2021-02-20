@@ -13,6 +13,8 @@ import BotDeleteModal from '../../../components/dashboard/Bots/DeleteModal';
 import { toast } from 'react-toastify';
 import ConfigureBot from '../../../components/dashboard/Bots/Configure/Messenger';
 import PuffLoader from "react-spinners/PuffLoader";
+import noData from '../../../assets/images/no-data.svg';
+
 
 
 type BotType = {
@@ -97,20 +99,18 @@ const Bots = () => {
     bots.splice(botId, 1);
   }
   
-  if (isLoading) {
-    return (
-      <div className="loader-wrapper">
-        <PuffLoader color={' #5850EC'} size={75} />
-      </div>
-    );
-  } else {
-    return (
-      <React.Fragment>
-        <div className="page-header">
-          <h1 className="main-heading">Bots</h1>
-          <PrimaryButton onClick={handleCreateOpen}>Add Bots</PrimaryButton>
-        </div>
-        <div className="container">
+  const getContent = () => {
+    if (bots.length < 1) {
+      return (
+        <div className="empty-data">
+          <img className="no-data-image" src={noData} alt="Empty Bots"></img>
+          <h3>No Bots</h3>
+          </div>
+      );
+    } else {
+      return (
+        <React.Fragment>
+           <div className="container">
           <TableWrapper>
             <li className="table-header">
               <div className="col col-1 flex-basis-50">Name</div>
@@ -163,6 +163,24 @@ const Bots = () => {
           total={lastPage}
           onChange={handlePageChange}
         />
+        </React.Fragment>
+      );
+    }
+  }
+  if (isLoading) {
+    return (
+      <div className="loader-wrapper">
+        <PuffLoader color={' #5850EC'} size={75} />
+      </div>
+    );
+  } else {
+    return (
+      <React.Fragment>
+        <div className="page-header">
+          <h1 className="main-heading">Bots</h1>
+          <PrimaryButton onClick={handleCreateOpen}>Add Bots</PrimaryButton>
+        </div>
+       {getContent()}
       </React.Fragment>
     );
   }

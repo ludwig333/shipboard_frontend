@@ -5,6 +5,8 @@ import { GridWrapper } from '../../common/grid';
 import Pagination from '../../common/Pagination/index';
 import { InstallToBotWrapper } from './styles';
 import { installBookingTemplate } from '../../../apis/flows';
+import noData from '../../../assets/images/no-data.svg';
+
 
 type BotType = {
   id: string;
@@ -70,7 +72,10 @@ const InstallToBot = ({ hideModal}) => {
         );
       })
     } else {
-     return  (<p>There are no other flows or they don't have messages</p>);
+      return ( <div className="empty-data">
+        <img className="no-data-image" src={noData} alt="Empty Bots"></img>
+        <h3>No Bots</h3>
+        </div>);
     }
   }
 
@@ -79,7 +84,7 @@ const InstallToBot = ({ hideModal}) => {
       <div className="modal-body">
         <button className="modal-exit" onClick={hideModal}></button>
         <div className="modal-title">
-         Connect Modal
+         Install Template
         </div>
         <div className="modal-content">
           <GridWrapper>
