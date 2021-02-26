@@ -22,7 +22,7 @@ export const Edge = ({ height, node1, node2, state,width = 0 }) => {
         // (!) Konva specific method, it is very important
         context.fillStrokeShape(shape);
       }}
-      stroke="black"
+      stroke="#8392AB"
       strokeWidth={2}
     />
   );
