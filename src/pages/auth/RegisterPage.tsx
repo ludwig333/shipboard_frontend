@@ -59,7 +59,7 @@ const RegisterPage: React.FC = (props: any) => {
 
   return (
     <AuthLayout>
-      <form className="register-form" onSubmit={handleSubmit(onSubmit)}>
+      <form className="register-form" onSubmit={handleSubmit(onSubmit)} noValidate>
         <FormHeader>Create new account</FormHeader>
         <InputField
           isError={!! errors.name}
@@ -67,12 +67,12 @@ const RegisterPage: React.FC = (props: any) => {
           id="name"
           name="name"
           placeholder="Full Name"
-          ref={register({required:true, maxLength: 20, minLength: 3 })}
+          ref={register({required:true, maxLength: 20, minLength: 3, pattern: /[A-Za-z]{3}/ })}
         />
         {errors.name && errors.name.type === 'required' && (<p className="form-error">This field is required</p>)}
         {errors.name && errors.name.type === 'minLength' && (<p className="form-error">This field is required min length of 3</p>)}
         {errors.name && errors.name.type === 'maxLength' && (<p className="form-error">This field is required max length of 20</p>)}
-        {/* {errors.name && errors.name.type === 'pattern' && (<p className="form-error">Invalid name provided</p>)} */}
+        {errors.name && errors.name.type === 'pattern' && (<p className="form-error">Invalid name provided</p>)}
         {errors.name && errors.name.type === 'server' && (<p className="form-error">{ errors.name.message}</p>)}
 
         <InputField
@@ -99,7 +99,6 @@ const RegisterPage: React.FC = (props: any) => {
         {errors.password && errors.password.type === 'server' && (<p className="form-error">{ errors.password.message}</p>)}
         <InputField
           isError={!!errors.password_confirmation}
-          className="last-input"
           type="password"
           name="password_confirmation"
           id="password_confirmation"

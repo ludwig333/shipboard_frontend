@@ -58,7 +58,7 @@ const LoginPage: React.FC = (props: any) => {
 
   return (
     <AuthLayout type="login">
-      <form className="login-form" onSubmit={handleSubmit}>
+      <form className="login-form" onSubmit={handleSubmit}noValidate>
         <FormHeader>Sign in to account</FormHeader>
         <InputField
           isError={!!errorMessage}
