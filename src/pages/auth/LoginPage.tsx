@@ -7,18 +7,14 @@ import { FormButton } from '../../components/common/buttons';
 import { useAuthDispatch } from '../../services/Auth/AuthProvider';
 import { login } from '../../apis/auth';
 import { CredentialData } from '../../../types';
+import { useForm } from "react-hook-form";
 
-const defaultCredentials: CredentialData = {
-  email: '',
-  password: '',
-};
 
 const LoginPage: React.FC = (props: any) => {
-  const [credential, setCredentials] = useState(defaultCredentials);
-  const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const emailRef = useRef<HTMLInputElement>(null);
+  const { register, handleSubmit, errors, setError } = useForm();  
 
   const authDispatch = useAuthDispatch();
 
@@ -26,20 +22,14 @@ const LoginPage: React.FC = (props: any) => {
     emailRef.current && emailRef.current.focus();
   }, []);
 
-  const handleChange = <P extends keyof CredentialData>(
-    prop: P,
-    value: CredentialData[P]
-  ) => {
-    setCredentials({ ...credential, [prop]: value });
-    setErrorMessage('');
-  };
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
+  const onSubmit = (data) => {
     setIsLoading(true);
-    login(credential)
+    login({
+      email: data.email,
+      password: data.password
+    })
       .then((response) => {
-        console.log(response.data);
         authDispatch({
           type: 'LOGIN',
           payload: response.data,
@@ -48,7 +38,18 @@ const LoginPage: React.FC = (props: any) => {
       })
       .catch((err) => {
         if (err.response.status === 422) {
-          setErrorMessage(err.response.data.message);
+          if (err.response.data.errors.email) {
+            setError('email', {
+              type: 'server',
+              message: err.response.data.errors.email[0]
+            })
+          }
+          if (err.response.data.errors.password) {
+            setError('password', {
+              type: 'server',
+              message: err.response.data.errors.password[0]
+            })
+          }
         }
       })
       .finally(() => {
@@ -58,31 +59,30 @@ const LoginPage: React.FC = (props: any) => {
 
   return (
     <AuthLayout type="login">
-      <form className="login-form" onSubmit={handleSubmit}noValidate>
+      <form className="login-form" onSubmit={handleSubmit(onSubmit)}noValidate>
         <FormHeader>Sign in to account</FormHeader>
         <InputField
-          isError={!!errorMessage}
-          id="email"
-          placeholder="Type your email"
-          ref={emailRef}
+          isError={!!errors.email}
           type="email"
-          value={credential.email}
-          onChange={(e) => {
-            handleChange('email', e.target.value);
-          }}
+          id="email"
+          name="email"
+          placeholder="Email"
+          ref={register({required:true})}
         />
-        {errorMessage && <span className="form-error">{errorMessage}</span>}
-        <InputField
-          isError={!!errorMessage}
-          className="last-input"
-          id="password"
-          placeholder="Type your password"
+        {errors.email && errors.email.type === 'required' && (<p className="form-error">This field is required</p>)}
+        {errors.email && errors.email.type === 'server' && (<p className="form-error">{errors.email.message}</p>)}
+        
+         <InputField
+          isError={!!errors.password}
           type="password"
-          value={credential.password}
-          onChange={(e) => {
-            handleChange('password', e.target.value);
-          }}
+          id="password"
+          name="password"
+          placeholder="Password"
+          ref={register({required:true})}
         />
+        {errors.password && errors.password.type === 'required' && (<p className="form-error">This field is required</p>)}
+        {errors.password && errors.password.type === 'server' && (<p className="form-error">{ errors.password.message}</p>)}
+       
         <FormButton type="submit" disabled={isLoading}>
           {isLoading ? 'Loading...' : 'Sign In'}
         </FormButton>

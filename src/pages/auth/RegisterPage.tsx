@@ -54,7 +54,7 @@ const RegisterPage: React.FC = (props: any) => {
         } else {
           toast.error('Something went wrong')
         }
-      });
+      }).finally(() => setIsLoading(false));
   };
 
   return (
@@ -72,7 +72,7 @@ const RegisterPage: React.FC = (props: any) => {
         {errors.name && errors.name.type === 'required' && (<p className="form-error">This field is required</p>)}
         {errors.name && errors.name.type === 'minLength' && (<p className="form-error">This field is required min length of 3</p>)}
         {errors.name && errors.name.type === 'maxLength' && (<p className="form-error">This field is required max length of 20</p>)}
-        {errors.name && errors.name.type === 'pattern' && (<p className="form-error">Invalid name provided</p>)}
+        {errors.name && errors.name.type === 'pattern' && (<p className="form-error">The name may only contains lettters</p>)}
         {errors.name && errors.name.type === 'server' && (<p className="form-error">{ errors.name.message}</p>)}
 
         <InputField
