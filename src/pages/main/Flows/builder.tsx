@@ -12,7 +12,8 @@ import {
   onTouchPinch,
   Edge,
   URLImage,
-  getActiveCard
+  getActiveCard,
+  getRelativePointerPosition
 } from './helper';
 import {
   useBuilder,
@@ -432,11 +433,26 @@ const handleRenderingChildrens = (message) => {
 
   const handleMousePosition = (event) => {
     if (!showToolOption && !isCreating) {
-      var point = event.target.getStage().getPointerPosition();
-      setMousePosition({
-        x: point.x,
-        y: point.y,
-      });
+    //   var point = event.target.getStage().getPointerPosition();
+    //   const scaleBy = 0.9;
+    const stage = event.target.getStage();
+    const layer = stage.find('.layer_1')[0];
+
+    const oldScale = layer.scaleX();
+    // const newScale = event.evt.deltaY > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+    // layer.scale({ x: newScale, y: newScale });
+
+    const layerPointerPosition = getRelativePointerPosition(layer);
+    const correctedLayerPointerPosition = {
+      x: layer.x() + layerPointerPosition.x ,
+      y: layer.y() + layerPointerPosition.y ,
+    };
+
+    const mousePointTo = {
+      x: correctedLayerPointerPosition.x - layer.x(),
+      y: correctedLayerPointerPosition.y  - layer.y() ,
+    };
+      setMousePosition(mousePointTo);
     }
   };
 
