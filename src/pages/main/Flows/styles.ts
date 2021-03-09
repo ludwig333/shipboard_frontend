@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 export const FlowBuilderWrapper = styled.div`
   position: absolute;
+  width: 100%;
   .header {
     display: flex;
     align-items: center;
@@ -15,6 +16,10 @@ export const FlowBuilderWrapper = styled.div`
       font-weight: 400;
       font-size: 1.6rem;
       margin-left: 5rem;
+    }
+
+    button {
+      margin-right: 2rem;
     }
   }
   .stage-action {

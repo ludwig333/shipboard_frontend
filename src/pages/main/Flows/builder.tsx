@@ -301,7 +301,7 @@ const handleRenderingChildrens = (message) => {
   };
 
   const getStageWidth = () => {
-    return sidebar ? window.innerWidth - 280 : window.innerWidth - 90;
+    return sidebar ? window.innerWidth - 220 : window.innerWidth - 60;
   };
 
   const setSelectedTrue = (messageId) => {

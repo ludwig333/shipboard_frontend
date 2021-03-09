@@ -15,7 +15,6 @@ export const Edge = ({ height, node1, node2, state,width = 0 }) => {
   const p2 = { x: (node1.x + node2.x) / 2, y: node2.y };
   return (
     <Shape
-      zIndex={10}
       sceneFunc={(context, shape) => {
         context.beginPath();
         context.moveTo(node1.x, node1.y);
