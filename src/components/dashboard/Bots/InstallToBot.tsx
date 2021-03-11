@@ -6,6 +6,8 @@ import Pagination from '../../common/Pagination/index';
 import { InstallToBotWrapper } from './styles';
 import { installBookingTemplate } from '../../../apis/flows';
 import noData from '../../../assets/images/no-data.svg';
+import flowCover from '../../../assets/images/flow-cover.png';
+
 
 
 type BotType = {
@@ -62,6 +64,9 @@ const InstallToBot = ({ hideModal}) => {
               <div className="grid-item" onClick={() => handleInstallBookingTemplate(data.id)}>
                 <div className="grid-item-wrapper">
                 <div className="grid-item-container">
+                    <div className="image">
+                      <img src={flowCover} alt="Flow Cover" />
+                    </div>
                   <div className="tag">
                     <p>{data.name}</p>
                   </div>           
