@@ -56,10 +56,17 @@ const FlowBuilder = (props) => {
   const getNextNode = (id) => {
     if (id) {
       const nextIndex = builderState.findIndex((obj) => obj.id == id);
-      if (nextIndex == -1) {
-        return mousePosition;
+      var data = {
+        position: builderState[nextIndex]?.position,
+        isNewLine: false
       }
-      return builderState[nextIndex].position;
+      if (nextIndex == -1) {
+        data = {
+          position: mousePosition,
+          isNewLine: true
+        }
+      }
+      return data;
     }
   };
 
@@ -121,7 +128,8 @@ const handleRenderingChildrens = (message) => {
         />
         {child.buttons.map((button, index) => {
           var y = (child.height * 1.05) + (40 * index) + 10;
-          var node2 = getNextNode(button.next);
+          var node2Obj = getNextNode(button.next);
+          var node2 = node2Obj?.position;
           return (
             <Group key={button.id}>
               { button.next &&
@@ -130,7 +138,8 @@ const handleRenderingChildrens = (message) => {
                   height={boxHeight}
                   node1={{ x: -60, y: - boxHeight + 30 + (y) }}
                   node2={{ x: node2.x - message.position.x - 20, y: node2.y - message.position.y - lastPosition }}
-                  width={20}
+                width={20}
+                isNewNode={node2Obj?.isNewLine}
                 />
               }
               <Rect
@@ -220,7 +229,9 @@ const handleRenderingChildrens = (message) => {
         />
         {children.cards[activeCard].buttons.map((button, index) => {
             var y = (children.cards[activeCard].height) + (40 * index) + 20;
-          var node2 = getNextNode(button.next);
+          var node2Obj = getNextNode(button.next);
+          var node2 = node2Obj?.position;
+
             return (
               <Group key={button.id}>
                 { button.next &&
@@ -229,7 +240,8 @@ const handleRenderingChildrens = (message) => {
                       height={boxHeight}
                       node1={{ x: -60, y: - boxHeight + 30 + (y)}}
                       node2={{ x: node2.x - message.position.x -20, y: node2.y - message.position.y - lastPosition}}
-                      width={20}
+                  width={20}
+                  isNewNode={node2Obj?.isNewLine}
                     />
                 }
                 <Rect
@@ -1182,6 +1194,9 @@ const handleRenderingChildrens = (message) => {
               typeof builderState == 'object' &&
               builderState.map((item, index) => {
                 var messageHeight = calculateHeightOfMessageBox(item.children);
+                var nextNodeObj = getNextNode(item.next);
+                var node2 = nextNodeObj?.position;
+
                 return (
                   <React.Fragment key={item.id}>
                     {(item.type === "default" && item.next) ? (
@@ -1189,7 +1204,8 @@ const handleRenderingChildrens = (message) => {
                         state={state}
                         height={messageHeight}
                         node1={item.position}
-                        node2={getNextNode(item.next)}
+                        node2={node2}
+                        isNewNode={nextNodeObj?.isNewLine}
                       />
                     ) : null}
                     {getMessageBox(item, index, messageHeight)}

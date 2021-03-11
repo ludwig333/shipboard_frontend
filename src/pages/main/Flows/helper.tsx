@@ -2,13 +2,17 @@ import React from 'react';
 import { Rect, Image, Text, Group, Shape, Circle } from 'react-konva';
 import useImage from 'use-image';
 
-export const Edge = ({ height, node1, node2, state,width = 0 }) => {
+export const Edge = ({ height, node1, node2, state,width = 0, isNewNode=false }) => {
   node1 = {
     x: node1.x + 350 - width,
     y: node1.y + height - 20
   }
+  var node2x = node2.x;
+  if (!isNewNode && node1.x > node2.x) {
+    node2x = node2.x + 340
+  } 
   node2 = {
-    x: node2.x,
+    x: node2x,    
     y: node2.y + 20
   }
   const p1 = { x: (node1.x + node2.x) / 2, y: node1.y };
