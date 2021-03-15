@@ -38,7 +38,7 @@ const BotEditModal = ({bot, hideModal, handleEditBot }) => {
       <div className="modal-body">
         <button className="modal-exit" onClick={hideModal}></button>
         <div className="modal-title">
-          <FormHeader>Edit Bot</FormHeader>
+          <FormHeader>Edit Bot Name</FormHeader>
         </div>
         <div className="modal-content">
           <form className="bot-create-form" onSubmit={handleSubmit(onSubmit)}>

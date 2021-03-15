@@ -151,6 +151,7 @@ const Toolbar = ({ id, hideToolbar, bot, flow }) => {
         <ToolbarMenu>
           <div className='flow-header'>
             <h4>Connect Flow </h4>
+            <div className="close-toolbar" onClick={hideToolbar}><GiCancel/></div>
           </div>
           {builderState[objIndex].children.length > 0 ? (
             builderState[objIndex].children.map((child) => {

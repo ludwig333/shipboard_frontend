@@ -968,7 +968,7 @@ const handleRenderingChildrens = (message) => {
           stroke={ "#5850EB"}
           shadowColor={getShadowColor(item)}
           shadowOpacity={1}
-          shadowBlur={7}
+          shadowBlur={getShadowColor(item)? 15 : 0}
         />
         {item.isHover &&
           <>
@@ -1064,16 +1064,16 @@ const handleRenderingChildrens = (message) => {
       }}
       onDragEnd={() => { updateMessagePosition(item) }}
     >
-      <Rect
-        cornerRadius={16}
-        height={200}
-        width={340}
-        fill="#FDFDFD"
-        stroke={ "#f9bf3b"}
-        strokeWidth={1}
-        shadowColor={getShadowColor(item)}
+        <Rect
+          cornerRadius={16}
+          height={200}
+          width={340}
+          fill="#FDFDFD"
+          stroke={"#f9bf3b"}
+          strokeWidth={1}
+          shadowColor={getShadowColor(item)}
         shadowOpacity={1}
-        shadowBlur={7}
+        shadowBlur={getShadowColor(item) ? 15 : 0}
       />
       {item.isHover &&
         <>
@@ -1171,6 +1171,7 @@ const handleRenderingChildrens = (message) => {
             onClick={handleAddMessage}
           />
         </div>
+        <h4 className="scroll-text">(Scroll to zoom in and out)</h4>
         {isToolbarActive && <Toolbar id={id} hideToolbar={hideToolbar} bot={flow.bot} flow={flow.id} />}
         <Stage
           width={getStageWidth()}
@@ -1221,11 +1222,10 @@ const handleRenderingChildrens = (message) => {
 const getShadowColor = (item) => {
   if (item.isSelected) {
     if (item.type == "default") {
-      return '#1e824c';
+      return '#8078FF';
     } else if (item.type == "flow") {
-      return "#f9ae23";
+      return "#f9bf3b";
     }
-   
   } else if (item.isHover) {
     if (item.type == "default") {
       return '#8078FF';
@@ -1233,7 +1233,7 @@ const getShadowColor = (item) => {
       return "#f9bf3b";
     }
   } else {
-    return '#95bbdf';
+    return'';
   }
 };
 

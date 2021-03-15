@@ -36,6 +36,12 @@ export const FlowBuilderWrapper = styled.div`
       border-radius: 7px;
     }
   }
+  .scroll-text {
+    color: #8392AB;
+    position: absolute;
+    bottom: 0rem;
+    right: 2rem;
+  }
 `;
 
 

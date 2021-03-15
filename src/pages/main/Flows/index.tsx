@@ -219,7 +219,7 @@ const Flows = (props) => {
                                         e.preventDefault();
                                         handleEditOpen(data);
                                       }}>
-                                      Edit
+                                      Edit Name
                                     </p>
                                     <p
                                       onClick={(e) => {
